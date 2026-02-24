@@ -1,0 +1,31 @@
+FROM php:8.2-apache
+
+# Instalar paquete SSL
+RUN apt-get update && apt-get upgrade -y\
+    && apt-get install -y openssl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Habilitar SSL
+RUN a2enmod ssl
+RUN a2enmod rewrite
+
+# Crear directorio SSL
+RUN mkdir /etc/apache2/ssl
+
+# Copiar configuración SSL personalizada
+COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+COPY server.crt /etc/apache2/ssl/server.crt
+COPY server.key /etc/apache2/ssl/server.key
+
+# Copiar index y script php a las rutas de HTML
+COPY index.php /var/www/html/index.php
+COPY script.php /var/www/html/script.php
+
+RUN chmod 600 /etc/apache2/ssl/server.key
+
+# Habilitar sitio SSL
+RUN a2ensite default-ssl.conf
+
+# Exponer puertos
+EXPOSE 80
+EXPOSE 443
