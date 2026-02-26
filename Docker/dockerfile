@@ -1,11 +1,25 @@
-FROM php:8.2-apache
+FROM php:8.2-apache-bookworm
 
-# Instalar paquete SSL
-RUN apt-get update && apt-get upgrade -y\
-    && apt-get install -y openssl \
+RUN apt-get update && apt-get install -y \
+    wget \
+    ca-certificates \
+    apt-transport-https \
+    gnupg \
+    openssl
+
+RUN wget -O /tmp/powershell.deb https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/powershell_7.5.4-1.deb_amd64.deb \
+    && apt-get update \
+    && apt-get install -y /tmp/powershell.deb \
+    && rm /tmp/powershell.deb \
     && rm -rf /var/lib/apt/lists/*
 
-# Habilitar SSL
+RUN apt-get purge -y --auto-remove \
+    wget \
+    apt-transport-https \
+    gnupg
+
+
+# Habilitar módulos necesarios
 RUN a2enmod ssl
 RUN a2enmod rewrite
 
@@ -13,13 +27,9 @@ RUN a2enmod rewrite
 RUN mkdir /etc/apache2/ssl
 
 # Copiar configuración SSL personalizada
-COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-COPY server.crt /etc/apache2/ssl/server.crt
-COPY server.key /etc/apache2/ssl/server.key
-
-# Copiar index y script php a las rutas de HTML
-COPY index.php /var/www/html/index.php
-COPY script.php /var/www/html/script.php
+COPY ./apache/default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
+COPY ./apache/server.crt /etc/apache2/ssl/server.crt
+COPY ./apache/server.key /etc/apache2/ssl/server.key
 
 RUN chmod 600 /etc/apache2/ssl/server.key
 
