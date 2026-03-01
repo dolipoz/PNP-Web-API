@@ -12,7 +12,7 @@
 		$output = shell_exec('ls -lart');
 		echo "<pre>$output</pre>";
 	?>
-	<a href="index.php">Volver</a>
+	<a href="../index.php">Volver</a>
     </div>
 </body>
 </html>

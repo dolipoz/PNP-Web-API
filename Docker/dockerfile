@@ -18,8 +18,10 @@ RUN apt-get purge -y --auto-remove \
     apt-transport-https \
     gnupg
 
+# Instalar Módulo de PNP.Powershell
+RUN pwsh -command Install-Module -name PNP.Powershell -force
 
-# Habilitar módulos necesarios
+# Habilitar módulos apache necesarios
 RUN a2enmod ssl
 RUN a2enmod rewrite
 
