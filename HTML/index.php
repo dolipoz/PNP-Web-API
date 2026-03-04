@@ -1,17 +1,19 @@
 <?php
     include "head.php";
 ?>
+    <div id="ventana">
+        <nav>
+            <!-- Navegador general para los enlaces -->
+            <ul>
+                <?php if (!$_SESSION["login"]) echo '<li id="login" class="pestanias"><a href="">Iniciar Sesión</a></li>' ?>
+                <?php if ($_SESSION["login"]) echo '<li id="signup" class="pestanias"><a href="">Crear Usuario</a></li>' ?>
+                <?php if ($_SESSION["login"]) echo '<li id="logoff" class="pestanias"><a href="">Cerrar Sesión</a></li>' ?>
+            </ul>
+        </nav>
 
-        <span id="prompt">PS C:\Users\Usuario></span> Get-Process
-
-        Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  ProcessName
-        -------  ------    -----      -----     ------     --  -----------
-        123      10     15000      20000       1.25   1234  notepad
-
-        <span id="prompt">PS C:\Users\Usuario></span>
-
-        <form id="consola" action="POST">
-            <input type="text" id="usuario" placeholder="Usuario">
+        <form id="consola" method="POST">
+            <label class="prompt" for="user">PS C:\Escriba su usuario></label><input type="text" id="user" name="user" placeholder="|"><br>
+            <label class="prompt" for="pass">PS C:\Escriba su contraseña></label><input type="text" id="pass" name="pass" placeholder="|">
         </form>
     </div>
 </body>

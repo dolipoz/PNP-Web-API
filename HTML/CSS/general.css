@@ -4,55 +4,67 @@ head {
 }
 
 body {
-    background-image: url("../Multimedia/Fondo-Login.jpg");
-    background-size: 100%;
+    /*background-image: url("../Multimedia/Fondo-Login.jpg");
+    background-size: 100%;*/
+    background-color: #2c5794;
 }
 
 /* ------------ Sección para simular la consola de powershell ------------ */
 #ventana {
     background-color: #012456;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    border-radius: 16px;
+    box-shadow: 0 10px 30px #00000099;
+    border-radius: 12px;
     margin: auto 15% auto;
     height: 50%;
-
+    overflow: hidden;
 
 
 }
 /* Parte de las pestañas para simular la consola de powershell */
 nav {
-    background-color: rgb(30, 30, 30);
-    height: 10%;
+    background-color: #1e1e1e;
+    border-radius: 12px 12px 0px 0px;
+    padding-top: 2px;
+
 }
 nav ul {
     list-style: none;
+    overflow: hidden;
 }
-#pestanias {
+.pestanias {
+    float: left;
     background-color: #012456;
-    border-radius: 16px 16px 0px 0px;
-    margin-top: 10px;
+    border-radius: 6px 6px 0px 0px;
     margin-left: 5px;
+    padding: 5px;
     width: 20%;
-    height: 90%;
+    font-family: Consolas, "Courier New", monospace;
     color: white;
 }
 /* Parte de la consola para simular la consola de powershell */
 #consola {
     background: #012456;
-    border-radius: 16px;
-    color: #ffffff;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 10px;
     font-family: Consolas, "Courier New", monospace;
+    color: #ffffff;
     font-size: 15px;
-    white-space: pre-wrap;
     min-height: 400px;
 }
-#prompt {
+.prompt {
     color: #00ff00;
+}
+
+form {
+    text-align: left;
 }
 
 input {
     background-color: #012456;
-    margin-left: 5px;
+    border: none;
+
+    outline: none;
+    color: white;
+    caret-color: transparent;
 }
 /* ------------------------------------------------------------------- */
