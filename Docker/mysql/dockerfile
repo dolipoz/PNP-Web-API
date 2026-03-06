@@ -1,0 +1,7 @@
+FROM mysql:8.0-bookworm
+
+# Pasar script sql para crear la base de datos
+COPY crear-database.sql /crear-database.sql
+
+# Exponer puerto
+EXPOSE 3306

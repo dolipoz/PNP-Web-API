@@ -15,10 +15,6 @@ body {
     box-shadow: 0 10px 30px #00000099;
     border-radius: 12px;
     margin: auto 15% auto;
-    height: 50%;
-    overflow: hidden;
-
-
 }
 /* Parte de las pestañas para simular la consola de powershell */
 nav {
@@ -29,27 +25,40 @@ nav {
 }
 nav ul {
     list-style: none;
-    overflow: hidden;
+    overflow: auto;
+    margin: 0px;
+    padding: 0px;
 }
 .pestanias {
     float: left;
     background-color: #012456;
     border-radius: 6px 6px 0px 0px;
-    margin-left: 5px;
+    margin-top: 5px;
+    margin-left: 10px;
     padding: 5px;
     width: 20%;
-    font-family: Consolas, "Courier New", monospace;
-    color: white;
+    font-family: "Segoe UI", "Inter", "Noto Sans", system-ui, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+}
+.pestanias a {
+    text-decoration: none;
+    color: inherit;
+}
+.pestanias a:hover {
+    color: #00ff00;
+
 }
 /* Parte de la consola para simular la consola de powershell */
 #consola {
     background: #012456;
-    border-radius: 12px;
+    border-radius: 0px 0px 12px 12px;
     padding: 10px;
     font-family: Consolas, "Courier New", monospace;
     color: #ffffff;
     font-size: 15px;
-    min-height: 400px;
+    min-height: 50vh;
 }
 .prompt {
     color: #00ff00;
@@ -58,13 +67,18 @@ nav ul {
 form {
     text-align: left;
 }
-
-input {
+#consola input {
     background-color: #012456;
     border: none;
 
     outline: none;
-    color: white;
+    color: #ffffff;
     caret-color: transparent;
+}
+input[type=submit],input[type=reset] {
+    cursor: pointer;
+}
+input[type=submit]:hover,input[type=reset]:hover {
+    color: #00ff00;
 }
 /* ------------------------------------------------------------------- */
