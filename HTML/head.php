@@ -11,8 +11,23 @@
 <body>
     <!-- Iniciamos sesión por cada usuario para usar variables globales -->
     <?php
-        session_start();
-        $_SESSION["login"] = true;
+        // Importamos las variables e iniciamos la sesión del navegador
+        include "Scripts/variables.php";
+        if ($_SESSION['alerta']) {
+            // Si 'alerta' es true, se mostrará el mensaje de aviso de alerta
+            echo '<script>alert("'.$_SESSION['info'].'")</script>';
+            $_SESSION['alerta'] = False;
+        }
+        if ($_SESSION['error']) {
+            // Si 'error' es true, se mostrará el mensaje de error
+            echo '<script>alert("'.$_SESSION['info'].'")</script>';
+            $_SESSION['error'] = False;
+        }
+        if ($_SESSION['correcto']) {
+            // Si 'correcto' es true, se mostrará el mensaje de información
+            echo '<script>alert("'.$_SESSION['info'].'")</script>';
+            $_SESSION['correcto'] = False;
+        }
     ?>
     <div id="ventana">
         <nav>
@@ -23,3 +38,8 @@
                 <?php if ($_SESSION["login"]) echo '<li id="logoff" class="pestanias"><a href="">Cerrar Sesión</a></li>' ?>
             </ul>
         </nav>
+<header>
+    <?php
+        include "Scripts/conectar-db.php";
+    ?>
+</header>

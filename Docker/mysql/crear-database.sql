@@ -17,3 +17,4 @@ create table powershell_api.usuarios_tokens (
     foreign key (usuario_id) references powershell_api.usuarios(id) on delete cascade,
     foreign key (token_id) references powershell_api.tokens(id) on delete cascade
 );
+insert into powershell_api.usuarios (usuario,password,correo) values ("admin","admin","");

@@ -1,37 +1,37 @@
 <?php
     include "../head.php";
     $user=$_POST['usuario'];
-    $pass=$_POST['contrasena'];
+    $pass=$_POST['clave'];
 
-    $q_user="select * from usuarios where usuario = '$user' and contrasena = '$pass'";
+    $q_user="select * from usuarios where nombre = '$user' and clave = '$pass'";
 
     $usuarios=mysqli_query($conexion,$q_user);
 
     if ($usuarios) {
         while ($usuario=mysqli_fetch_row($usuarios)) {
-            if ($usuario[9] == True) {
-                $_SESSION["login"] = True;
-                $_SESSION["administrador"] = True;
-                $_SESSION['correcto'] = True;
+            if ($usuario[9] == true) {
+                $_SESSION["login"] = true;
+                $_SESSION["administrador"] = true;
+                $_SESSION['correcto'] = true;
                 $_SESSION['info'] = 'Administrador conectado.';
                 header('Location: ../index.php');
             } else {
-                $_SESSION["login"] = True;
-                $_SESSION["administrador"] = False;
+                $_SESSION["login"] = true;
+                $_SESSION["administrador"] = false;
                 $_SESSION["correo"] = $usuario[1];
-                $_SESSION['correcto'] = True;
+                $_SESSION['correcto'] = true;
                 $_SESSION['info'] = "Cliente conectado.";
                 header('Location: ../index.php');
             }
         }
         if (!$_SESSION["login"]) {
-            $_SESSION['error'] = True;
+            $_SESSION['error'] = true;
             $_SESSION['info'] = 'El usuario no existe o la contraseña no es correcta.';
-            header('Location: ../iniciar_sesion.php');
+            header('Location: ../index.php');
         }
     } else {
-        $_SESSION['error'] = True;
+        $_SESSION['error'] = true;
         $_SESSION['info'] = 'El usuario no existe o la contraseña no es correcta.';
-        header('Location: ../iniciar_sesion.php');
+        header('Location: ../index.php');
     }
 ?>
