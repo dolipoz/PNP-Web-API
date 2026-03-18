@@ -33,4 +33,7 @@
     if (!isset($_SESSION["busqueda"])) {
         $_SESSION["busqueda"] = 'select * from productos order by fecha_in';
     }
+    if (!isset($_SESSION["secreto"])) {
+        $_SESSION["secreto"] = '';
+    }
 ?>

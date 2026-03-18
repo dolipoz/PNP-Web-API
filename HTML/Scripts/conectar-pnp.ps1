@@ -1,9 +1,13 @@
 param(
     [string]$url,
-    [string]$AccessToken
+    [string]$idcliente,
+    [string]$certificado,
+    [string]$tenant
 )
 
 Write-Output $url
-Write-Output $AccessToken
-#Connect-PnPOnline -Url $url -AccessToken $AccessToken
+Write-Output $idcliente
+Write-Output $certificado
+Write-Output $tenant
+#Connect-PnPOnline -Url $url -ClientId $idcliente -CertificatePath $certificado -Tenant $tenant
 #Get-PnPWeb

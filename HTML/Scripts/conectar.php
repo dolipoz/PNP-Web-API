@@ -6,21 +6,16 @@
     $tenantId = $_POST['tenantId'];
     $clientId = $_POST['clientId'];
     $clientSecret = $_POST['clientSecret'];
-    // Obtener token de acceso para PNP.powershell
-    $token = generarToken($tenant, $tenantId, $clientId, $clientSecret);
+    $certificado = $_POST['certificado'];
 
     
 
-    $command = "powershell -ExecutionPolicy Bypass -File /var/www/html/Scripts/conectar-pnp.ps1 \"$url\" \"$token\"";
+    $command = "pwsh -NoProfile -ExecutionPolicy Bypass -File /var/www/html/Scripts/conectar-pnp.ps1 \"$url\" \"$clientId\" \"$certificado\" \"$tenant\"";
     //$command = "whoami";
     exec($command, $output, $return);
 
-    if ($return) {
-        echo "<h1>Funciona</h1>";
-        print_r($output);
-    } else {
-        echo "</h1>No funciona</h1>";
-    }
+    print_r($output);
+
 
     include "footer.php";
 ?>
