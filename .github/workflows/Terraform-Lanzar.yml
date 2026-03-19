@@ -34,13 +34,13 @@ jobs:
 
     # ------------------------------- Importamos Terraform -------------------------------
     - name: Cargar Terraform
-      uses: hashicorp/setup-terraform@v3
+      uses: hashicorp/setup-terraform@v4
     # Iniciar el módulo de terraform en el workdir por defecto
     - name: Iniciar Terraform
       run: terraform init
     # Ejecutamos terraform apply para crear la infrestructura
     - name: Aplicar Terraform
-      run: terraform terraform apply --auto-approve
+      run: terraform apply --auto-approve
 
     # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
     # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo

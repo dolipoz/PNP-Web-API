@@ -16,7 +16,7 @@ jobs:
         token: ${{ secrets.TOKEN_GITHUB }}
     # Importamos Terraform
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v3
+      uses: hashicorp/setup-terraform@v4
     # Cargamos las credenciales de AWS para usar awscli
     - name: CONFIGURAR CREDENCIALES AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -68,7 +68,7 @@ jobs:
       run: terraform init
     # Destruimos la ingraestructura
     - name: Terraform Destroy
-      run: terraform terraform apply --destroy --auto-approve
+      run: terraform apply --destroy --auto-approve
     # Borramos el tfstate del s3
     - name: Borrar Caché
       run:  |

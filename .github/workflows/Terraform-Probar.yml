@@ -25,7 +25,7 @@ jobs:
 
     # ------------------------------- Importamos Terraform -------------------------------
     - name: Cargar Terraform
-      uses: hashicorp/setup-terraform@v3
+      uses: hashicorp/setup-terraform@v4
     # Iniciar el módulo de terraform en el workflow
     - name: Terraform Init
       run: terraform init
