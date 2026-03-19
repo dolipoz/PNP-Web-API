@@ -10,7 +10,7 @@ jobs:
     steps:
     # Importar Checkout para cargar el repositorio en el runner
     - name: Cargar Repositorio al Workflow
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
@@ -18,7 +18,7 @@ jobs:
       run: mv Terraform/* ./
     # Cargamos las credenciales de AWS para usar terraform
     - name: Configurar Credenciales AWS
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v6
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -33,4 +33,4 @@ jobs:
       run: terraform init
     # Ejecutamos terraform plan para comprobar errores
     - name: Plan Terraform
-      run: terraform terraform plan
+      run: terraform plan
