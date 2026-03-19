@@ -26,9 +26,6 @@ jobs:
     # ------------------------------- Importamos Terraform -------------------------------
     - name: Cargar Terraform
       uses: hashicorp/setup-terraform@v3
-    # Iniciar el módulo de terraform en el workdir por defecto
-    - name: Iniciar Terraform
-      run: terraform init
-    # Ejecutamos terraform apply para crear la infrestructura
+    # Ejecutamos terraform plan para comprobar errores
     - name: Plan Terraform
       run: terraform plan
