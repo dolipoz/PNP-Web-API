@@ -1,0 +1,40 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+    name: efs-sc
+provisioner: efs.csi.aws.com
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-efs
+  labels:
+    type: efs
+spec:
+  storageClassName: efs-sc
+  claimRef:
+    name: pvc-efs
+    namespace: default
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteMany
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: ${id_efs}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-efs
+  namespace: default
+spec:
+  storageClassName: efs-sc
+  volumeName: pv-efs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi

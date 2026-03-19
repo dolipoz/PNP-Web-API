@@ -1,0 +1,94 @@
+name: 'Lanzar Terraform'
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Lanzar Terraform'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Importar Checkout para cargar el repositorio en el runner
+    - name: Cargar Repositorio al Workflow
+      uses: actions/checkout@v4
+      with:
+        # Para importar el repositorio se necesita generar un token en github
+        token: ${{ secrets.user_token }}
+    # ------------------------------- Importar python para instalar awscli -------------------------------
+    - name: Importar python
+      uses: actions/setup-python@v5.0.0
+      with:
+        python-version: '3.10'
+    - name: Instalar awscli para subir ficheros al S3
+      run: |
+        python -m pip install --upgrade pip
+        pip install awscli
+    # Cargamos las credenciales de AWS para usar awscli y terraform
+    - name: Configurar Credenciales AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # ------------------------------- Importamos Terraform -------------------------------
+    - name: Cargar Terraform
+      uses: hashicorp/setup-terraform@v3
+    # Iniciar el módulo de terraform en el workdir por defecto
+    - name: Iniciar Terraform
+      run: terraform init
+    # Ejecutamos terraform apply para crear la infrestructura
+    - name: Aplicar Terraform
+      run: terraform apply --auto-approve
+
+    # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
+    # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo
+    - name: Guardar .tfstate en el Bucket
+      run: |
+        if ; then
+          sudo apt install jq -y
+        fi
+        aws s3 cp terraform.tfstate s3://${{ secrets.TFSTATE_BUCKET }}/Terraform/ --region ${{ secrets.REGION }}
+
+    # Exportar las variables de terraform a variables del sistema
+    - name: Exportar variables terraform
+      run: |
+        if ! command -v jq &> /dev/null; then
+          sudo apt install jq -y
+        fi
+        TF_OUTPUT=$(terraform output -json)
+        echo "Exportando variables de entorno desde Terraform outputs..."
+        echo "$TF_OUTPUT" | jq -r 'to_entries[] | "export " + .key + "=" + (if .value.value|type == "array" then "\"" + (.value.value | join(",")) + "\"" else "\"" + (.value.value | tostring) + "\"" end)' > variables-terraform.sh
+        chmod +x variables-terraform.sh
+    # Instalamos eksctl y kubectl
+    - name: Instalar y configurar eksctl y kubectl
+      run: |
+        ARCH=amd64
+        PLATFORM=$(uname -s)_$ARCH
+
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+
+        curl -LO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+        tar -xzf eksctl_$PLATFORM.tar.gz
+        mv ./eksctl /usr/local/bin
+
+    # Conectamos kubectl con el cluster para crear el despliegue con el servicio web
+    - name: Conectar kubectl con cluster y crear despliegue
+      run: |
+        source ./variables-terraform.sh
+        aws eks update-kubeconfig --region us-east-1 --name $nombre_cluster
+
+        ### Creamos el secret de la contraseña de mysql
+        ### De momento solo funciona con la contraseña Toor_2024 ya que la contraseña está puesta en un script php
+        kubectl create secret generic sql --from-literal=contrasena=${{ secrets.MYSQL_ROOT_PASSWORD }}
+        
+        ####### Añadimos los drivers de csi para volumenes en efs #######
+        kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
+
+        envsubst < ./kubernetes/volumenes/VP-HTML.yml | tee ./VP-HTML-Var.yml
+        kubectl apply -f ./VP-HTML-Var.yml
+        kubectl apply -f ./kubernetes/deployments/mysql.yml
+        kubectl apply -f ./kubernetes/deployments/apache-php.yml

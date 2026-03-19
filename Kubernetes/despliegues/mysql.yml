@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-deployment
+  name: despliegue-mysql
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql
+      app: pod-mysql
   template:
     metadata:
       labels:
-        app: mysql
+        app: pod-mysql
     spec:
       containers:
-        - name: mysql-pod
+        - name: contenedor-mysql
           image: mysql-php:latest
           imagePullPolicy: IfNotPresent
           env:

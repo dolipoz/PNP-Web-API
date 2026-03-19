@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: servicio-mysql
+spec:
+  type: ClusterIP
+  selector:
+    app: pod-mysql
+  ports:
+    - name: puerto-mysql
+      port: 3306
+      targetPort: mysql

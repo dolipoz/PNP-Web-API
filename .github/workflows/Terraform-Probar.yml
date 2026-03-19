@@ -1,0 +1,34 @@
+name: 'Probar Terraform'
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: 'Probar Terraform'
+    runs-on: ubuntu-latest
+
+    steps:
+    # Importar Checkout para cargar el repositorio en el runner
+    - name: Cargar Repositorio al Workflow
+      uses: actions/checkout@v4
+      with:
+        # Para importar el repositorio se necesita generar un token en github
+        token: ${{ secrets.user_token }}
+    # Cargamos las credenciales de AWS para usar terraform
+    - name: Configurar Credenciales AWS
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    # ------------------------------- Importamos Terraform -------------------------------
+    - name: Cargar Terraform
+      uses: hashicorp/setup-terraform@v3
+    # Iniciar el módulo de terraform en el workdir por defecto
+    - name: Iniciar Terraform
+      run: terraform init
+    # Ejecutamos terraform apply para crear la infrestructura
+    - name: Plan Terraform
+      run: terraform plan
