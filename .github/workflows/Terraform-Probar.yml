@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         # Para importar el repositorio se necesita generar un token en github
-        token: ${{ secrets.user_token }}
+        token: ${{ secrets.TOKEN_GITHUB }}
     # Cargamos las credenciales de AWS para usar terraform
     - name: Configurar Credenciales AWS
       uses: aws-actions/configure-aws-credentials@v4
@@ -26,6 +26,9 @@ jobs:
     # ------------------------------- Importamos Terraform -------------------------------
     - name: Cargar Terraform
       uses: hashicorp/setup-terraform@v3
+    # Iniciar el módulo de terraform en el workflow
+    - name: Terraform Init
+      run: terraform init
     # Ejecutamos terraform plan para comprobar errores
     - name: Plan Terraform
-      run: terraform plan
+      run: terraform -chdir=terraform plan
