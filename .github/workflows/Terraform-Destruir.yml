@@ -15,7 +15,7 @@ jobs:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
     - name: Mover archivos terraform
-      run: mv terraform/* ./
+      run: mv Terraform/* ./
     # Importamos Terraform
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v4
