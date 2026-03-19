@@ -47,11 +47,7 @@ jobs:
     # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
     # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo
     - name: Guardar .tfstate en el Bucket
-      run: |
-        if ; then
-          sudo apt install jq -y
-        fi
-        aws s3 cp terraform.tfstate s3://${{ secrets.TFSTATE_BUCKET }}/Terraform/ --region ${{ secrets.REGION }}
+      run: aws s3 cp terraform.tfstate s3://${{ secrets.AWS_S3 }}/Terraform/ --region ${{ secrets.AWS_REGION }}
 
     # Exportar las variables de terraform a variables del sistema
     - name: Exportar variables terraform
