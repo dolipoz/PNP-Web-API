@@ -1,10 +1,10 @@
-name: 'Lanzar Terraform'
+name: 'Crear S3'
 on:
   workflow_dispatch:
 
 jobs:
   terraform:
-    name: 'Lanzar Terraform'
+    name: 'Crear S3'
     runs-on: ubuntu-latest
 
     steps:
