@@ -26,5 +26,5 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
     - name: Crear S3 mediante awscli
       run: |
-        aws s3api create-bucket --bucket ${{ secrets.AWS_S3 }} --region ${{ secrets.AWS_REGION }} 2>&1 $output
+        output=$(aws s3api create-bucket --bucket ${{ secrets.AWS_S3 }} --region ${{ secrets.AWS_REGION }})
         echo $output
