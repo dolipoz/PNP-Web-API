@@ -14,6 +14,8 @@ jobs:
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
+    - name: Mover archivos terraform
+      run: mv terraform/* ./
     # Cargamos las credenciales de AWS para usar terraform
     - name: Configurar Credenciales AWS
       uses: aws-actions/configure-aws-credentials@v4

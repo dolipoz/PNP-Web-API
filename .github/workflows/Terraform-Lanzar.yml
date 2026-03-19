@@ -14,6 +14,8 @@ jobs:
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
+    - name: Mover archivos terraform
+      run: mv terraform/* ./
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v5.0.0
