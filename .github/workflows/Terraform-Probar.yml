@@ -10,7 +10,7 @@ jobs:
     steps:
     # Importar Checkout para cargar el repositorio en el runner
     - name: Cargar Repositorio al Workflow
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
