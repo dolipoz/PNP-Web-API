@@ -39,6 +39,7 @@
         // Por defecto la ruta de certificados personalizada está en la raiz
         $certDir = '/certs';
         $archivo = $certDir . "/certificate_$nombre-$ciudad.crt";
+        $pem = $certDir . "/certificate_$nombre-$ciudad.pem";
         $keyFile = $certDir . "/private_$nombre-$ciudad.key";
 
         if (file_exists($archivo)) {
@@ -46,10 +47,20 @@
         } else {
             // Generar certificado con OpenSSL
             $cmd = "openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout $keyFile -out $archivo -subj '/C=$pais/ST=$capital/L=$ciudad/O=$orga/CN=$nombre'";
+            $cmd2 = "openssl pkcs12 -export -out $pem -inkey $keyFile -in $archivo -passout pass:12345678";
+            
             exec($cmd, $output, $result);
             if ($result !== 0 || !file_exists($archivo)) {
                 echo "Error generando certificado";
+            } else {
+                exec($cmd2, $output2, $result2);
+                if ($result !== 0 || !file_exists($pem)) {
+                    echo "Error generando certificado pem";
+                }
             }
+            
+
+
         }
 
     }
@@ -58,8 +69,8 @@
 
     <h1>Certificados</h1>
     <form method="post">
-        <input type="text" name="certificado" id="certificado" value="<?php echo $archivo; ?>" hidden>
-        <button type="submit" <?php echo "hidden"; ?>>Generar y descargar certificado</button>
+        <input type="text" name="certificado" id="certificado" value="<?php echo $pem; ?>" hidden>
+        <button type="submit" <?php if (!file_exists($pem)) {echo "hidden";} ?>>Descargar certificado</button>
     </form>
 
 </body>
