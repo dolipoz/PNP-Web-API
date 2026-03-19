@@ -40,7 +40,7 @@ jobs:
       run: terraform init
     # Ejecutamos terraform apply para crear la infrestructura
     - name: Aplicar Terraform
-      run: terraform -chdir=terraform apply --auto-approve
+      run: terraform terraform apply --auto-approve
 
     # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
     # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo

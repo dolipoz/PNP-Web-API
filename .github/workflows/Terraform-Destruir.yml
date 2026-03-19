@@ -68,7 +68,7 @@ jobs:
       run: terraform init
     # Destruimos la ingraestructura
     - name: Terraform Destroy
-      run: terraform -chdir=terraform apply --destroy --auto-approve
+      run: terraform terraform apply --destroy --auto-approve
     # Borramos el tfstate del s3
     - name: Borrar Caché
       run:  |
