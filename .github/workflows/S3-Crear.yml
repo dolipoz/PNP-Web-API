@@ -25,6 +25,4 @@ jobs:
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ secrets.AWS_REGION }}
     - name: Crear S3 mediante awscli
-      run: |
-        output=$(aws s3api create-bucket --bucket ${{ secrets.AWS_S3 }} --region ${{ secrets.AWS_REGION }})
-        echo $output
+      run: aws s3api create-bucket --bucket ${{ secrets.AWS_S3 }} --region ${{ secrets.AWS_REGION }}
