@@ -28,15 +28,11 @@ RUN a2enmod rewrite
 # Crear directorio SSL
 RUN mkdir /etc/apache2/ssl
 
-# Copiar configuración SSL personalizada
-COPY default-ssl.conf /etc/apache2/sites-available/default-ssl.conf
-COPY server.crt /etc/apache2/ssl/server.crt
-COPY server.key /etc/apache2/ssl/server.key
-
-RUN chmod 600 /etc/apache2/ssl/server.key
+# Copiar configuración SSL personalizada tras cambiar las variables por valores
+COPY https-var.conf /etc/apache2/sites-available/https.conf
 
 # Habilitar sitio SSL
-RUN a2ensite default-ssl.conf
+RUN a2ensite https.conf
 
 # Exponer puertos
 EXPOSE 80

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: contenedor-apache
-          image: apache-php:latest
+          image: $ImagenApache
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

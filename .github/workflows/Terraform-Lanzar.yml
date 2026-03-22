@@ -34,7 +34,7 @@ jobs:
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    # ------------------------------- Importamos Terraform -------------------------------
+    # ------------------------------- Terraform -------------------------------
     - name: Cargar Terraform
       uses: hashicorp/setup-terraform@v4
     # Iniciar el módulo de terraform en el workdir por defecto
@@ -56,9 +56,26 @@ jobs:
           sudo apt install jq -y
         fi
         TF_OUTPUT=$(terraform output -json)
-        echo "Exportando variables de entorno desde Terraform outputs..."
         echo "$TF_OUTPUT" | jq -r 'to_entries[] | "export " + .key + "=" + (if .value.value|type == "array" then "\"" + (.value.value | join(",")) + "\"" else "\"" + (.value.value | tostring) + "\"" end)' > variables-terraform.sh
         chmod +x variables-terraform.sh
+
+    # ------------------------------- ECR Docker -------------------------------
+    # Creamos el repositorio dentro del ECR recién creado donde almacenaremos las imágenes creadas con docker build
+    - name: Crear repositorio ECR de AWS para almacenar las imágenes creadas por docker
+      run: |
+        source variables-terraform.sh
+        export NombreServidor=${{ secrets.HTTP_SERVER }}
+        export AliasServidor=${{ secrets.HTTP_ALIAS }}
+        export ImagenApache=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/apache/${{ secrets.ECR_Repo }}:latest
+        export ImagenMysql=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql/${{ secrets.ECR_Repo }}:latest
+        envsubst < Docker/apache/https.conf | tee Docker/apache/https-var.conf
+
+        aws ecr create-repository --repository-name ${{ secrets.ECR_Repo }} --region region
+
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+        docker build -t AWS/apache:latest ./Docker/apache
+        docker build -t AWS/mysql:latest ./Docker/mysql
+    # ------------------------------- EKS Kubernetes -------------------------------
     # Instalamos eksctl y kubectl
     - name: Instalar y configurar eksctl y kubectl
       run: |
@@ -66,27 +83,34 @@ jobs:
         PLATFORM=$(uname -s)_$ARCH
 
         curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-        chmod +x ./kubectl
-        mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+        chmod +x kubectl
+        mkdir -p $HOME/bin && cp kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
 
         curl -LO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
         tar -xzf eksctl_$PLATFORM.tar.gz
-        mv ./eksctl /usr/local/bin
+        mv eksctl /usr/local/bin
 
     # Conectamos kubectl con el cluster para crear el despliegue con el servicio web
-    - name: Conectar kubectl con cluster y crear despliegue
+    - name: Conectar kubectl con cluster y desplegar apache y mysql al EKS
       run: |
-        source ./variables-terraform.sh
-        aws eks update-kubeconfig --region us-east-1 --name $nombre_cluster
+        source variables-terraform.sh
+
+        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name $nombre_cluster
 
         ### Creamos el secret de la contraseña de mysql
-        ### De momento solo funciona con la contraseña Toor_2024 ya que la contraseña está puesta en un script php
         kubectl create secret generic sql --from-literal=contrasena=${{ secrets.MYSQL_ROOT_PASSWORD }}
         
         ####### Añadimos los drivers de csi para volumenes en efs #######
         kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
 
-        envsubst < ./kubernetes/volumenes/VP-HTML.yml | tee ./VP-HTML-Var.yml
+        envsubst < kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-Var.yml
         kubectl apply -f ./VP-HTML-Var.yml
         kubectl apply -f ./kubernetes/deployments/mysql.yml
         kubectl apply -f ./kubernetes/deployments/apache-php.yml
+    # ------------------------------- Artefacto -------------------------------
+    - name: Subir archivo
+      uses: actions/upload-artifact@v4
+      with:
+        name: archivo
+        path: archivo.txt
+        retention-days: 1
