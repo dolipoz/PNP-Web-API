@@ -57,12 +57,12 @@ vpc-pub = {
       cluster = {
          nombre            = "eks-01"
          version           = "1.32"
-         rol_cluster       = "arn:aws:iam::851725455984:role/LabRole"
+         rol_cluster       = "arn:aws:iam::533267229166:role/LabRole"
       }
       nodegroup = {
          nombre            = "NG-01"
          cluster           = "eks-01"
-         rol_nodo          = "arn:aws:iam::851725455984:role/LabRole"
+         rol_nodo          = "arn:aws:iam::533267229166:role/LabRole"
          tipos_ec2         = ["t3.medium"]
          escalabilidad = {
             deseada        = 2
