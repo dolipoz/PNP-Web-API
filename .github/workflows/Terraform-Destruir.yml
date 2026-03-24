@@ -26,7 +26,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ vars.AWS_REGION }}
     # Importamos Python
     - name: Importar python
       uses: actions/setup-python@v6
@@ -37,34 +37,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install awscli
-        aws s3 cp s3://${{ secrets.TFSTATE_BUCKET }}/Terraform/terraform.tfstate ./ --region us-east-1
+        aws s3 cp s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate ./ --region ${{ vars.AWS_REGION }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
 
-    # Instalamos eksctl y kubectl
-    - name: Instalar y configurar eksctl y kubectl
-      run: |
-          ARCH=amd64
-          PLATFORM=$(uname -s)_$ARCH
-
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
-
-          curl -LO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
-          tar -xzf eksctl_$PLATFORM.tar.gz
-          mv ./eksctl /usr/local/bin
-    # Conectamos kubectl con el cluster para destruir el despliegue con el servicio web
-    - name: Conectar kubectl con cluster y borrar despliegue
-      run: |
-          aws eks update-kubeconfig --region us-east-1 --name eks-dop-01
-
-          kubectl delete -f ./kubernetes/deployments/sql.yml
-          kubectl delete -f ./kubernetes/deployments/php.yml
-          kubectl delete -f ./kubernetes/deployments/nginx.yml
-          kubectl delete -f ./kubernetes/deployments/volumen-persistente-claim.yml
     # Iniciar el módulo de terraform en el workflow
     - name: Terraform Init
       run: terraform init
@@ -74,5 +52,5 @@ jobs:
     # Borramos el tfstate del s3
     - name: Borrar Caché
       run:  |
-          aws s3 rm s3://${{ secrets.TFSTATE_BUCKET }}/Terraform/terraform.tfstate
+          aws s3 rm s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate
 
