@@ -14,13 +14,20 @@ spec:
     spec:
       containers:
         - name: contenedor-mysql
-          image: mysql-php:latest
+          image: $ImagenMysql
           imagePullPolicy: IfNotPresent
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: mysql-secret
-                  key: password
+                  name: mysql
+                  key: MYSQL_PASS
           ports:
             - containerPort: 3306
+          volumeMounts:
+            - name: volumen-db
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: volumen-db
+          persistentVolumeClaim:
+            claimName: pvc-efs-db

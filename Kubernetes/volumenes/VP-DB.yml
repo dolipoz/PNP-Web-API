@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: pv-efs-html
+  name: pv-efs-db
   labels:
     type: efs
 spec:
   storageClassName: efs-sc
   claimRef:
-    name: pvc-efs-html
+    name: pvc-efs-db
     namespace: default
   capacity:
     storage: 1Gi
@@ -22,11 +22,11 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: pvc-efs-html
+  name: pvc-efs-db
   namespace: default
 spec:
   storageClassName: efs-sc
-  volumeName: pv-efs-html
+  volumeName: pv-efs-db
   accessModes:
     - ReadWriteMany
   resources:

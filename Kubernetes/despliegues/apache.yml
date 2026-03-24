@@ -16,6 +16,21 @@ spec:
         - name: contenedor-apache
           image: $ImagenApache
           imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: MYSQL_PASS
           ports:
-            - containerPort: 80
-            - containerPort: 443
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+          volumeMounts:
+            - name: volumen-html
+              mountPath: /var/www/html
+      volumes:
+        - name: volumen-html
+          persistentVolumeClaim:
+            claimName: pvc-efs-html

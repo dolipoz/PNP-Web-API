@@ -15,11 +15,14 @@ jobs:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
     - name: Mover archivos terraform
-      run: mv Terraform/* ./
+      run: |
+        mv Terraform/* ./
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -subj "/C=ES/ST=Granada/L=Granada/O=MiEmpresa/OU=IT/CN=www.dominio.com"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v6
       with:
+        # Con la versión 3.10 no hay fallos de repositorios con awscli
         python-version: '3.10'
     - name: Instalar awscli para subir ficheros al S3
       run: |
@@ -32,7 +35,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ vars.AWS_REGION }}
 
     # ------------------------------- Terraform -------------------------------
     - name: Cargar Terraform
@@ -47,7 +50,7 @@ jobs:
     # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
     # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo
     - name: Guardar .tfstate en el Bucket
-      run: aws s3 cp terraform.tfstate s3://${{ secrets.AWS_S3 }}/Terraform/ --region ${{ secrets.AWS_REGION }}
+      run: aws s3 cp terraform.tfstate s3://${{ vars.AWS_S3 }}/Terraform/ --region ${{ vars.AWS_REGION }}
 
     # Exportar las variables de terraform a variables del sistema
     - name: Exportar variables terraform
@@ -64,17 +67,22 @@ jobs:
     - name: Crear repositorio ECR de AWS para almacenar las imágenes creadas por docker
       run: |
         source variables-terraform.sh
-        export NombreServidor=${{ secrets.HTTP_SERVER }}
-        export AliasServidor=${{ secrets.HTTP_ALIAS }}
-        export ImagenApache=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/apache/${{ secrets.ECR_Repo }}:latest
-        export ImagenMysql=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/mysql/${{ secrets.ECR_Repo }}:latest
-        envsubst < Docker/apache/https.conf | tee Docker/apache/https-var.conf
+        export NombreServidor=${{ vars.HTTP_SERVER }}
+        export AliasServidor=${{ vars.HTTP_ALIAS }}
+        export ImagenApache=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/apache/${{ vars.ECR_Repo }}:latest
+        export ImagenMysql=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/mysql/${{ vars.ECR_Repo }}:latest
+            
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/https.conf | tee Docker/apache/https-var.conf
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/apache.yml | tee apache-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
 
-        aws ecr create-repository --repository-name ${{ secrets.ECR_Repo }} --region region
+        aws ecr create-repository --repository-name ${{ vars.ECR_Repo }} --region ${{ vars.AWS_REGION }}
 
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-        docker build -t AWS/apache:latest ./Docker/apache
-        docker build -t AWS/mysql:latest ./Docker/mysql
+        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+        docker build -t $ImagenApache ./Docker/apache
+        docker build -t $ImagenMysql ./Docker/mysql
     # ------------------------------- EKS Kubernetes -------------------------------
     # Instalamos eksctl y kubectl
     - name: Instalar y configurar eksctl y kubectl
@@ -94,23 +102,39 @@ jobs:
     - name: Conectar kubectl con cluster y desplegar apache y mysql al EKS
       run: |
         source variables-terraform.sh
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
 
-        aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name $nombre_cluster
+        aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $nombre_cluster
 
         ### Creamos el secret de la contraseña de mysql
-        kubectl create secret generic sql --from-literal=contrasena=${{ secrets.MYSQL_ROOT_PASSWORD }}
+        kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }}
         
         ####### Añadimos los drivers de csi para volumenes en efs #######
         kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
 
-        envsubst < kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-Var.yml
-        kubectl apply -f ./VP-HTML-Var.yml
-        kubectl apply -f ./kubernetes/deployments/mysql.yml
-        kubectl apply -f ./kubernetes/deployments/apache-php.yml
-    # ------------------------------- Artefacto -------------------------------
-    - name: Subir archivo
-      uses: actions/upload-artifact@v4
-      with:
-        name: archivo
-        path: archivo.txt
-        retention-days: 1
+        kubectl apply -f CSI-Ext.yml
+        kubectl apply -f VP-DB-var.yml
+        kubectl apply -f VP-HTML-var.yml
+        kubectl wait --for=condition=Bound pvc/pvc-efs-db --timeout=60s
+        kubectl wait --for=condition=Bound pvc/pvc-efs-html --timeout=60s
+
+        kubectl apply -f apache-php-var.yml
+        kubectl apply -f mysql-var.yml
+        kubectl wait --for=condition=Available deployment/despliegue-apache --timeout=120s
+        kubectl wait --for=condition=Available deployment/despliegue-mysql --timeout=120s
+
+        kubectl apply -f Kubernetes/servicios/apache.yml
+        kubectl apply -f Kubernetes/servicios/mysql.yml
+
+
+        for pod in $(kubectl get pods -l app=pod-apache -o name); do
+          kubectl cp server.key $pod:/etc/apache2/ssl/server.key
+          kubectl cp server.key $pod:/etc/apache2/ssl/server.crt
+          kubectl exec $pod -- chmod 600 /etc/apache2/ssl/server.key
+          kubectl exec $pod -- chmod 644 /etc/apache2/ssl/server.crt
+        done
+
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} < Docker/mysql/crear-database.sql
+
+
+        kubectl get svc servicio-apache
