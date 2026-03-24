@@ -62,9 +62,9 @@ jobs:
         echo "$TF_OUTPUT" | jq -r 'to_entries[] | "export " + .key + "=" + (if .value.value|type == "array" then "\"" + (.value.value | join(",")) + "\"" else "\"" + (.value.value | tostring) + "\"" end)' > variables-terraform.sh
         chmod +x variables-terraform.sh
 
-    # ------------------------------- ECR Docker -------------------------------
-    # Creamos el repositorio dentro del ECR recién creado donde almacenaremos las imágenes creadas con docker build
-    - name: Crear repositorio ECR de AWS para almacenar las imágenes creadas por docker
+    # ------------------------------- Variables de archivos -------------------------------
+    # Cargamos usando los secrets y variables de github para reemplazar las variables de entorno y de cada fichero
+    - name: Reemplazar variables dentro de los ficheros correspondientes con las variables de entorno
       run: |
         source variables-terraform.sh
         export NombreServidor=${{ vars.HTTP_SERVER }}
@@ -77,9 +77,10 @@ jobs:
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
-
-        aws ecr create-repository --repository-name ${{ vars.ECR_Repo }} --region ${{ vars.AWS_REGION }}
-
+    # ------------------------------- ECR Docker -------------------------------
+    # Iniciamos sesión en docker con aws ECR ya creado donde almacenaremos las imágenes creadas en AWS
+    - name: Subir imágenes docker a ECR de AWS
+      run: |
         aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.TOKEN_GITHUB }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
@@ -97,8 +98,8 @@ jobs:
         curl -LO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
         tar -xzf eksctl_$PLATFORM.tar.gz
         mv eksctl /usr/local/bin
-
-    # Conectamos kubectl con el cluster para crear el despliegue con el servicio web
+    # ------------------------------- Kubectl -------------------------------
+    # Conectamos kubectl con el cluster para crear el despliegue de apache y mysql
     - name: Conectar kubectl con cluster y desplegar apache y mysql al EKS
       run: |
         source variables-terraform.sh
@@ -129,12 +130,10 @@ jobs:
 
         for pod in $(kubectl get pods -l app=pod-apache -o name); do
           kubectl cp server.key $pod:/etc/apache2/ssl/server.key
-          kubectl cp server.key $pod:/etc/apache2/ssl/server.crt
+          kubectl cp server.crt $pod:/etc/apache2/ssl/server.crt
           kubectl exec $pod -- chmod 600 /etc/apache2/ssl/server.key
           kubectl exec $pod -- chmod 644 /etc/apache2/ssl/server.crt
         done
-
         kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} < Docker/mysql/crear-database.sql
-
 
         kubectl get svc servicio-apache
