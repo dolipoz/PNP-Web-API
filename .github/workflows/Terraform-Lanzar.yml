@@ -80,7 +80,7 @@ jobs:
 
         aws ecr create-repository --repository-name ${{ vars.ECR_Repo }} --region ${{ vars.AWS_REGION }}
 
-        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.TOKEN_GITHUB }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
     # ------------------------------- EKS Kubernetes -------------------------------
