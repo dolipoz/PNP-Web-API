@@ -17,7 +17,7 @@ jobs:
     - name: Mover archivos terraform
       run: |
         mv Terraform/* ./
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -subj "/C=ES/ST=Granada/L=Granada/O=MiEmpresa/OU=IT/CN=www.dominio.com"
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v6
@@ -38,19 +38,29 @@ jobs:
         aws-region: ${{ vars.AWS_REGION }}
 
     # ------------------------------- Terraform -------------------------------
+    # Cargamos el .tfstate del bucket si ya existe
+    - name: Cargar .tfstate si ya existe en el bucket
+      run: aws s3 cp s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate ./ --region ${{ vars.AWS_REGION }}
+      continue-on-error: true
+    # Iniciar el módulo de terraform en el workdir por defecto
     - name: Cargar Terraform
       uses: hashicorp/setup-terraform@v4
-    # Iniciar el módulo de terraform en el workdir por defecto
     - name: Iniciar Terraform
       run: terraform init
     # Ejecutamos terraform apply para crear la infrestructura
     - name: Aplicar Terraform
+      id: terraform
       run: terraform apply --auto-approve
+      continue-on-error: true
 
     # Guardamos el .tfstate en un bucket creado personalmente en una cuenta AWS
     # En un secret se almacena el nombre del bucket por ejemplo: mi-cubo
     - name: Guardar .tfstate en el Bucket
       run: aws s3 cp terraform.tfstate s3://${{ vars.AWS_S3 }}/Terraform/ --region ${{ vars.AWS_REGION }}
+    # Con esto permitimos que el tfstate se guarde con lo que sí se ha creado pero salimos para que no continue
+    - name: Salir si falla terraform
+      if: ${{ steps.terraform.outcome == 'failure' }}
+      run: exit 1
 
     # Exportar las variables de terraform a variables del sistema
     - name: Exportar variables terraform
@@ -81,7 +91,8 @@ jobs:
     # Iniciamos sesión en docker con aws ECR ya creado donde almacenaremos las imágenes creadas en AWS
     - name: Subir imágenes docker a ECR de AWS
       run: |
-        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.TOKEN_GITHUB }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+        ID_ECR=$(aws sts get-caller-identity --query Account --output text)
+        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ID_ECR.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
     # ------------------------------- EKS Kubernetes -------------------------------
