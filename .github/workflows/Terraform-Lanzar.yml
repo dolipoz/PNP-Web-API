@@ -121,9 +121,9 @@ jobs:
         source variables-terraform.sh
         aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $nombre_cluster
 
-        ### Creamos el secret de la contraseña de mysql
-        kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }}
-        
+        ### Creamos el secret de la contraseña de mysql, si no existe, en caso contrario lo modifica
+        kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }} --dry-run=client -o yaml | kubectl apply -f -
+
         ####### Añadimos los drivers de csi para volumenes en efs #######
         kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
 
