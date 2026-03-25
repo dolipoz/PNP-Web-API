@@ -92,14 +92,19 @@ jobs:
     # Iniciamos sesión en docker con aws ECR ya creado donde almacenaremos las imágenes creadas en AWS
     - name: Subir imágenes docker a ECR de AWS
       run: |
-        ID_ECR=$(aws sts get-caller-identity --query Account --output text)
-        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ID_ECR.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+        ECR_ID=$(aws sts get-caller-identity --query Account --output text)
+        ECR_URL=$ECR_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
+        aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URL
         
-        export ImagenApache=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/apache/${{ vars.ECR_Repo }}:latest
-        export ImagenMysql=${{ secrets.AWS_ACCESS_KEY_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com/mysql/${{ vars.ECR_Repo }}:latest
+        export ImagenApache=$ECR_URL/${{ vars.ECR_Repo }}:apache
+        export ImagenMysql=$ECR_URL/${{ vars.ECR_Repo }}:mysql
         
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
+
+        docker push $ImagenApache
+        docker push $ImagenMysql
+
     # ------------------------------- EKS Kubernetes -------------------------------
     # Instalamos eksctl y kubectl
     - name: Instalar y configurar eksctl y kubectl
