@@ -10,20 +10,20 @@ jobs:
     steps:
     - name: Comprobar si las variables están creadas
       run: |
-        if ${{ vars.AWS_REGION }} == ""; then exit 1 ; fi
-        if ${{ vars.AWS_S3 }} == ""; then exit 1 ; fi
-        if ${{ vars.HTTP_SERVER }} == ""; then exit 1 ; fi
-        if ${{ vars.HTTP_ALIAS }} == ""; then exit 1 ; fi
-        if ${{ vars.ECR_Repo }} == ""; then exit 1 ; fi
+        if [${{ vars.AWS_REGION }} == ""]; then exit 1 ; fi
+        if [${{ vars.AWS_S3 }} == ""]; then exit 1 ; fi
+        if [${{ vars.HTTP_SERVER }} == ""]; then exit 1 ; fi
+        if [${{ vars.HTTP_ALIAS }} == ""]; then exit 1 ; fi
+        if [${{ vars.ECR_Repo }} == ""]; then exit 1 ; fi
+        if [${{ secrets.MYSQL_ROOT_PASSWORD }} == ""]; then exit 1 ; fi
     # Importar Checkout para cargar el repositorio en el runner
     - name: Cargar Repositorio al Workflow
       uses: actions/checkout@v6
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
-    - name: Mover archivos terraform
+    - name: Crear certificado autofirmado temporal para evitar fallos de pods
       run: |
-        mv Terraform/* ./
         openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout Docker/apache/servidor.key -out Docker/apache/servidor.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
@@ -49,6 +49,8 @@ jobs:
     - name: Cargar .tfstate si ya existe en el bucket
       run: aws s3 cp s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate ./ --region ${{ vars.AWS_REGION }}
       continue-on-error: true
+    - name: Mover todos los ficheros terraform al workflow
+      run: mv Terraform/* ./
     # Iniciar el módulo de terraform en el workdir por defecto
     - name: Cargar Terraform
       uses: hashicorp/setup-terraform@v4

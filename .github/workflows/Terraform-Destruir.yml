@@ -8,17 +8,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Comprobar si las variables están creadas
+      run: |
+        if [${{ vars.AWS_REGION }} == ""]; then exit 1 ; fi
+        if [${{ vars.AWS_S3 }} == ""]; then exit 1 ; fi
+        if [${{ vars.CLUSTER_NAME }} == ""]; then exit 1 ; fi
     # Importar Checkout para cargar el repositorio en el runner
     - name: Checkout
       uses: actions/checkout@v6
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
-    - name: Mover archivos terraform
-      run: mv Terraform/* ./
-    # Importamos Terraform
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v4
+
+    # ------------------------------- AWSCLI -------------------------------
+    # Importamos Python
+    - name: Importar python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.10'
+    # Instalar awscli
+    - name: Instalar awscli
+      run: |
+        python -m pip install --upgrade pip
+        pip install awscli
     # Cargamos las credenciales de AWS para usar awscli
     - name: CONFIGURAR CREDENCIALES AWS
       uses: aws-actions/configure-aws-credentials@v6
@@ -27,22 +39,39 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ vars.AWS_REGION }}
-    # Importamos Python
-    - name: Importar python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.10'
+    # ------------------------------- Kubectl y EKS -------------------------------
+    # Instalamos eksctl y kubectl
+    - name: Instalar y configurar eksctl y kubectl
+      run: |
+        ARCH=amd64
+        PLATFORM=$(uname -s)_$ARCH
+
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        mkdir -p $HOME/bin && cp kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+
+        curl -LO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
+        tar -xzf eksctl_$PLATFORM.tar.gz
+        mv eksctl /usr/local/bin
+    # Conectamos kubectl con el cluster para eliminar todos los deployments
+    - name: Conectar kubectl con cluster y eliminar apache y mysql del EKS
+      run: |
+        aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ vars.CLUSTER_NAME }}
+        kubectl delete deployment --all --all-namespaces=true
+    # ------------------------------- Terraform -------------------------------
     # Descargar terraform.tfstate mediante awscli
     - name: Descargar fichero de s3
       run: |
-        python -m pip install --upgrade pip
-        pip install awscli
         aws s3 cp s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate ./ --region ${{ vars.AWS_REGION }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-
+    - name: Mover archivos terraform
+      run: mv Terraform/* ./
+    # Importamos Terraform
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v4
     # Iniciar el módulo de terraform en el workflow
     - name: Terraform Init
       run: terraform init
@@ -51,6 +80,4 @@ jobs:
       run: terraform apply --destroy --auto-approve
     # Borramos el tfstate del s3
     - name: Borrar Caché
-      run:  |
-          aws s3 rm s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate
-
+      run: aws s3 rm s3://${{ vars.AWS_S3 }}/Terraform/terraform.tfstate
