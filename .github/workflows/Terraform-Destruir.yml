@@ -56,7 +56,8 @@ jobs:
     # Conectamos kubectl con el cluster para eliminar todos los deployments
     - name: Conectar kubectl con cluster y eliminar apache y mysql del EKS
       run: |
-        aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name ${{ vars.CLUSTER_NAME }}
+        CLUSTER_NAME=$(aws eks list-clusters --region ${{ vars.AWS_REGION }} --query "clusters[?contains(@, 'eks')] | [0]" --output text)
+        aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $CLUSTER_NAME
         kubectl delete deployment --all --all-namespaces=true
     # ------------------------------- Terraform -------------------------------
     # Descargar terraform.tfstate mediante awscli
