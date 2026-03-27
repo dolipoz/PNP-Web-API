@@ -30,6 +30,11 @@ RUN mkdir /etc/apache2/ssl
 
 # Copiar configuración SSL personalizada tras cambiar las variables por valores
 COPY https-var.conf /etc/apache2/sites-available/https.conf
+COPY servidor.key /etc/apache2/ssl/servidor.key
+COPY servidor.crt /etc/apache2/ssl/servidor.crt
+
+RUN chmod 600 /etc/apache2/ssl/servidor.key
+RUN chmod 644 /etc/apache2/ssl/servidor.crt
 
 # Habilitar sitio SSL
 RUN a2ensite https.conf

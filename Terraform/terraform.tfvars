@@ -56,7 +56,7 @@ vpc-pub = {
       }
       cluster = {
          nombre            = "eks-01"
-         version           = "1.32"
+         version           = "1.35"
          rol_cluster       = "arn:aws:iam::533267229166:role/LabRole"
       }
       nodegroup = {

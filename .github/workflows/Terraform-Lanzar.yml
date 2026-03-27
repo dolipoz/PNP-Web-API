@@ -8,6 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Comprobar si las variables están creadas
+      run: |
+        if ${{ vars.AWS_REGION }} == ""; then exit 1 ; fi
+        if ${{ vars.AWS_S3 }} == ""; then exit 1 ; fi
+        if ${{ vars.HTTP_SERVER }} == ""; then exit 1 ; fi
+        if ${{ vars.HTTP_ALIAS }} == ""; then exit 1 ; fi
+        if ${{ vars.ECR_Repo }} == ""; then exit 1 ; fi
     # Importar Checkout para cargar el repositorio en el runner
     - name: Cargar Repositorio al Workflow
       uses: actions/checkout@v6
@@ -17,7 +24,7 @@ jobs:
     - name: Mover archivos terraform
       run: |
         mv Terraform/* ./
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout server.key -out server.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout Docker/apache/servidor.key -out Docker/apache/servidor.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v6
