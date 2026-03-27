@@ -142,24 +142,22 @@ jobs:
         kubectl apply -f Kubernetes/volumenes/CSI-Ext.yml
         kubectl apply -f VP-DB-var.yml
         kubectl apply -f VP-HTML-var.yml
-        kubectl wait --for=condition=Bound pvc/pvc-efs-db --timeout=60s
-        kubectl wait --for=condition=Bound pvc/pvc-efs-html --timeout=60s
 
         kubectl apply -f apache-php-var.yml
         kubectl apply -f mysql-var.yml
-        kubectl wait --for=condition=Available deployment/despliegue-apache --timeout=120s
-        kubectl wait --for=condition=Available deployment/despliegue-mysql --timeout=120s
 
         kubectl apply -f Kubernetes/servicios/apache.yml
         kubectl apply -f Kubernetes/servicios/mysql.yml
 
 
+        kubectl wait --for=condition=Available deployment/despliegue-apache --timeout=120s
         for pod in $(kubectl get pods -l app=pod-apache -o name); do
           kubectl cp server.key $pod:/etc/apache2/ssl/server.key
           kubectl cp server.crt $pod:/etc/apache2/ssl/server.crt
           kubectl exec $pod -- chmod 600 /etc/apache2/ssl/server.key
           kubectl exec $pod -- chmod 644 /etc/apache2/ssl/server.crt
         done
+        kubectl wait --for=condition=Available deployment/despliegue-mysql --timeout=60s
         kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} < Docker/mysql/crear-database.sql
 
         kubectl get svc servicio-apache
