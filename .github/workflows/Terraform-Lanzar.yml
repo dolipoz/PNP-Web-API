@@ -84,7 +84,7 @@ jobs:
     - name: Reemplazar variables dentro de los ficheros correspondientes con las variables de entorno
       run: |
         source variables-terraform.sh
-        ID_ECR=$(aws sts get-caller-identity --query Account --output text)
+        ECR_ID=$(aws sts get-caller-identity --query Account --output text)
         ECR_URL=$ECR_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         export NombreServidor=${{ vars.HTTP_SERVER }}
         export AliasServidor=${{ vars.HTTP_ALIAS }}
