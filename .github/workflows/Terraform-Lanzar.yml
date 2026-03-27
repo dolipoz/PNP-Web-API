@@ -143,7 +143,7 @@ jobs:
         kubectl apply -f VP-DB-var.yml
         kubectl apply -f VP-HTML-var.yml
 
-        kubectl apply -f apache-php-var.yml
+        kubectl apply -f apache-var.yml
         kubectl apply -f mysql-var.yml
 
         kubectl apply -f Kubernetes/servicios/apache.yml
