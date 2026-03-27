@@ -84,16 +84,10 @@ jobs:
     - name: Reemplazar variables dentro de los ficheros correspondientes con las variables de entorno
       run: |
         source variables-terraform.sh
-        ECR_ID=$(aws sts get-caller-identity --query Account --output text)
-        ECR_URL=$ECR_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         export NombreServidor=${{ vars.HTTP_SERVER }}
         export AliasServidor=${{ vars.HTTP_ALIAS }}
-        export ImagenApache=$ECR_URL/${{ vars.ECR_Repo }}:apache
-        export ImagenMysql=$ECR_URL/${{ vars.ECR_Repo }}:mysql
 
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/https.conf | tee Docker/apache/https-var.conf
-        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/apache.yml | tee apache-var.yml
-        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
     # ------------------------------- ECR Docker -------------------------------
@@ -103,10 +97,13 @@ jobs:
         ECR_ID=$(aws sts get-caller-identity --query Account --output text)
         ECR_URL=$ECR_ID.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com
         aws ecr get-login-password --region ${{ vars.AWS_REGION }} | docker login --username AWS --password-stdin $ECR_URL
-        
-        ImagenApache=$ECR_URL/${{ vars.ECR_Repo }}:apache
-        ImagenMysql=$ECR_URL/${{ vars.ECR_Repo }}:mysql
-        
+
+        export ImagenApache=$ECR_URL/${{ vars.ECR_Repo }}:apache
+        export ImagenMysql=$ECR_URL/${{ vars.ECR_Repo }}:mysql
+
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/apache.yml | tee apache-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
+
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
 
@@ -153,10 +150,10 @@ jobs:
 
         kubectl wait --for=condition=Available deployment/despliegue-apache --timeout=120s
         for pod in $(kubectl get pods -l app=pod-apache -o name); do
-          kubectl cp server.key $pod:/etc/apache2/ssl/server.key
-          kubectl cp server.crt $pod:/etc/apache2/ssl/server.crt
-          kubectl exec $pod -- chmod 600 /etc/apache2/ssl/server.key
-          kubectl exec $pod -- chmod 644 /etc/apache2/ssl/server.crt
+          kubectl cp server.key $pod:/etc/apache2/ssl/servidor.key
+          kubectl cp server.crt $pod:/etc/apache2/ssl/servidor.crt
+          kubectl exec $pod -- chmod 600 /etc/apache2/ssl/servidor.key
+          kubectl exec $pod -- chmod 644 /etc/apache2/ssl/servidor.crt
         done
         kubectl wait --for=condition=Available deployment/despliegue-mysql --timeout=60s
         kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} < Docker/mysql/crear-database.sql
