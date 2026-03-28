@@ -8,6 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Comprobar si las variables están creadas
+      run: |
+        if ["${{ vars.AWS_REGION }}" == ""]; then exit 1 ; fi
+        if ["${{ vars.ECR_Repo }}" == ""]; then exit 1 ; fi
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar Extensiones de Python para awscli y las credenciales de AWS
       uses: actions/setup-python@v6
@@ -23,6 +27,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: ${{ vars.AWS_REGION }}
     - name: Crear Repositorio ECR mediante awscli
       run: aws ecr create-repository --repository-name ${{ vars.ECR_Repo }} --region ${{ vars.AWS_REGION }}

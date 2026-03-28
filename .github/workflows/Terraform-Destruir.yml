@@ -10,9 +10,8 @@ jobs:
     steps:
     - name: Comprobar si las variables están creadas
       run: |
-        if [${{ vars.AWS_REGION }} == ""]; then exit 1 ; fi
-        if [${{ vars.AWS_S3 }} == ""]; then exit 1 ; fi
-        if [${{ vars.CLUSTER_NAME }} == ""]; then exit 1 ; fi
+        if ["${{ vars.AWS_REGION }}" == ""]; then exit 1 ; fi
+        if ["${{ vars.AWS_S3 }}" == ""]; then exit 1 ; fi
     # Importar Checkout para cargar el repositorio en el runner
     - name: Checkout
       uses: actions/checkout@v6
@@ -58,7 +57,7 @@ jobs:
       run: |
         CLUSTER_NAME=$(aws eks list-clusters --region ${{ vars.AWS_REGION }} --query "clusters[?contains(@, 'eks')] | [0]" --output text)
         aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $CLUSTER_NAME
-        kubectl delete deployment --all --all-namespaces=true
+        kubectl delete services --all --all-namespaces=true
     # ------------------------------- Terraform -------------------------------
     # Descargar terraform.tfstate mediante awscli
     - name: Descargar fichero de s3
