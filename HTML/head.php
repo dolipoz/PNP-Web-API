@@ -28,7 +28,7 @@
             echo '<script>alert("'.$_SESSION['info'].'")</script>';
             $_SESSION['correcto'] = False;
         }
-        include "Scripts/funciones.php"
+        include "Scripts/funciones.php";
     ?>
     <div id="ventana">
         <nav>
