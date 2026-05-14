@@ -2,14 +2,15 @@
     include "../head.php";
     $user=$_POST['usuario'];
     $pass=$_POST['clave'];
+    $hash_pass=password_hash($pass, PASSWORD_DEFAULT);
 
-    $q_user="select * from usuarios where nombre = '$user' and clave = '$pass'";
+    $q_user="select * from usuarios where usuario = '$user' and clave = '$hash_pass'";
 
     $usuarios=mysqli_query($conexion,$q_user);
 
     if ($usuarios) {
-        while ($usuario=mysqli_fetch_row($usuarios)) {
-            if ($usuario[9] == true) {
+        while ($usuario=mysqli_fetch_assoc($usuarios)) {
+            if ($usuario[''] == true) {
                 $_SESSION["login"] = true;
                 $_SESSION["administrador"] = true;
                 $_SESSION['correcto'] = true;

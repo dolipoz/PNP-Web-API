@@ -17,11 +17,26 @@ spec:
           image: $ImagenApache
           imagePullPolicy: IfNotPresent
           env:
-            - name: MYSQL_ROOT_PASSWORD
+            - name: API_USER
               valueFrom:
                 secretKeyRef:
                   name: mysql
-                  key: MYSQL_PASS
+                  key: API_USER
+            - name: API_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: API_PASS
+            - name: PWSH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: PWSH_USER
+            - name: PWSH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: PWSH_PASS
           ports:
             - name: http
               containerPort: 80
