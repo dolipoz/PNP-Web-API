@@ -6,6 +6,10 @@
         // Variable que determina si el usuario que inició sesión es administrador o no
         $_SESSION["administrador"] = False;
     }
+    if (!isset($_SESSION["usuario"])) {
+        // Variable que almacena los datos del usuario que haya iniciado sesión
+        $_SESSION["usuario"] = False;
+    }
     if (!isset($_SESSION["login"])) {
         // Variable que determina si se ha iniciado sesión
         $_SESSION["login"] = False;

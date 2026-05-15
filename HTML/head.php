@@ -39,9 +39,10 @@
                 echo "<li id='login' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola1\")'>Iniciar Sesión</a></li>";
             } else {
                 echo "
+                <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola3\")'>Mi Perfil</a></li>
                 <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola2\")'>Cerrar Sesión</a></li>
-                <li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola3\")'>Crear Usuario</a></li>
-                <li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola4\")'>Gestionar Usuarios</a></li>
+                <li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola4\")'>Crear Usuario</a></li>
+                <li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"consola5\")'>Gestionar Usuarios</a></li>
                 ";
             }
             ?>

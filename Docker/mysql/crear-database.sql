@@ -67,7 +67,7 @@ create table certificados (
 
 -- Añadimos el rol de admin con true en sistema para que no se pueda eliminar de los registros y el rol supervisor para
 insert into roles (rol,descripcion,sistema) values ('admin','Puede gestionar todo dentro del sistema',true);
-insert into roles (rol,descripcion,sistema) values ('tecnico','Rol modificable para gestiones de api y certificados');
+insert into roles (rol,descripcion) values ('tecnico','Rol modificable para gestiones de api y certificados');
 
 delimiter //
 create trigger permisos_admin_agregar
