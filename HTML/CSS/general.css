@@ -51,7 +51,7 @@ nav ul {
 
 }
 /* Parte de la consola para simular la consola de powershell */
-#consola {
+.consolas {
     background: #012456;
     border-radius: 0px 0px 12px 12px;
     padding: 10px;
@@ -60,6 +60,7 @@ nav ul {
     font-size: 15px;
     min-height: 50vh;
 }
+
 .prompt {
     color: #00ff00;
 }
@@ -67,7 +68,7 @@ nav ul {
 form {
     text-align: left;
 }
-#consola input {
+#consola input, #consola select option {
     background-color: #012456;
     border: none;
 

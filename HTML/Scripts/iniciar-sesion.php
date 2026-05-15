@@ -10,13 +10,14 @@
 
     if ($usuarios) {
         while ($usuario=mysqli_fetch_assoc($usuarios)) {
-            if ($usuario[''] == true) {
+            if ($usuario['usuario'] == 'admin') {
                 $_SESSION["login"] = true;
                 $_SESSION["administrador"] = true;
                 $_SESSION['correcto'] = true;
                 $_SESSION['info'] = 'Administrador conectado.';
                 header('Location: ../index.php');
             } else {
+                if ($usuario['activo'] == true)
                 $_SESSION["login"] = true;
                 $_SESSION["administrador"] = false;
                 $_SESSION["correo"] = $usuario[1];
@@ -29,6 +30,9 @@
             $_SESSION['error'] = true;
             $_SESSION['info'] = 'El usuario no existe o la contraseña no es correcta.';
             header('Location: ../index.php');
+        } else {
+            $upd_user="update usuarios set ult_sesion = current_timestamp where usuario = '$user'";
+            mysqli_query($conexion,$upd_user);
         }
     } else {
         $_SESSION['error'] = true;
