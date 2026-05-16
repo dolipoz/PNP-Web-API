@@ -35,6 +35,9 @@
             </select><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
+        <form id='consola5' class='consolas' action='Scripts/gestionar-usuarios.php' method='POST' style='display: none;'>
+            <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
+        </form>
         ";
     }
 ?>
