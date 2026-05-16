@@ -17,7 +17,15 @@
             <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
         </form>
         <div id='consola3' class='consolas'>
-            <p>Usuario conectado</p>
+            <h2>Usuario: ".$_SESSION['usuario']['usuario']."</h2>
+            <h2>Correo: ".$_SESSION['usuario']['correo']."</h2>
+            <h2>Nombre: ".$_SESSION['usuario']['nombre']."</h2>
+            <h2>Apellidos: ".$_SESSION['usuario']['apellidos']."</h2>
+            <h2>Activo: ".$_SESSION['usuario']['activo']."</h2>
+            <h2>Rol: ".$_SESSION['usuario']['rol']."</h2>
+            <h2>Fecha Creación: ".$_SESSION['usuario']['f_creado']."</h2>
+            <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
+
             <form id='mod_perfil' action='Scripts/cerrar-sesion.php' method='POST' style='display: none;'>
                 <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
             </form>
@@ -54,3 +62,4 @@
 <?php
     include 'footer.php';
 ?>
+
