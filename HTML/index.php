@@ -28,10 +28,19 @@
             <label class='prompt' for='correo'>PS C:\Escriba su correo electrónico></label><input type='correo' id='correo' name='correo' placeholder='|' size='50' min='9' max='50'><br>
             <label class='prompt' for='nombre'>PS C:\Escriba su nombre></label><input type='text' id='nombre' name='nombre' placeholder='|' size='20' min='2' max='20'><br>
             <label class='prompt' for='apellidos'>PS C:\Escriba su[s] apellido[s]></label><input type='text' id='apellidos' name='apellidos' placeholder='|' size='50' min='2' max='50'><br>
-            <label class='prompt' for='activo'>PS C:\Marque si quiere activar el usuario></label><input type='checkbox' id='activo' name='activo'><br>
+            <label class='prompt' for='activo'>PS C:\Marque si quiere activar el usuario></label><input type='checkbox' id='activo' name='activo' checked><br>
             <label class='prompt' for='rol'>PS C:\Seleccione el rol del usuario></label>
             <select id='rol' name='rol'>
-                <option value='1'>Admin</option>
+        ";
+        $q_rol="select id,rol from roles";
+        $roles=mysqli_query($conexion,$q_rol);
+        // Recorremos la lista que en caso de encontrar usuarios es solo uno ya que no se puede repetir el nombre de usuario
+        if ($roles) {
+            while ($rol=mysqli_fetch_assoc($roles)) {
+                echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
+            }
+        }
+        echo "
             </select><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>

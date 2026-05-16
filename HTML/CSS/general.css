@@ -68,7 +68,7 @@ nav ul {
 form {
     text-align: left;
 }
-.consolas input, .consolas select option {
+.consolas input, .consolas select {
     background-color: #012456;
     border: none;
 

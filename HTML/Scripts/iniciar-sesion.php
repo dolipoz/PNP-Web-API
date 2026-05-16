@@ -10,8 +10,8 @@
     if ($usuarios) {
         while ($usuario=mysqli_fetch_assoc($usuarios)) {
             // Comprueba que la contraseña hasheada sea la misma que la introducida por el usuario, si no saldrá sin iniciar sesión
-            if (!password_verify($pass, $usuario['clave'])) { break; };
-            if ($usuario['id_rol'] == 1) { $_SESSION["administrador"] = true; };
+            if (!password_verify($pass, $usuario['clave'])) { break; }
+            if ($usuario['id_rol'] == 1) { $_SESSION["administrador"] = true; }
             // Si usuario y contraseña son correctos y además está activo, modificará las variables de sesión para usuario
             if ($usuario['activo'] == true) {
                 $_SESSION["login"] = true;
