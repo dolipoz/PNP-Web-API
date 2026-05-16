@@ -76,6 +76,10 @@ form {
     color: #ffffff;
     caret-color: transparent;
 }
+.consolas input:focus {
+    background-color: #9dbbe6;
+}
+
 input[type=submit],input[type=reset] {
     cursor: pointer;
 }
