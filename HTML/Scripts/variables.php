@@ -2,10 +2,6 @@
     // Variables globales para cada sesión de cliente Web
     session_start();
 
-    if (!isset($_SESSION["administrador"])) {
-        // Variable que determina si el usuario que inició sesión es administrador o no
-        $_SESSION["administrador"] = False;
-    }
     if (!isset($_SESSION["usuario"])) {
         // Variable que almacena los datos del usuario que haya iniciado sesión
         $_SESSION["usuario"] = False;

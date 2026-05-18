@@ -17,6 +17,8 @@ spec:
           image: $ImagenMysql
           imagePullPolicy: IfNotPresent
           env:
+            - name: TZ
+              value: "Europe/Madrid"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
