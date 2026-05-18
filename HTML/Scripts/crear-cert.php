@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Daniel Olivares Pozo">
-    <link rel="stylesheet" href="../CSS/general.css">
-    <link rel="shortcut icon" href="../Multimedia/PowerShell_icon.png" type="image/x-icon">
-    <title>Sharepoint Powershell API</title>
-</head>
-<body>
-
 <?php
+	include "variables.php";
+	include "funciones.php";
+	include "conectar-db.php";
     // IF ELSE para que al cargar la página se genere el certificado y que cuando se pulse el botón se descargue y salga
     if (isset($_POST['certificado'])) {
         $certificado = $_POST['certificado'];
@@ -58,20 +49,6 @@
                     echo "Error generando certificado pem";
                 }
             }
-            
-
-
         }
-
     }
 ?>
-
-
-    <h1>Certificados</h1>
-    <form method="post">
-        <input type="text" name="certificado" id="certificado" value="<?php echo $pem; ?>" hidden>
-        <button type="submit" <?php if (!file_exists($pem)) {echo "hidden";} ?>>Descargar certificado</button>
-    </form>
-
-</body>
-</html>

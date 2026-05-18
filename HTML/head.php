@@ -41,9 +41,13 @@
                 echo "
                 <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola3\")'>Mi Perfil</a></li>
                 <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola2\")'>Cerrar Sesión</a></li>
-                <li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola4\")'>Crear Usuario</a></li>
-                <li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola5\")'>Gestionar Usuarios</a></li>
                 ";
+                if ($_SESSION['usuario']['permisos'][1]) {
+                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola4\")'>Crear Usuario</a></li>";
+                }
+                if ($_SESSION['usuario']['permisos'][2] or $_SESSION['usuario']['permisos'][3]) {
+                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola5\")'>Gestionar Usuarios</a></li>";
+                }
             }
             ?>
             </ul>
