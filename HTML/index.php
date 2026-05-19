@@ -12,6 +12,7 @@
         </form>
         ";
     } else {
+        // -----------------------------------------  Consolas 2 y 3 - Cerrar Sesión y Perfil de usuario modificable  ---------------------------------------------------------
         echo "
         <form id='consola2' class='consolas' action='Scripts/cerrar-sesion.php' method='POST' style='display: none;'>
             <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
@@ -25,7 +26,6 @@
             <h2>Rol: ".$_SESSION['usuario']['rol']."</h2>
             <ul>
         ";
-
         foreach ($_SESSION['usuario']['permisos'] as $id => $nombre_valor) {
             foreach ($nombre_valor as $nombre => $valor) {
                 if ($valor) {
@@ -34,7 +34,6 @@
             }
 
         }
-
         echo "
             </ul>
             <h2>Fecha Creación: ".$_SESSION['usuario']['f_creado']."</h2>
@@ -49,7 +48,9 @@
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
             </form>
         </div>
-
+        ";
+        // -----------------------------------------  Consola 4 Crear usuarios  ---------------------------------------------------------
+        echo "
         <form id='consola4' class='consolas' action='Scripts/crear-usuario.php' method='POST' style='display: none;'>
             <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='20' maxlength='20' required><br>
             <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' placeholder='|' size='20' minlength='8' maxlength='20' required><br>
@@ -63,7 +64,7 @@
         $q_rol="select id,rol from roles";
         $roles=mysqli_query($conexion,$q_rol);
         // Recorremos los roles que existen
-        if ($roles) {
+        if ($roles and mysqli_num_rows($roles) > 0) {
             while ($rol=mysqli_fetch_assoc($roles)) {
                 echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
             }
@@ -75,60 +76,90 @@
         ";
         $solo_lectura = "";
         if ($_SESSION['usuario']['permisos'][2]) {$solo_lectura = "readonly";}
+        // -----------------------------------------  Consola 5 Gestión de usuarios  ---------------------------------------------------------
         echo "
-        <div id='consola5' class='consolas'>
-            <form id='mod_perfil' action='Scripts/modificar-usuarios.php' method='POST' style='display: none;'>
-                <table>
-                    <tr>
-                        <td>
-                            <input type='text' id='usuario' name='usuario' placeholder='|' size='20' maxlength='20' required $solo_lectura>
-                        </td>
-                        <td>
-                            <input type='password' id='clave' name='clave' placeholder='|' size='20' minlength='8' maxlength='20' required>
-                        </td>
-                        <td>
-                            <input type='email' id='correo' name='correo' placeholder='|' size='50' minlength='9' maxlength='50'>
-                        </td>
-                        <td>
-                            <input type='text' id='nombre' name='nombre' placeholder='|' size='20' minlength='2' maxlength='20'>
-                        </td>
-                        <td>
-                            <input type='text' id='apellidos' name='apellidos' placeholder='|' size='50' minlength='2' maxlength='50'>
-                        </td>
-                        <td>
-                            <input type='checkbox' id='activo' name='activo' checked>
-                        </td>
-                        <td>
-                            <select id='id_rol' name='id_rol'>
+        <div id='consola5' class='consolas' style='display: none;'>
+            <table id='cabecera-tabla'>
+                <tr>
+                    <td>Usuario</td>
+                    <td>Clave</td>
+                    <td>Correo</td>
+                    <td>Nombre</td>
+                    <td>Apellidos</td>
+                    <td>Activo</td>
+                    <td>Rol</td>
+                    <td>Creado el</td>
+                    <td>Última Sesión</td>
+                    <td>Actualizar</td>
+                    <td>Eliminar</td>
+                </tr>
         ";
-        // Recorremos los roles que existen
-        if ($roles) {
-            while ($rol = mysqli_fetch_assoc($roles)) {
-                echo "          <option value='".$rol['id']."'>".$rol['rol']."</option>";
+
+        $q_users = "select * from usuarios";
+        $usuarios = mysqli_query($conexion, $q_users);
+
+        if ($usuarios && mysqli_num_rows($usuarios) > 0) {
+            while ($usuario = mysqli_fetch_assoc($usuarios)) {
+                $activo = '';
+                if ($usuario['activo']) {
+                    $activo = 'checked';
+                }
+                echo "
+                <tr>
+                    <td><form action='Scripts/modificar-usuario.php' method='POST' class='filas-tabla'>
+                    <input type='text' name='usuario' value='".$usuario['usuario']."' size='20' maxlength='20' required $solo_lectura></td>
+                    <td><input type='password' name='clave' placeholder='Nueva contraseña' size='20' minlength='8' maxlength='20'></td>
+                    <td><input type='email' name='correo' value='".$usuario['correo']."' size='50' minlength='9' maxlength='50'></td>
+                    <td><input type='text' name='nombre' value='".$usuario['nombre']."' size='20' minlength='2' maxlength='20'></td>
+                    <td><input type='text' name='apellidos' value='".$usuario['apellidos']."' size='50' minlength='2' maxlength='50'></td>
+                    <td><input type='checkbox' name='activo' $activo></td>
+                    <td><select name='id_rol'>
+                ";
+
+                $roles = mysqli_query($conexion, $q_rol);
+                if ($roles && mysqli_num_rows($roles) > 0) {
+                    while ($rol = mysqli_fetch_assoc($roles)) {
+                        if ($rol['id'] == $usuario['id_rol']) {
+                            echo "<option value='".$rol['id']."' selected>".$rol['rol']."</option>";
+                        } else {
+                            echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
+                        }
+                    }
+                }
+
+                echo "
+                    </select></td>
+                    <td>".$usuario['f_creado']."</td>
+                    <td>".$usuario['ult_sesion']."
+                ";
+
+                if (isset($_SESSION['usuario']['permisos'][2])) {
+                    $valor_permisos = array_values($_SESSION['usuario']['permisos'][2]);
+                    if ($valor_permisos) {
+                        echo "
+                        </td><td><input type='submit' value='Modificar'>
+                        ";
+                    }
+                }
+                if (isset($_SESSION['usuario']['permisos'][3])) {
+                    $valor_permisos = array_values($_SESSION['usuario']['permisos'][3]);
+                    if ($valor_permisos) {
+                        echo "
+                        </td><td><input type='submit' formaction='Scripts/eliminar-usuario.php' value='Eliminar'>
+                        ";
+                    }
+                }
+
+                echo "
+                    </form>
+                    </td>
+                </tr>
+                ";
             }
         }
+
         echo "
-                            </select>
-                        </td>
-        ";
-        if ($_SESSION['usuario']['permisos'][2]) {
-            echo "
-                        <td>
-                            <input id='btn_modificar' type='submit' value='Modificar'>
-                        </td>
-            ";
-        }
-        if ($_SESSION['usuario']['permisos'][3]) {
-            echo "
-                        <td>
-                            <input id='btn_eliminar' type='submit' value='Eliminar'>
-                        </td>
-            ";
-        }
-        echo "
-                    </tr>
-                </table>
-            </form>
+            </table>
         </div>
         ";
     }
@@ -137,4 +168,3 @@
 <?php
     include 'footer.php';
 ?>
-

@@ -32,7 +32,7 @@
                 // Sacamos los permisos del usuario usando un select join con las tablas de rol y permisos
                 $perm_user="select r.rol,p.id,p.permiso from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$usuario['id_rol'];
                 $perms=mysqli_query($conexion,$perm_user);
-                if ($perms) {
+                if ($perms and mysqli_num_rows($perms) > 0) {
                     while ($p=mysqli_fetch_assoc($perms)) {
                         $_SESSION["usuario"]['rol'] = $p['rol'];
                         $_SESSION["usuario"]['permisos'][$p['id']] = [$p['permiso'] => true];

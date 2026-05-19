@@ -3,12 +3,12 @@
 	include "funciones.php";
 	include "conectar-db.php";
 
-    $usuario = $_POST['usuario'];
-	$correo = $_POST['correo'];
-	$nombre = $_POST['nombre'];
-	$apellidos = $_POST['apellidos'];
-	$activo = isset($_POST['activo']) ? 1 : 0;
-	$id_rol = $_POST['id_rol'];
+    $usuario = isset($_POST['usuario']) ? $_POST['usuario'] : $_SESSION['usuario']['usuario'];
+	$correo = isset($_POST['correo']) ? $_POST['usuario'] : $_SESSION['usuario']['correo'];
+	$nombre = isset($_POST['nombre']) ? $_POST['usuario'] : $_SESSION['usuario']['nombre'];
+	$apellidos = isset($_POST['apellidos']) ? $_POST['usuario'] : $_SESSION['usuario']['apellidos'];
+	$activo = isset($_POST['activo']) ? $_POST['usuario'] : $_SESSION['usuario']['activo'];
+	$id_rol = isset($_POST['id_rol']) ? 1 : 0;
 
 	$sql_mod_user="update usuarios set ";
 	if (isset($_POST['clave'])) {
@@ -20,7 +20,6 @@
 			$clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);
 			$sql_mod_user=$sql_mod_user." clave = '$clave', ";
 		}
-		
 	}
 
 	$sql_mod_user=$sql_mod_user."
