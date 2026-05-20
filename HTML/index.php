@@ -2,6 +2,8 @@
     include 'head.php';
 ?>
 <?php
+    $q_rol="select id,rol from roles";
+    $q_users = "select * from usuarios";
     if (!$_SESSION["login"]) {
         echo "
         <form id='consola1' class='consolas' action='Scripts/iniciar-sesion.php' method='POST'>
@@ -29,7 +31,7 @@
         foreach ($_SESSION['usuario']['permisos'] as $id => $nombre_valor) {
             foreach ($nombre_valor as $nombre => $valor) {
                 if ($valor) {
-                    echo "  <li>$id: $nombre</li>";
+                    echo "  <li>$id: $nombre -- $valor</li>";
                 }
             }
 
@@ -40,10 +42,10 @@
             <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
 
             <form id='mod_perfil' action='Scripts/modificar-mi-usuario.php' method='POST' style='display: none;'>
-                <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' ".$_SESSION['usuario']['clave']." size='20' min='8' max='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='email' id='correo' name='correo' ".$_SESSION['usuario']['correo']." size='20' min='8' max='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='text' id='nombre' name='nombre' ".$_SESSION['usuario']['nombre']." size='20' min='8' max='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='text' id='apellidos' name='apellidos' ".$_SESSION['usuario']['apellidos']." size='20' min='8' max='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' id='clave' name='clave' placeholder='Nueva Contraseña' size='20' min='8' max='20'><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar correo></label><input type='email' id='correo' name='correo' ".$_SESSION['usuario']['correo']." size='20' min='8' max='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar nombre></label><input type='text' id='nombre' name='nombre' ".$_SESSION['usuario']['nombre']." size='20' min='8' max='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar apellidos></label><input type='text' id='apellidos' name='apellidos' ".$_SESSION['usuario']['apellidos']." size='20' min='8' max='20' required><br>
                 <br>
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
             </form>
@@ -61,7 +63,6 @@
             <label class='prompt' for='id_rol'>PS C:\Seleccione el rol del usuario></label>
             <select id='id_rol' name='id_rol'>
         ";
-        $q_rol="select id,rol from roles";
         $roles=mysqli_query($conexion,$q_rol);
         // Recorremos los roles que existen
         if ($roles and mysqli_num_rows($roles) > 0) {
@@ -74,9 +75,9 @@
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
-        $solo_lectura = "";
-        if ($_SESSION['usuario']['permisos'][2]) {$solo_lectura = "readonly";}
         // -----------------------------------------  Consola 5 Gestión de usuarios  ---------------------------------------------------------
+        $solo_lectura = "";
+        if ($puede_eliminar_usuarios and !$puede_modificar_usuarios) {$solo_lectura = "readonly";}
         echo "
         <div id='consola5' class='consolas' style='display: none;'>
             <table id='cabecera-tabla'>
@@ -90,23 +91,19 @@
                     <td>Rol</td>
                     <td>Creado el</td>
                     <td>Última Sesión</td>
-                    <td>Actualizar</td>
-                    <td>Eliminar</td>
-                </tr>
         ";
+        if ($puede_modificar_usuarios) { echo "            <td>Actualizar</td>"; }
+        if ($puede_eliminar_usuarios) { echo "            <td>Eliminar</td>"; }
+        echo "  </tr>";
 
-        $q_users = "select * from usuarios";
         $usuarios = mysqli_query($conexion, $q_users);
-
-        if ($usuarios && mysqli_num_rows($usuarios) > 0) {
+        if ($usuarios and mysqli_num_rows($usuarios) > 0) {
             while ($usuario = mysqli_fetch_assoc($usuarios)) {
                 $activo = '';
-                if ($usuario['activo']) {
-                    $activo = 'checked';
-                }
+                if ($usuario['activo']) { $activo = 'checked'; }
                 echo "
                 <tr>
-                    <td><form action='Scripts/modificar-usuario.php' method='POST' class='filas-tabla'>
+                    <td><form action='Scripts/modificar-usuario.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este usuario?\");'>
                     <input type='text' name='usuario' value='".$usuario['usuario']."' size='20' maxlength='20' required $solo_lectura></td>
                     <td><input type='password' name='clave' placeholder='Nueva contraseña' size='20' minlength='8' maxlength='20'></td>
                     <td><input type='email' name='correo' value='".$usuario['correo']."' size='50' minlength='9' maxlength='50'></td>
@@ -115,9 +112,8 @@
                     <td><input type='checkbox' name='activo' $activo></td>
                     <td><select name='id_rol'>
                 ";
-
                 $roles = mysqli_query($conexion, $q_rol);
-                if ($roles && mysqli_num_rows($roles) > 0) {
+                if ($roles and mysqli_num_rows($roles) > 0) {
                     while ($rol = mysqli_fetch_assoc($roles)) {
                         if ($rol['id'] == $usuario['id_rol']) {
                             echo "<option value='".$rol['id']."' selected>".$rol['rol']."</option>";
@@ -126,30 +122,13 @@
                         }
                     }
                 }
-
                 echo "
                     </select></td>
                     <td>".$usuario['f_creado']."</td>
                     <td>".$usuario['ult_sesion']."
                 ";
-
-                if (isset($_SESSION['usuario']['permisos'][2])) {
-                    $valor_permisos = array_values($_SESSION['usuario']['permisos'][2]);
-                    if ($valor_permisos) {
-                        echo "
-                        </td><td><input type='submit' value='Modificar'>
-                        ";
-                    }
-                }
-                if (isset($_SESSION['usuario']['permisos'][3])) {
-                    $valor_permisos = array_values($_SESSION['usuario']['permisos'][3]);
-                    if ($valor_permisos) {
-                        echo "
-                        </td><td><input type='submit' formaction='Scripts/eliminar-usuario.php' value='Eliminar'>
-                        ";
-                    }
-                }
-
+                if ($puede_modificar_usuarios) { echo "   </td><td><input type='submit' value='Modificar'>"; }                
+                if ($puede_eliminar_usuarios) { echo "   </td><td><input type='submit' formaction='Scripts/eliminar-usuario.php' value='Eliminar'>"; }
                 echo "
                     </form>
                     </td>
@@ -162,6 +141,72 @@
             </table>
         </div>
         ";
+        // -----------------------------------------  Consola 6 - Crear API  -------------------------------------------------------------
+        echo "
+        <form id='consola6' class='consolas' action='Scripts/crear-api.php' method='POST' style='display: none;'>
+            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
+            <label class='prompt' for='url_sharepoint'>PS C:\Escriba la url del sharepoint></label><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
+            <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
+            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
+        </form>
+        ";
+        // -----------------------------------------  Consola 7 - Gestionar API  ---------------------------------------------------------
+        $solo_lectura = "";
+        if ($puede_eliminar_api and !$puede_modificar_api) {$solo_lectura = "readonly";}
+        echo "
+        <div id='consola7' class='consolas' style='display: none;'>
+            <table id='cabecera-tabla'>
+                <tr>
+                    <td>Tenant</td>
+                    <td>URL</td>
+                    <td>Cliente ID</td>
+        ";
+        if ($puede_modificar_api) { echo "            <td>Actualizar</td>"; }
+        if ($puede_eliminar_api) { echo "            <td>Eliminar</td>"; }
+        echo "      <td>Certificados</td>";
+        if ($valor_permisos_modificar_api) { echo "            <td>Eliminar Certificado</td>"; }
+        echo "  </tr>";
+
+        $q_api = "select * from api";
+        $apis = mysqli_query($conexion, $q_api);
+
+        if ($apis and mysqli_num_rows($apis) > 0) {
+            while ($api = mysqli_fetch_assoc($apis)) {
+                echo "
+                <tr>
+                    <td><form action='Scripts/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
+                    <input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required></td>
+                    <td><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required></td>
+                    <td><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required>
+                ";
+                if ($puede_modificar_api) { echo "      </td><td><input type='submit' value='Modificar'>"; }
+                if ($puede_eliminar_api) { echo "      </td><td><input type='submit' formaction='Scripts/eliminar-api.php' value='Eliminar'>"; }
+                echo "    </form></td>";
+                echo "    <td><form action='Scripts/eliminar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
+                            <select name='certificados'>
+                ";
+                $q_cert = "select * from certificados where id_api = ".$api['id'];
+                $certificados = mysqli_query($conexion, $q_cert);
+                if ($certificados and mysqli_num_rows($certificados) > 0) {
+                    while ($certificado = mysqli_fetch_assoc($certificados)) {
+                        echo "<option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
+                    }
+                }
+                if ($puede_eliminar_certificados and mysqli_num_rows($certificados) > 0) { echo "      </td><td><input type='submit' value='Eliminar Certificado'>"; }
+                echo "
+                    </select></td>
+                </tr>
+                ";
+            }
+        }
+
+        echo "
+            </table>
+        </div>
+        ";
+        // -----------------------------------------  Consola 8 - Crear Certificados  ---------------------------------------------------------
+        // -----------------------------------------  Consola 9 - Gestionar Certificados  ---------------------------------------------------------
+
     }
 ?>
     </div>

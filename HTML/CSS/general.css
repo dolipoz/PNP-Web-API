@@ -2,11 +2,21 @@
 head {
     background-color: black;
 }
-
+html {
+    margin: 0px;
+    padding: 0px;
+}
 body {
     /*background-image: url("../Multimedia/Fondo-Login.jpg");
     background-size: 100%;*/
     background-color: #2c5794;
+}
+footer {
+    display: block;
+    background-color: #1e1e1e;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
 }
 table {
     border-collapse: collapse;
@@ -20,28 +30,28 @@ td {
     background-color: #012456;
     box-shadow: 0 10px 30px #00000099;
     border-radius: 12px;
-    margin: auto 15% auto;
+    margin: 20px 8% 20px 8%;
 }
-#consola5 {
+.consolas {
     overflow: scroll;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.8) transparent;
 }
-#consola5::-webkit-scrollbar-button {
+.consolas::-webkit-scrollbar-button {
     display: none;
 }
-#consola5::-webkit-scrollbar {
+.consolas::-webkit-scrollbar {
     width: 6px;
 }
-#consola5::-webkit-scrollbar-track {
+.consolas::-webkit-scrollbar-track {
     background: transparent;
 }
-#consola5::-webkit-scrollbar-thumb {
+.consolas::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.8);
     border-radius: 10px;
 }
-#consola5::-webkit-scrollbar-thumb:hover {
-    background: white;
+.consolas::-webkit-scrollbar-thumb:hover {
+    background: #ffffff;
 }
 
 #cabecera-tabla td {
@@ -66,16 +76,17 @@ nav {
     background-color: #1e1e1e;
     border-radius: 12px 12px 0px 0px;
     padding-top: 2px;
-
 }
 ul {
+    display: flex;
+    flex-wrap: nowrap;
     list-style: none;
     overflow: auto;
     margin: 0px;
     padding: 0px;
 }
 .pestanias {
-    float: left;
+    flex: 0.2;
     background-color: #1e1e1e;
     border-radius: 6px 6px 0px 0px;
     margin-top: 5px;
@@ -131,4 +142,11 @@ input[type=submit],input[type=reset] {
 input[type=submit]:hover,input[type=reset]:hover {
     color: #00ff00;
 }
+
+/* ------------------- Parte para mostrar perfil --------------------- */
+
+#consola3 ul {
+    flex-direction: column;
+}
+
 /* ------------------------------------------------------------------- */

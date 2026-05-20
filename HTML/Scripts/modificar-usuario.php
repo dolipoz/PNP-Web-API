@@ -3,12 +3,18 @@
 	include "funciones.php";
 	include "conectar-db.php";
 
-    $usuario = isset($_POST['usuario']) ? $_POST['usuario'] : $_SESSION['usuario']['usuario'];
-	$correo = isset($_POST['correo']) ? $_POST['usuario'] : $_SESSION['usuario']['correo'];
-	$nombre = isset($_POST['nombre']) ? $_POST['usuario'] : $_SESSION['usuario']['nombre'];
-	$apellidos = isset($_POST['apellidos']) ? $_POST['usuario'] : $_SESSION['usuario']['apellidos'];
-	$activo = isset($_POST['activo']) ? $_POST['usuario'] : $_SESSION['usuario']['activo'];
-	$id_rol = isset($_POST['id_rol']) ? 1 : 0;
+    if (isset($_POST['usuario'])) {
+		$usuario = $_POST['usuario'];
+	} else {
+		$_SESSION["error"] = True;
+		$_SESSION["info"] = "El usuario está mal escrito o no se encuentra.";
+		header("Location: ../index.php");
+	}
+	$correo = isset($_POST['correo']) ? $_POST['correo'] : null;
+	$nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
+	$apellidos = isset($_POST['apellidos']) ? $_POST['apellidos'] : null;
+	$activo = isset($_POST['activo']) ? 1 : 0;
+	$id_rol = $_POST['id_rol'];
 
 	$sql_mod_user="update usuarios set ";
 	if (isset($_POST['clave'])) {
@@ -27,18 +33,26 @@
 		nombre = '$nombre',
 		apellidos = '$apellidos',
 		activo = '$activo',
-		id_rol = '$id_rol'
+		id_rol = '$id_rol' 
 		where usuario = '$usuario'
 	";
 	
     if ($conexion->query($sql_mod_user) == True) {
-        echo "Usuario modificado.";
-		$_SESSION["correcto"] = True;
-		$_SESSION["info"] = "Su usuario se modificó correctamente.";
+		$filas = mysqli_affected_rows($conexion);
+		if ($filas > 0) {
+			echo "Usuario modificado.";
+			$_SESSION["correcto"] = True;
+			$_SESSION["info"] = "El usuario: $usuario se modificó correctamente.";
+		} else {
+			$_SESSION["error"] = True;
+			$_SESSION["info"] = "No se encontraron cambios.";
+		}
     } else {
 		$_SESSION["error"] = True;
-		$_SESSION["info"] = "Su usuario no se pudo modificar.";
+		$_SESSION["info"] = "El usuario está mal escrito o no se encuentra.";
 	}
 
 	header("Location: ../index.php");
+	
 ?>
+

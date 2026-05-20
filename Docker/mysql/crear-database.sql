@@ -59,10 +59,10 @@ create table certificados (
     id int auto_increment primary key,
     id_api int not null,
     nombre varchar(20) not null,
-    ruta varchar(255) not null,
+    f_creado date default null,
+    expira date default null,
 
-    unique (nombre),
-    unique (ruta)
+    unique (nombre)
 );
 
 -- Añadimos el rol de admin con true en sistema para que no se pueda eliminar de los registros y el rol supervisor para
