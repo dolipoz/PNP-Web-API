@@ -7,21 +7,14 @@ function ejecutarquery {
     param(
         [string]$query
     )
-    try {
-        $salida = mysql `
-            -h 'servicio-mysql' `
-            -u $env:PWSH_USER `
-            -p$env:PWSH_PASS `
-            -D 'powershell_api' `
-            -N `
-            -e $query 2>&1
 
-        if ($LASTEXITCODE -ne 0) {
-            return $false
-        }
-        return $salida
-    }
-    catch {
-        return $false
-    }
+    $salida = mysql `
+        -h 'servicio-mysql' `
+        -u $env:PWSH_USER `
+        "--password=$env:PWSH_PASS" `
+        -D 'powershell_api' `
+        -N `
+        -e $query
+    return $salida
+
 }
