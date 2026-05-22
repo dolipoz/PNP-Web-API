@@ -8,6 +8,6 @@ RUN pwsh -Command "\
     Install-Module PnP.PowerShell -Scope AllUsers -Force; \
     Install-Module ThreadJob -Scope AllUsers -Force"
 
-COPY escaneo.ps1 /scripts/escaneo.ps1
+COPY scripts/* /scripts/
 
 CMD ["pwsh","/scripts/escaneo.ps1"]
