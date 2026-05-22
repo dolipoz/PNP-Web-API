@@ -29,21 +29,21 @@
             $_SESSION['correcto'] = False;
         }
         include "Scripts/funciones.php";
-        $puede_crear_usuarios = array_values($_SESSION['usuario']['permisos'][1]);
-        $puede_modificar_usuarios = array_values($_SESSION['usuario']['permisos'][2]);
-        $puede_eliminar_usuarios = array_values($_SESSION['usuario']['permisos'][3]);
-        $puede_crear_roles = array_values($_SESSION['usuario']['permisos'][4]);
-        $puede_modificar_roles = array_values($_SESSION['usuario']['permisos'][5]);
-        $puede_eliminar_roles = array_values($_SESSION['usuario']['permisos'][6]);
-        $puede_crear_permisos = array_values($_SESSION['usuario']['permisos'][7]);
-        $puede_modificar_permisos = array_values($_SESSION['usuario']['permisos'][8]);
-        $puede_eliminar_permisos = array_values($_SESSION['usuario']['permisos'][9]);
-        $puede_crear_api = array_values($_SESSION['usuario']['permisos'][10]);
-        $puede_modificar_api = array_values($_SESSION['usuario']['permisos'][11]);
-        $puede_eliminar_api = array_values($_SESSION['usuario']['permisos'][12]);
-        $puede_crear_certificados = array_values($_SESSION['usuario']['permisos'][13]);
-        $puede_modificar_certificados = array_values($_SESSION['usuario']['permisos'][14]);
-        $puede_eliminar_certificados = array_values($_SESSION['usuario']['permisos'][15]);
+        $puede_crear_usuarios = array_values($_SESSION['usuario']['permisos'][1])[0];
+        $puede_modificar_usuarios = array_values($_SESSION['usuario']['permisos'][2])[0];
+        $puede_eliminar_usuarios = array_values($_SESSION['usuario']['permisos'][3])[0];
+        $puede_crear_roles = array_values($_SESSION['usuario']['permisos'][4])[0];
+        $puede_modificar_roles = array_values($_SESSION['usuario']['permisos'][5])[0];
+        $puede_eliminar_roles = array_values($_SESSION['usuario']['permisos'][6])[0];
+        $puede_crear_permisos = array_values($_SESSION['usuario']['permisos'][7])[0];
+        $puede_modificar_permisos = array_values($_SESSION['usuario']['permisos'][8])[0];
+        $puede_eliminar_permisos = array_values($_SESSION['usuario']['permisos'][9])[0];
+        $puede_crear_api = array_values($_SESSION['usuario']['permisos'][10])[0];
+        $puede_modificar_api = array_values($_SESSION['usuario']['permisos'][11])[0];
+        $puede_eliminar_api = array_values($_SESSION['usuario']['permisos'][12])[0];
+        $puede_crear_certificados = array_values($_SESSION['usuario']['permisos'][13])[0];
+        $puede_modificar_certificados = array_values($_SESSION['usuario']['permisos'][14])[0];
+        $puede_eliminar_certificados = array_values($_SESSION['usuario']['permisos'][15])[0];
     ?>
     <div id="ventana">
         <nav>
@@ -51,23 +51,29 @@
             <ul>
             <?php
             if (!$_SESSION["login"]) {
-                echo "<li id='login' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"login\",\"consola1\")'>Iniciar Sesión</a></li>";
+                echo "<li id='login' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"login\",\"consola_login\")'>Iniciar Sesión</a></li>";
             } else {
                 echo "
-                <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola3\")'>Mi Perfil</a></li>
-                <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola2\")'>Cerrar Sesión</a></li>
+                <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola_perfil\")'>Mi Perfil</a></li>
+                <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola_logoff\")'>Cerrar Sesión</a></li>
                 ";
                 if ($puede_crear_usuarios) {
-                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola4\")'>Crear Usuario</a></li>";
+                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola_signup\")'>Crear Usuario</a></li>";
                 }
                 if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
-                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola5\")'>Gestionar Usuarios</a></li>";
+                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
                 }
                 if ($puede_crear_api) {
-                    echo "<li id='addapi' class='pestanias'><a href='#' onclick='mostrarConsola(\"addapi\",\"consola6\")'>Crear API</a></li>";
+                    echo "<li id='addapi' class='pestanias'><a href='#' onclick='mostrarConsola(\"addapi\",\"consola_addapi\")'>Crear API</a></li>";
                 }
                 if ($puede_modificar_api or $puede_eliminar_api) {
-                    echo "<li id='gestion_api' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_api\",\"consola7\")'>Gestionar APIs</a></li>";
+                    echo "<li id='gestion_api' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_api\",\"consola_g_api\")'>Gestionar APIs</a></li>";
+                }
+                if ($puede_crear_certificados) {
+                    echo "<li id='addcert' class='pestanias'><a href='#' onclick='mostrarConsola(\"addcert\",\"consola_addcert\")'>Crear Certificado</a></li>";
+                }
+                if ($puede_modificar_certificados or $puede_eliminar_certificados) {
+                    echo "<li id='gestion_cert' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_cert\",\"consola_g_cert\")'>Gestionar Certificados</a></li>";
                 }
             }
             ?>

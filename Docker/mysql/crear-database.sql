@@ -44,8 +44,7 @@ create table usuarios (
     sistema boolean default false,
 
     foreign key (id_rol) references roles(id),
-    unique (usuario),
-    unique (correo)
+    unique (usuario)
 );
 -- Tabla para api de Microsoft
 create table api (
@@ -57,14 +56,31 @@ create table api (
 -- Tabla para los certificados de las sesiones de PNP.Powershell
 create table certificados (
     id int auto_increment primary key,
-    id_api int not null,
     nombre varchar(20) not null,
     f_creado date default null,
     expira date default null,
 
     unique (nombre)
 );
+-- Tabla para asociar los certificados con las api
+create table api_certificados (
+    id_api int,
+    id_certificado int,
 
+    primary key (id_api, id_certificado),
+    foreign key (id_api) references api(id) on delete cascade,
+    foreign key (id_certificado) references certificados(id) on delete cascade
+);
+-- Tabla para los trabajos de powershell
+create table trabajos (
+    id int auto_increment primary key,
+    nombre_contenedor varchar(255),
+    id_trabajo int,
+    trabajo varchar(20),
+    estado varchar(20),
+    salida varchar(255) default null,
+    f_finalizacion datetime default null
+);
 -- Añadimos el rol de admin con true en sistema para que no se pueda eliminar de los registros y el rol supervisor para
 insert into roles (rol,descripcion,sistema) values ('admin','Puede gestionar todo dentro del sistema',true);
 insert into roles (rol,descripcion) values ('tecnico','Rol modificable para gestiones de api y certificados');
