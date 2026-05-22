@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: despliegue-powershell
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pod-powershell
+  template:
+    metadata:
+      labels:
+        app: pod-powershell
+    spec:
+      containers:
+        - name: contenedor-powershell
+          image: $ImagenPowershell
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PWSH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: PWSH_USER
+            - name: PWSH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: PWSH_PASS
+          volumeMounts:
+            - name: volumen-certs
+              mountPath: /certificados
+      volumes:
+        - name: volumen-certs
+          persistentVolumeClaim:
+            claimName: pvc-efs-certs

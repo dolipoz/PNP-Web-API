@@ -96,6 +96,7 @@ jobs:
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/https.conf | tee Docker/apache/https-var.conf
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-CERTS.yml | tee VP-CERTS-var.yml
     # ------------------------------- ECR Docker -------------------------------
     # Iniciamos sesión en docker con aws ECR ya creado donde almacenaremos las imágenes creadas en AWS
     - name: Subir imágenes docker a ECR de AWS
@@ -106,15 +107,19 @@ jobs:
 
         export ImagenApache=$ECR_URL/${{ vars.ECR_Repo }}:apache
         export ImagenMysql=$ECR_URL/${{ vars.ECR_Repo }}:mysql
+        export ImagenPowershell=$ECR_URL/${{ vars.ECR_Repo }}:powershell
 
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/apache.yml | tee apache-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/powershell.yml | tee powershell-var.yml
 
         docker build -t $ImagenApache ./Docker/apache
         docker build -t $ImagenMysql ./Docker/mysql
+        docker build -t $ImagenPowershell ./Docker/powershell
 
         docker push $ImagenApache
         docker push $ImagenMysql
+        docker push $ImagenPowershell
 
     # ------------------------------- EKS Kubernetes -------------------------------
     # Instalamos eksctl y kubectl
@@ -146,9 +151,11 @@ jobs:
         kubectl apply -f Kubernetes/volumenes/CSI-Ext.yml
         kubectl apply -f VP-DB-var.yml
         kubectl apply -f VP-HTML-var.yml
+        kubectl apply -f VP-CERTS-var.yml
 
         kubectl apply -f apache-var.yml
         kubectl apply -f mysql-var.yml
+        kubectl apply -f powershell-var.yml
 
         kubectl apply -f Kubernetes/servicios/apache.yml
         kubectl apply -f Kubernetes/servicios/mysql.yml

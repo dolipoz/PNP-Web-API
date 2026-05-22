@@ -1,9 +1,5 @@
 # Script de powershell para crear las variables y funciones globales, para los jobs
-$MaxThreads = 4
-$SQLhost = "servicio-mysql"
-$SQLdb = "powershell_api"
-$SQLuser = "pwsh"
-$SQLpass = "12345678"
+$MaxHilos = 4
 $nombre_contenedor = $env:HOSTNAME
 
 # Función para ejecutar querys de MySQL
@@ -11,14 +7,21 @@ function ejecutarquery {
     param(
         [string]$query
     )
-    $query_limpia = $query.Replace('"', '\"')
-    $cmd = @(
-        "-h", $SQLhost,
-        "-u", $SQLuser,
-        "-p$SQLpass",
-        "-D", $SQLdb,
-        "-N",
-        "-e", $query_limpia
-    )
-    & mysql @cmd
+    try {
+        $salida = mysql `
+            -h 'servicio-mysql' `
+            -u $env:PWSH_USER `
+            -p$env:PWSH_PASS `
+            -D 'powershell_api' `
+            -N `
+            -e $query 2>&1
+
+        if ($LASTEXITCODE -ne 0) {
+            return $false
+        }
+        return $salida
+    }
+    catch {
+        return $false
+    }
 }

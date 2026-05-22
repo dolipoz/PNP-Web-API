@@ -1,20 +1,18 @@
 # Importamos las variables y funciones
 . \scripts\importaciones.ps1
 
-Write-Host "Starting worker..."
-Write-Host "Threads: $MaxThreads"
 # Creamos los jobs que se ejecutan en segundo plano actualizando la info de la base de datos
-for ($index=1; $index -le $MaxThreads; $index++) {
-    ejecutarquery("insert into trabajos (nombre_contenedor,id_trabajo,trabajo,estado) values ('$nombre_contenedor',$index,'mostrar fecha y hora','running');")
+for ($index=1; $index -le $MaxHilos; $index++) {
     # Usamos el módulo de ThreadJob para gestionar mejor los jobs
     Start-ThreadJob -ArgumentList $index {
         param($index)
         # Importamos las variables y funciones dentro de cada job ya que no recoge las variables ni funciones del script base
         . \scripts\importaciones.ps1
         while ($true) {
-            $datetime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-            ejecutarquery("update trabajos set estado = 'running', salida = '$datetime' where nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
-            Start-Sleep -Seconds 10
+
+            ejecutarquery("update trabajos set nombre_contenedor = '$nombre_contenedor', id_trabajo = $index, estado = 'running' where estado = 'pendiente' and nombre_contenedor is null;")
+            ejecutarquery("update trabajos set estado = 'running', salida = current_timestamp where nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+            ejecutarquery("update trabajos set estado = 'Completado', f_finalizacion = current_timestamp where nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
         }
     }
 }

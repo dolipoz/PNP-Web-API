@@ -27,16 +27,6 @@ spec:
                 secretKeyRef:
                   name: mysql
                   key: API_PASS
-            - name: PWSH_USER
-              valueFrom:
-                secretKeyRef:
-                  name: mysql
-                  key: PWSH_USER
-            - name: PWSH_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: mysql
-                  key: PWSH_PASS
           ports:
             - name: http
               containerPort: 80

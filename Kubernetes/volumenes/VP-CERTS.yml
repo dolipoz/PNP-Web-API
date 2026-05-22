@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-efs-certs
+  labels:
+    type: efs
+spec:
+  storageClassName: efs-sc
+  claimRef:
+    name: pvc-efs-certs
+    namespace: default
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  persistentVolumeReclaimPolicy: Retain
+  accessModes:
+    - ReadWriteMany
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: ${id_efs}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-efs-certs
+  namespace: default
+spec:
+  storageClassName: efs-sc
+  volumeName: pv-efs-certs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
