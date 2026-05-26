@@ -51,7 +51,9 @@ create table api (
     id int auto_increment primary key,
     tenant varchar(50) not null,
     url_sharepoint varchar(255) not null,
-    id_cliente varchar(255) not null
+    id_cliente varchar(255) not null,
+
+    unique (url_sharepoint)
 );
 -- Tabla para los certificados de las sesiones de PNP.Powershell
 create table certificados (
@@ -74,12 +76,19 @@ create table api_certificados (
 -- Tabla para los trabajos de powershell
 create table trabajos (
     id int auto_increment primary key,
-    nombre_contenedor varchar(255),
-    id_trabajo int,
-    trabajo varchar(20),
-    estado varchar(20),
-    salida varchar(255) default null,
-    f_finalizacion datetime default null
+    id_api int not null,
+    nombre_contenedor varchar(255) default null,
+    id_trabajo int default null,
+    trabajo json not null,
+    estado varchar(20) not null,
+    salida json default null,
+    error varchar(255) default null,
+    progreso int default 0,
+    f_finalizacion datetime default null,
+    bloqueo tinyint default null,
+
+    foreign key (id_api) references api(id) on delete cascade,
+    unique (id_api,bloqueo)
 );
 -- Añadimos el rol de admin con true en sistema para que no se pueda eliminar de los registros y el rol supervisor para
 insert into roles (rol,descripcion,sistema) values ('admin','Puede gestionar todo dentro del sistema',true);

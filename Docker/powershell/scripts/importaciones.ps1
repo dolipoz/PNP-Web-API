@@ -7,7 +7,6 @@ function ejecutarquery {
     param(
         [string]$query
     )
-
     $salida = mysql `
         -h 'servicio-mysql' `
         -u $env:PWSH_USER `
@@ -16,5 +15,4 @@ function ejecutarquery {
         -N `
         -e $query
     return $salida
-
 }
