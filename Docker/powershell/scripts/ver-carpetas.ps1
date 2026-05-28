@@ -8,7 +8,7 @@
 #. \scripts\importaciones.ps1
 #Connect-PnPOnline -Url $tenant.sharepoint.com -ClientId $id_cliente -Tenant $tenant.onmicrosoft.com -CertificatePath $cert
 
-$rcsv = "D:\\EjemploProyecto.csv"
+$rcsv = "D:\\EjemploCSV.csv"
 $csv = Import-Csv -Path $rcsv -Delimiter ";"
 
 $cabecerasNiveles = $csv[0].psobject.properties.name | where-object { $_ -match "^Nivel" }
