@@ -59,8 +59,9 @@ create table api (
 create table certificados (
     id int auto_increment primary key,
     nombre varchar(20) not null,
+    contenido text default null,
     f_creado date default null,
-    expira date default null,
+    expira date,
 
     unique (nombre)
 );
