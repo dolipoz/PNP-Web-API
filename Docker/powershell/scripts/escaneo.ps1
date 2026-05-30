@@ -15,26 +15,23 @@ for ($index=1; $index -le $MaxHilos; $index++) {
             if ($null -ne $buscar_trabajo) {
                 ejecutarquery("update trabajos set nombre_contenedor = '$nombre_contenedor', id_trabajo = $index, estado = 'ejecutando' where estado = 'pendiente' and nombre_contenedor is null limit 1;")
                 Start-Sleep -Seconds 1
-                $empezar_trabajo = ejecutarquery("select * from trabajos where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+                $empezar_trabajo = ejecutarquery("select * from trabajos where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index limit 1;")
                 try {
                     ### Aquí empieza ha realizar el trabajo
                     foreach ($fila in $empezar_trabajo) {
                         $columnas = $fila -split "`t"
-                        $id = $columnas[0]
+                        $trabajo = $columnas[4] | ConvertFrom-Json
+                        $script = $trabajo.script
+                        $params = @($trabajo.parametros)
+                        $params += "$nombre_contenedor"
+                        $params += "$index"
+                        & pwsh \scripts\$script $params
                     }
-                    $tareas = (0,1,2)
-                    $salto = 100 / $tareas.Length
-                    foreach ($n in $tareas) {
-                        $indice_elemento = [array]::IndexOf($tareas, $n) + 1
-                        $progreso = [math]::round($salto * $indice_elemento)
-                        ejecutarquery("update trabajos set progreso = $progreso where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
-                        Start-Sleep -Seconds 5
-                    }
-
                     ### Tras llegar el proceso a 100% se actualizará el trabajo como completado y se le pondrá fecha de finalización
                     ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
                 } catch {
-                    ejecutarquery("update trabajos set estado = 'Error', error = '$_', bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+                    write-error $_
+                    ejecutarquery("update trabajos set estado = 'Error', error = 'error', bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
                 }
             }
             Start-Sleep -Seconds 5
@@ -43,6 +40,14 @@ for ($index=1; $index -le $MaxHilos; $index++) {
 }
 # Bucle que muestra los trabajos que están en ejecución
 while ($true) {
-    Get-Job | Format-List -Property Id, State, Error, Output
+    $jobs = Get-Job
+    write-output  "----------------------------------------------------------------------------"
+    foreach ($j in $jobs) {
+        write-output  "Id: ",$j.Id
+        write-output  "Estado: ",$j.State
+        write-output  "Error: ",$j.Error
+        write-output  "Salida: ",$j.Output
+    }
+    write-output  "----------------------------------------------------------------------------"
     Start-Sleep -Seconds 5
 }

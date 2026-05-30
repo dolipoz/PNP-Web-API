@@ -1,12 +1,12 @@
 # Como parametros de entrada tenemos el tenant
-param (
-   [string]$tenant,
-   [string]$id_cliente,
-   [string]$cert
-)
+# param (
+#    [string]$tenant,
+#    [string]$id_cliente,
+#    [string]$cert
+# )
 # Importamos las funciones para realizar actualizaciones en la base de datos
-. \scripts\importaciones.ps1
-Connect-PnPOnline -Url $tenant.sharepoint.com -ClientId $id_cliente -Tenant $tenant.onmicrosoft.com -CertificatePath $cert
+#. \scripts\importaciones.ps1
+#Connect-PnPOnline -Url $tenant.sharepoint.com -ClientId $id_cliente -Tenant $tenant.onmicrosoft.com -CertificatePath $cert
 
 # $rcsv = "D:\\EjemploCSV.csv"
 # $csv = Import-Csv -Path $rcsv -Delimiter ";"

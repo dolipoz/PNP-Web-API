@@ -61,7 +61,7 @@ create table certificados (
     nombre varchar(20) not null,
     contenido text default null,
     f_creado date default null,
-    expira date,
+    expira date default null,
 
     unique (nombre)
 );
@@ -77,7 +77,7 @@ create table api_certificados (
 -- Tabla para los trabajos de powershell
 create table trabajos (
     id int auto_increment primary key,
-    id_api int not null,
+    id_api int deafult null,
     nombre_contenedor varchar(255) default null,
     id_trabajo int default null,
     trabajo json not null,
