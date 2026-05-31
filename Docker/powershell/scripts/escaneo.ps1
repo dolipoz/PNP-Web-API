@@ -28,7 +28,7 @@ for ($index=1; $index -le $MaxHilos; $index++) {
                         & pwsh \scripts\$script $params
                     }
                     ### Tras llegar el proceso a 100% se actualizará el trabajo como completado y se le pondrá fecha de finalización
-                    ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+                    #ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
                 } catch {
                     write-error $_
                     ejecutarquery("update trabajos set estado = 'Error', error = 'error', bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")

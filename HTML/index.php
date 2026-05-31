@@ -1,9 +1,12 @@
 <?php
     include 'head.php';
-?>
-<?php
+
     $q_rol="select id,rol from roles";
     $q_users = "select * from usuarios";
+    $q_apis = "select * from api";
+    $q_certs = "select * from certificados";
+
+
     if (!$_SESSION["login"]) {
         echo "
         <form id='consola_login' class='consolas' action='Scripts/iniciar-sesion.php' method='POST'>
@@ -42,10 +45,10 @@
             <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
 
             <form id='mod_perfil' action='Scripts/modificar-mi-usuario.php' method='POST' style='display: none;'>
-                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' id='clave' name='clave' placeholder='Nueva Contraseña' size='20' min='8' max='20'><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar correo></label><input type='email' id='correo' name='correo' ".$_SESSION['usuario']['correo']." size='20' min='8' max='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar nombre></label><input type='text' id='nombre' name='nombre' ".$_SESSION['usuario']['nombre']." size='20' min='8' max='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar apellidos></label><input type='text' id='apellidos' name='apellidos' ".$_SESSION['usuario']['apellidos']." size='20' min='8' max='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' id='clave' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar correo></label><input type='email' id='correo' name='correo' value='".$_SESSION['usuario']['correo']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar nombre></label><input type='text' id='nombre' name='nombre' value='".$_SESSION['usuario']['nombre']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar apellidos></label><input type='text' id='apellidos' name='apellidos' value='".$_SESSION['usuario']['apellidos']."' size='20' minlenght='8' maxlenght='20' required><br>
                 <br>
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
             </form>
@@ -63,7 +66,7 @@
             <label class='prompt' for='id_rol'>PS C:\Seleccione el rol del usuario></label>
             <select id='id_rol' name='id_rol'>
         ";
-        $roles=mysqli_query($conexion,$q_rol);
+        $roles = mysqli_query($conexion,$q_rol);
         // Recorremos los roles que existen
         if ($roles and mysqli_num_rows($roles) > 0) {
             while ($rol=mysqli_fetch_assoc($roles)) {
@@ -80,7 +83,7 @@
         if (!$puede_modificar_usuarios) {$solo_lectura = "readonly";}
         echo "
         <div id='consola_g_usuarios' class='consolas' style='display: none;'>
-            <table id='cabecera-tabla'>
+            <table class='cabecera-tabla'>
                 <tr>
                     <td>Usuario</td>
                     <td>Clave</td>
@@ -155,7 +158,7 @@
         if (!$puede_modificar_api) {$solo_lectura = "readonly";}
         echo "
         <div id='consola_g_api' class='consolas' style='display: none;'>
-            <table id='cabecera-tabla'>
+            <table class='cabecera-tabla'>
                 <tr>
                     <td>Tenant</td>
                     <td>URL</td>
@@ -163,43 +166,41 @@
         ";
         if ($puede_modificar_api) { echo "            <td>Actualizar</td>"; }
         if ($puede_eliminar_api) { echo "            <td>Eliminar</td>"; }
-        echo "      <td>Certificados</td>";
-        if ($valor_permisos_modificar_api) { echo "            <td>Eliminar Certificado</td>"; }
+        echo "      <td>Certificados Asociados</td>";
         echo "  </tr>";
 
-        $q_api = "select * from api";
-        $apis = mysqli_query($conexion, $q_api);
-
+        $apis = mysqli_query($conexion, $q_apis);
         if ($apis and mysqli_num_rows($apis) > 0) {
             while ($api = mysqli_fetch_assoc($apis)) {
+                $tenant = $api['tenant'];
+                $url_s = $api['url_sharepoint'];
+                $id_cliente = $api['id_cliente'];
                 echo "
                 <tr>
                     <td><form action='Scripts/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
-                    <input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required></td>
-                    <td><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required></td>
-                    <td><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required>
+                    <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
+                    <td><input type='text' name='url_sharepoint' value='$url_s' size='30' minlength='8' maxlength='255' required></td>
+                    <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
                 ";
-                if ($puede_modificar_api) { echo "      </td><td><input type='submit' value='Modificar'>"; }
-                if ($puede_eliminar_api) { echo "      </td><td><input type='submit' formaction='Scripts/eliminar-api.php' value='Eliminar'>"; }
-                echo "    </form></td>";
-                echo "    <td><form action='Scripts/eliminar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
-                            <select name='certificados'>
+                if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
+                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/eliminar-api.php' value='Eliminar'>"; }
+                echo "
+                    </td><td><select name='certificados'>
                 ";
-                $q_cert = "select * from certificados where id_api = ".$api['id'];
+                $q_cert = "select certs.* from certificados certs inner join api_certificados api_cert on api_cert.id_certificado = certs.id where api_cert.id_api = ".$api['id'];
                 $certificados = mysqli_query($conexion, $q_cert);
                 if ($certificados and mysqli_num_rows($certificados) > 0) {
                     while ($certificado = mysqli_fetch_assoc($certificados)) {
-                        echo "<option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
+                        echo "      <option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
                     }
                 }
-                if ($puede_eliminar_certificados and mysqli_num_rows($certificados) > 0) { echo "      </td><td><input type='submit' value='Eliminar Certificado'>"; }
                 echo "
-                    </select></td>
+                        </select>
+                    </form></td>
                 </tr>
                 ";
             }
         }
-
         echo "
             </table>
         </div>
@@ -207,9 +208,8 @@
         // -----------------------------------------  Consola 8 - Crear Certificados  -------------------------------------------------------------
         echo "
         <form id='consola_addcert' class='consolas' action='Scripts/crear-certificado.php' method='POST' style='display: none;'>
-            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
-            <label class='prompt' for='url_sharepoint'>PS C:\Escriba la url del sharepoint></label><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
-            <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
+            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' name='expira' min='1' max='4' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
@@ -218,51 +218,38 @@
         if ($puede_eliminar_certificados and !$puede_modificar_certificados) {$solo_lectura = "readonly";}
         echo "
         <div id='consola_g_cert' class='consolas' style='display: none;'>
-            <table id='cabecera-tabla'>
+            <table class='cabecera-tabla'>
                 <tr>
-                    <td>Tenant</td>
-                    <td>URL</td>
-                    <td>Cliente ID</td>
+                    <td>Nombre</td>
+                    <td>Descargar Certificado</td>
+                    <td>Fecha Creación</td>
+                    <td>Fecha Expiración</td>
         ";
-        if ($puede_modificar_api) { echo "            <td>Actualizar</td>"; }
-        if ($puede_eliminar_api) { echo "            <td>Eliminar</td>"; }
-        echo "      <td>Certificados</td>";
-        if ($valor_permisos_modificar_api) { echo "            <td>Eliminar Certificado</td>"; }
+        if ($puede_eliminar_certificados) { echo "            <td>Eliminar</td>"; }
         echo "  </tr>";
 
-        $q_api = "select * from api";
-        $apis = mysqli_query($conexion, $q_api);
+        $certs = mysqli_query($conexion, $q_certs);
 
-        if ($apis and mysqli_num_rows($apis) > 0) {
-            while ($api = mysqli_fetch_assoc($apis)) {
+        if ($certs and mysqli_num_rows($certs) > 0) {
+            while ($cert = mysqli_fetch_assoc($certs)) {
+                $nombre = $cert['nombre'];
+                $f_creado = $cert['f_creado'];
+                $f_expira = $cert['expira'];
                 echo "
                 <tr>
                     <td><form action='Scripts/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
-                    <input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required></td>
-                    <td><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required></td>
-                    <td><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required>
+                    <input type='text' name='nombre' value='$nombre' size='20' maxlength='20' required></td>
+                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre)."'>Descargar</a></td>
+                    <td><p>$f_creado</p></td>
+                    <td><p>$f_expira</p>
                 ";
-                if ($puede_modificar_api) { echo "      </td><td><input type='submit' value='Modificar'>"; }
-                if ($puede_eliminar_api) { echo "      </td><td><input type='submit' formaction='Scripts/eliminar-api.php' value='Eliminar'>"; }
-                echo "    </form></td>";
-                echo "    <td><form action='Scripts/eliminar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
-                            <select name='certificados'>
-                ";
-                $q_cert = "select * from certificados where id_api = ".$api['id'];
-                $certificados = mysqli_query($conexion, $q_cert);
-                if ($certificados and mysqli_num_rows($certificados) > 0) {
-                    while ($certificado = mysqli_fetch_assoc($certificados)) {
-                        echo "<option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
-                    }
-                }
-                if ($puede_eliminar_certificados and mysqli_num_rows($certificados) > 0) { echo "      </td><td><input type='submit' value='Eliminar Certificado'>"; }
+                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/eliminar-cert.php' value='Eliminar'>"; }
                 echo "
-                    </select></td>
+                    </form></td>
                 </tr>
                 ";
             }
         }
-
         echo "
             </table>
         </div>

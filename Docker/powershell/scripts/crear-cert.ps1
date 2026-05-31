@@ -35,9 +35,5 @@ Remove-Item $llave -Recurse -Force
 Remove-Item $cert -Recurse -Force
 
 # Creamos los certificados en la base de datos
-try {
-    ejecutarquery("insert into certificados (nombre, contenido, f_creado, expira) values ('$nombre', '$cert64', current_timestamp, date_add(current_timestamp,interval 1 year));")
-} catch {
-    throw $_
-}
+ejecutarquery("insert into certificados (nombre, contenido, f_creado, expira) values ('$nombre', '$cert64', current_timestamp, date_add(current_timestamp,interval 1 year));")
 ejecutarquery("update trabajos set progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")

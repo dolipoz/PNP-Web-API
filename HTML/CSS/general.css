@@ -54,7 +54,7 @@ td {
     background: #ffffff;
 }
 
-#cabecera-tabla td {
+.cabecera-tabla td {
     text-align: center;
     margin: 0px;
     padding-top: 0px;
