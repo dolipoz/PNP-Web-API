@@ -17,32 +17,53 @@ $password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
 Connect-PnPOnline -Url "$tenant.sharepoint.com" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
 ejecutarquery("update trabajos set progreso = 66 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
 
+
+#$grupo = Get-PnPGroup -Identity "$tenant\G01"
+#$grupo = Get-PnPUser | Where-Object { $_.Title -eq "G01" }
+#write-output $grupo
+
+
+#$login = "c:0t.c|tenant|689e87ae-1f65-4bbd-8985-986d840d804a"
+
+Set-PnPListItemPermission `
+   -List $raiz `
+   -Identity 1 `
+   -Group "G01" `
+   -AddRole "Colaborar"
+
+
 # Para recorrer todos los directorios dentro del Sharepoint usamos Get-PnPListItems
 # La columna FileLeafRef da el nombre del directorio, el deFSObjType da si es fichero o directorio, HasUniqueRoleAssignments dice si tiene permisos propios o heredados
-$directorios = Get-PnPListItem -List $Raiz -PageSize 5000 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }
+# $directorios = Get-PnPListItem -List $Raiz -PageSize 5000 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }
 
-write-output "+++++++++++++++++++++++++++++++"
-# Recorremos los directorios buscados con Get-PnPListItems
-foreach ($dir in $directorios) {
-      # Si FSObjType es 1 significa que es un directorio, que es lo que buscamos
-      if ($dir["FSObjType"] -ne 1) {
-         continue
-      }
-   write-output $dir["Id"]
-   write-output $dir["FileLeafRef"]
-}
-write-output "+++++++++++++++++++++++++++++++"
-
-$item = Get-PnPListItem -List $Raiz -Id 1
-Get-PnPProperty -ClientObject $item -Property RoleAssignments
-foreach ($roleAssignment in $item.RoleAssignments) {
-    $grupo = $roleAssignment.Member.Title
-    $permisos = $roleAssignment.RoleDefinitionBindings | Select-Object -ExpandProperty Name
-    [PSCustomObject]@{
-        Grupo     = $grupo
-        Permisos  = ($permisos -join ", ")
-    }
-}
+# write-output "+++++++++++++++++++++++++++++++"
+# # Recorremos los directorios buscados con Get-PnPListItems
+# foreach ($dir in $directorios) {
+#    $HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
+#    #Write-Output $dirPNP.PSObject.Properties.Name
+#    #$HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
+#    Write-Output $dir['FileLeafRef']
+#    #Write-Output $dir['FSObjType']
+   
+#    if ($dir['FSObjType'] -ne 1) {
+#       # Si FSObjType no es 1 significa que es un directorio, que es lo que buscamos
+#       continue
+#    }
+   
+#    if ($HasUniqueRoleAssignments -eq $true) {
+#       #Write-Output $dir.PSObject.Properties.Name
+#       $roleAssignments = Get-PnPProperty -ClientObject $dir -Property RoleAssignments
+#       foreach ($roleAssignment in $roleAssignments) {
+#          #$grupo = $roleAssignment.Member.Title
+#          $grupo = Get-PnPProperty -ClientObject $roleAssignment -Property Member
+#          $permisos = Get-PnPProperty -ClientObject $roleAssignment -Property RoleDefinitionBindings
+#          write-output $grupo.PSObject.Properties.Name
+#          #write-output $permisos.Name
+#       }
+#    }
+#    break
+# }
+# write-output "+++++++++++++++++++++++++++++++"
 
 
 #ejecutarquery("update trabajos set salida = '{".'"resultado"'.":$directorios}', progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
@@ -69,3 +90,4 @@ Disconnect-PnPOnline
 #     }
 #     $contador++
 # }
+ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
