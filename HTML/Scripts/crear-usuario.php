@@ -11,7 +11,7 @@
 	$activo = isset($_POST['activo']) ? 1 : 0;
 	$id_rol = $_POST['id_rol'];
 
-	$sql_signup="insert into usuarios (usuario,clave,correo,nombre,apellidos,activo,id_rol) values (
+	$sql_signup = "insert into usuarios (usuario,clave,correo,nombre,apellidos,activo,id_rol) values (
 		'$usuario',
 		'$clave',
 		'$correo',

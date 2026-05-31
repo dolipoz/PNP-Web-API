@@ -1,12 +1,45 @@
+
+
 <?php
     include 'head.php';
+?>
+    <div id="ventana_index">
+        <nav>
+            <!-- Navegador general para los enlaces -->
+            <ul>
+            <?php
+            if (!$_SESSION["login"]) {
+                echo "<li id='login' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"login\",\"consola_login\")'>Iniciar Sesión</a></li>";
+            } else {
+                echo "
+                <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola_perfil\")'>Mi Perfil</a></li>
+                <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola_logoff\")'>Cerrar Sesión</a></li>
+                ";
+                if ($puede_crear_usuarios) {
+                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola_signup\")'>Crear Usuario</a></li>";
+                }
+                if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
+                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
+                }
+                if ($puede_crear_api) {
+                    echo "<li id='addapi' class='pestanias'><a href='#' onclick='mostrarConsola(\"addapi\",\"consola_addapi\")'>Crear API</a></li>";
+                }
+                if ($puede_modificar_api or $puede_eliminar_api) {
+                    echo "<li id='gestion_api' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_api\",\"consola_g_api\")'>Gestionar APIs</a></li>";
+                }
+                if ($puede_crear_certificados) {
+                    echo "<li id='addcert' class='pestanias'><a href='#' onclick='mostrarConsola(\"addcert\",\"consola_addcert\")'>Crear Certificado</a></li>";
+                }
+                if ($puede_modificar_certificados or $puede_eliminar_certificados) {
+                    echo "<li id='gestion_cert' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_cert\",\"consola_g_cert\")'>Gestionar Certificados</a></li>";
+                }
+            }
+            ?>
+            </ul>
+        </nav>
 
-    $q_rol="select id,rol from roles";
-    $q_users = "select * from usuarios";
-    $q_apis = "select * from api";
-    $q_certs = "select * from certificados";
 
-
+<?php
     if (!$_SESSION["login"]) {
         echo "
         <form id='consola_login' class='consolas' action='Scripts/iniciar-sesion.php' method='POST'>
@@ -66,7 +99,7 @@
             <label class='prompt' for='id_rol'>PS C:\Seleccione el rol del usuario></label>
             <select id='id_rol' name='id_rol'>
         ";
-        $roles = mysqli_query($conexion,$q_rol);
+        $roles = mysqli_query($conexion,$Q_roles);
         // Recorremos los roles que existen
         if ($roles and mysqli_num_rows($roles) > 0) {
             while ($rol=mysqli_fetch_assoc($roles)) {
@@ -99,7 +132,7 @@
         if ($puede_eliminar_usuarios) { echo "            <td>Eliminar</td>"; }
         echo "  </tr>";
 
-        $usuarios = mysqli_query($conexion, $q_users);
+        $usuarios = mysqli_query($conexion, $Q_usuarios);
         if ($usuarios and mysqli_num_rows($usuarios) > 0) {
             while ($usuario = mysqli_fetch_assoc($usuarios)) {
                 $activo = '';
@@ -115,7 +148,7 @@
                     <td><input type='checkbox' name='activo' $activo></td>
                     <td><select name='id_rol'>
                 ";
-                $roles = mysqli_query($conexion, $q_rol);
+                $roles = mysqli_query($conexion, $Q_roles);
                 if ($roles and mysqli_num_rows($roles) > 0) {
                     while ($rol = mysqli_fetch_assoc($roles)) {
                         if ($rol['id'] == $usuario['id_rol']) {
@@ -148,7 +181,7 @@
         echo "
         <form id='consola_addapi' class='consolas' action='Scripts/crear-api.php' method='POST' style='display: none;'>
             <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
-            <label class='prompt' for='url_sharepoint'>PS C:\Escriba la url del sharepoint></label><input type='text' name='url_sharepoint' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
+            <label class='prompt' for='sitio'>PS C:\Escriba la url del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
             <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
@@ -161,7 +194,7 @@
             <table class='cabecera-tabla'>
                 <tr>
                     <td>Tenant</td>
-                    <td>URL</td>
+                    <td>Sitio</td>
                     <td>Cliente ID</td>
         ";
         if ($puede_modificar_api) { echo "            <td>Actualizar</td>"; }
@@ -169,17 +202,17 @@
         echo "      <td>Certificados Asociados</td>";
         echo "  </tr>";
 
-        $apis = mysqli_query($conexion, $q_apis);
+        $apis = mysqli_query($conexion, $Q_apis);
         if ($apis and mysqli_num_rows($apis) > 0) {
             while ($api = mysqli_fetch_assoc($apis)) {
                 $tenant = $api['tenant'];
-                $url_s = $api['url_sharepoint'];
+                $sitio = $api['sitio'];
                 $id_cliente = $api['id_cliente'];
                 echo "
                 <tr>
                     <td><form action='Scripts/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
                     <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
-                    <td><input type='text' name='url_sharepoint' value='$url_s' size='30' minlength='8' maxlength='255' required></td>
+                    <td><input type='text' name='sitio' value='$sitio' size='30' minlength='8' maxlength='255' required></td>
                     <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
                 ";
                 if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
@@ -228,8 +261,7 @@
         if ($puede_eliminar_certificados) { echo "            <td>Eliminar</td>"; }
         echo "  </tr>";
 
-        $certs = mysqli_query($conexion, $q_certs);
-
+        $certs = mysqli_query($conexion, $Q_certs);
         if ($certs and mysqli_num_rows($certs) > 0) {
             while ($cert = mysqli_fetch_assoc($certs)) {
                 $nombre = $cert['nombre'];

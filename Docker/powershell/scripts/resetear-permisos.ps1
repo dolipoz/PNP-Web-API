@@ -1,6 +1,7 @@
 # Como parametros de entrada tenemos el tenant
 param (
    [string]$tenant,
+   [string]$sitio,
    [string]$id_cliente,
    [string]$cert,
    [string]$nombre_contenedor,
@@ -8,13 +9,13 @@ param (
 )
 # Importamos las funciones para realizar actualizaciones en la base de datos
 . \scripts\importaciones.ps1
-
+# Si el Sitio está configurado en otro idioma diferente al Español, cambiar según el lenguaje la raíz, por ejemplo en inglés sería "Documents"
 $raiz = "Documentos compartidos"
 
 $RutaCert = "/certs/$cert.pfx"
 $password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
 # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
-Connect-PnPOnline -Url "$tenant.sharepoint.com" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
+Connect-PnPOnline -Url "$tenant.sharepoint.com/sites/$sitio" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
 ejecutarquery("update trabajos set progreso = 33 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
 # Obtener todas las carpetas
 $directorios = Get-PnPListItem -List $Raiz -PageSize 500 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }

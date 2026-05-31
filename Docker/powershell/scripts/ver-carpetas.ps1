@@ -1,36 +1,23 @@
 # Como parametros de entrada tenemos el tenant
 param (
    [string]$tenant,
+   [string]$sitio,
    [string]$id_cliente,
    [string]$cert,
+   [string]$csvTexto,
    [string]$nombre_contenedor,
    [int32]$index
 )
 # Importamos las funciones para realizar actualizaciones en la base de datos
 . \scripts\importaciones.ps1
-
+# Si el Sitio está configurado en otro idioma diferente al Español, cambiar según el lenguaje la raíz, por ejemplo en inglés sería "Documents"
 $raiz = "Documentos compartidos"
 
 $RutaCert = "/certs/$cert.pfx"
 $password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
 # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
-Connect-PnPOnline -Url "$tenant.sharepoint.com" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
+Connect-PnPOnline -Url "$tenant.sharepoint.com/sites/$sitio" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
 ejecutarquery("update trabajos set progreso = 66 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
-
-
-#$grupo = Get-PnPGroup -Identity "$tenant\G01"
-#$grupo = Get-PnPUser | Where-Object { $_.Title -eq "G01" }
-#write-output $grupo
-
-
-#$login = "c:0t.c|tenant|689e87ae-1f65-4bbd-8985-986d840d804a"
-
-Set-PnPListItemPermission `
-   -List $raiz `
-   -Identity 1 `
-   -Group "G01" `
-   -AddRole "Colaborar"
-
 
 # Para recorrer todos los directorios dentro del Sharepoint usamos Get-PnPListItems
 # La columna FileLeafRef da el nombre del directorio, el deFSObjType da si es fichero o directorio, HasUniqueRoleAssignments dice si tiene permisos propios o heredados
@@ -68,26 +55,34 @@ Set-PnPListItemPermission `
 
 #ejecutarquery("update trabajos set salida = '{".'"resultado"'.":$directorios}', progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
 # Para cerrar la sesion de PNP
+
+$csv = Import-Csv -Path $csvTexto -Delimiter ";"
+
+# Obtenemos las cabeceras de los niveles del CSV como ARRAY
+$cabecerasNiveles = $csv[0].psobject.properties.name | where-object { $_ -match "^Nivel" }
+# Obtenemos las cabeceras de los Grupos sin Prefijo del CSV como ARRAY
+$cabecerasPermisos = $csv[0].psobject.properties.name | where-object { $_ -notmatch "^Nivel" }
+
+# Quitamos las filas que estén vacías al final del CSV
+$csv = $csv | where-object { $_.psobject.properties.Value -ne  '' }
+# Sacamos la cantidad de filas que hay en el CSV -1 para usarlo en el FOREACH
+$csvLimite = $csv | Measure-Object
+$csvLimite = $csvLimite.Count-1
+$nivel1 = $nivel2 = $nivel3 = $nivel4 = 0
+
+$contador = 0
+write-output "__________________________________________"
+foreach ($fila in $csv) {
+    if ($contador -eq 0) {
+        write-output "$contador principio"
+    } elseif ($contador -eq $csvLimite) {
+        write-output $cabecerasNiveles | foreach-object { $fila.$_ }
+        write-output $cabecerasPermisos | foreach-object { $fila.$_ }
+    } else {
+        write-output "$contador normal"
+    }
+    $contador++
+}
+write-output "__________________________________________"
 Disconnect-PnPOnline
-# $rcsv = "D:\\EjemploCSV.csv"
-# $csv = Import-Csv -Path $rcsv -Delimiter ";"
-
-# $cabecerasNiveles = $csv[0].psobject.properties.name | where-object { $_ -match "^Nivel" }
-# $cabecerasPermisos = $csv[0].psobject.properties.name | where-object { $_ -notmatch "^Nivel" }
-# $csv = $csv | where-object { $_.psobject.properties.Value -ne  '' }
-# $csvLimite = $csv | Measure-Object
-# $csvLimite = $csvLimite.Count-1
-# $nivel1 = $nivel2 = $nivel3 = $nivel4 = 0
-
-# $contador = 0
-# foreach ($fila in $csv) {
-#     if ($contador -eq 0) {
-#         write-output "$contador principio"
-#     } elseif ($contador -eq $csvLimite) {
-#         write-output $cabecerasNiveles | foreach-object {$fila.$_}
-#     } else {
-#         write-output "$contador normal"
-#     }
-#     $contador++
-# }
 ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")

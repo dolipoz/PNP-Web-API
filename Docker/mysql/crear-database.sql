@@ -50,10 +50,10 @@ create table usuarios (
 create table api (
     id int auto_increment primary key,
     tenant varchar(50) not null,
-    url_sharepoint varchar(255) not null,
+    sitio varchar(50) not null,
     id_cliente varchar(255) not null,
 
-    unique (url_sharepoint)
+    unique (sitio)
 );
 -- Tabla para los certificados de las sesiones de PNP.Powershell
 create table certificados (

@@ -45,40 +45,6 @@
         $puede_modificar_certificados = array_values($_SESSION['usuario']['permisos'][14])[0];
         $puede_eliminar_certificados = array_values($_SESSION['usuario']['permisos'][15])[0];
     ?>
-    <div id="ventana">
-        <nav>
-            <!-- Navegador general para los enlaces -->
-            <ul>
-            <?php
-            if (!$_SESSION["login"]) {
-                echo "<li id='login' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"login\",\"consola_login\")'>Iniciar Sesión</a></li>";
-            } else {
-                echo "
-                <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola_perfil\")'>Mi Perfil</a></li>
-                <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola_logoff\")'>Cerrar Sesión</a></li>
-                ";
-                if ($puede_crear_usuarios) {
-                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola_signup\")'>Crear Usuario</a></li>";
-                }
-                if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
-                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
-                }
-                if ($puede_crear_api) {
-                    echo "<li id='addapi' class='pestanias'><a href='#' onclick='mostrarConsola(\"addapi\",\"consola_addapi\")'>Crear API</a></li>";
-                }
-                if ($puede_modificar_api or $puede_eliminar_api) {
-                    echo "<li id='gestion_api' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_api\",\"consola_g_api\")'>Gestionar APIs</a></li>";
-                }
-                if ($puede_crear_certificados) {
-                    echo "<li id='addcert' class='pestanias'><a href='#' onclick='mostrarConsola(\"addcert\",\"consola_addcert\")'>Crear Certificado</a></li>";
-                }
-                if ($puede_modificar_certificados or $puede_eliminar_certificados) {
-                    echo "<li id='gestion_cert' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_cert\",\"consola_g_cert\")'>Gestionar Certificados</a></li>";
-                }
-            }
-            ?>
-            </ul>
-        </nav>
 <header>
     <?php
         include "Scripts/conectar-db.php";

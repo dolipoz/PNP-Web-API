@@ -2,6 +2,15 @@
     // Variables globales para cada sesión de cliente Web
     session_start();
 
+    $MaxTamaArchivos = 10;
+    $MaxMB = $MaxTamaArchivos*1024*1024;
+    $extensionesValidas = array("csv","CSV");
+
+    $Q_roles = "select id,rol from roles";
+    $Q_users = "select * from usuarios";
+    $Q_apis = "select * from api";
+    $Q_certs = "select * from certificados";
+
     if (!isset($_SESSION["usuario"])) {
         // Variable que almacena los datos del usuario que haya iniciado sesión
         $_SESSION["usuario"] = [
