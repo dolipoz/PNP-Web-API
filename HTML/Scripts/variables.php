@@ -12,21 +12,7 @@
     $Q_usuarios = "select * from usuarios";
     $Q_apis = "select * from api";
     $Q_certs = "select * from certificados";
-    $Q_trabajos = "
-        select
-            id,
-            id_api,
-            nombre_contenedor,
-            id_trabajo,
-            trabajo,
-            estado,
-            salida,
-            error,
-            progreso,
-            f_finalizacion
-        from trabajos
-        where estado = 'completado'
-    ";
+    $Q_tareas = "select * from tareas";
     if (!isset($_SESSION["usuario"])) {
         // Variable que almacena los datos del usuario que haya iniciado sesión
         $_SESSION["usuario"] = [
@@ -43,7 +29,7 @@
                 10 => ['10' => false], 11 => ['11' => false], 12 => ['12' => false],
                 // Permisos de ver, modificar o eliminar certificados
                 13 => ['13' => false], 14 => ['14' => false], 15 => ['15' => false],
-                // Permisos de ver, modificar o eliminar trabajos
+                // Permisos de ver, modificar o eliminar tareas
                 16 => ['16' => false], 17 => ['17' => false], 18 => ['18' => false]
             ]
         ];
@@ -91,8 +77,8 @@
     $puede_crear_certificados = array_values($_SESSION['usuario']['permisos'][13])[0];
     $puede_modificar_certificados = array_values($_SESSION['usuario']['permisos'][14])[0];
     $puede_eliminar_certificados = array_values($_SESSION['usuario']['permisos'][15])[0];
-    $puede_crear_trabajos = array_values($_SESSION['usuario']['permisos'][16])[0];
-    $puede_modificar_trabajos = array_values($_SESSION['usuario']['permisos'][17])[0];
-    $puede_eliminar_trabajos = array_values($_SESSION['usuario']['permisos'][18])[0];
+    $puede_crear_tareas = array_values($_SESSION['usuario']['permisos'][16])[0];
+    $puede_modificar_tareas = array_values($_SESSION['usuario']['permisos'][17])[0];
+    $puede_eliminar_tareas = array_values($_SESSION['usuario']['permisos'][18])[0];
 
 ?>

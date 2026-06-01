@@ -1,7 +1,7 @@
 <?php
-	include "variables.php";
-	include "funciones.php";
-	include "conectar-db.php";
+	include "../variables.php";
+	include "../funciones.php";
+	include "../conectar-db.php";
 
     $usuario = $_POST['usuario'];
 	$correo = $_POST['correo'];
@@ -41,5 +41,5 @@
 		$_SESSION["info"] = "Su usuario no se pudo modificar.";
 	}
 
-	header("Location: ../index.php");
+	header("Location: ../../index.php");
 ?>

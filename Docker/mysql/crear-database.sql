@@ -74,13 +74,13 @@ create table api_certificados (
     foreign key (id_api) references api(id) on delete cascade,
     foreign key (id_certificado) references certificados(id) on delete cascade
 );
--- Tabla para los trabajos de powershell
-create table trabajos (
+-- Tabla para los tareas de powershell
+create table tareas (
     id int auto_increment primary key,
     id_api int default null,
     nombre_contenedor varchar(255) default null,
-    id_trabajo int default null,
-    trabajo json not null,
+    id_tarea int default null,
+    comando json not null,
     estado varchar(20) not null,
     salida json default null,
     error varchar(255) default null,
@@ -93,7 +93,7 @@ create table trabajos (
 );
 -- Añadimos el rol de admin con true en sistema para que no se pueda eliminar de los registros y el rol supervisor para
 insert into roles (rol,descripcion,sistema) values ('admin','Puede gestionar todo dentro del sistema',true);
-insert into roles (rol,descripcion) values ('tecnico','Rol modificable para gestiones de api y certificados');
+insert into roles (rol,descripcion) values ('tecnico','Rol modificable para gestiones de api, certificados y tareas');
 
 delimiter //
 create trigger permisos_admin_agregar
@@ -114,18 +114,18 @@ insert into permisos (permiso,descripcion,sistema) values ('roles.eliminar','Pue
 insert into permisos (permiso,descripcion,sistema) values ('permisos.crear','Puede crear roles',true);
 insert into permisos (permiso,descripcion,sistema) values ('permisos.modificar','Puede modificar roles',true);
 insert into permisos (permiso,descripcion,sistema) values ('permisos.eliminar','Puede eliminar roles',true);
--- De 10 a 18 son para api, certificados y trabajos. En adelante se pueden agregar más para otras funciones.
+-- De 10 a 18 son para api, certificados y tareas. En adelante se pueden agregar más para otras funciones.
 insert into permisos (permiso,descripcion,sistema) values ('api.crear','Puede crear una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('api.modificar','Puede modificar una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('api.eliminar','Puede eliminar una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.crear','Puede crear certificados',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.modificar','Puede modificar certificados',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.eliminar','Puede eliminar certificados',true);
-insert into permisos (permiso,descripcion,sistema) values ('trabajos.crear','Puede crear trabajos',true);
-insert into permisos (permiso,descripcion,sistema) values ('trabajos.modificar','Puede modificar trabajos',true);
-insert into permisos (permiso,descripcion,sistema) values ('trabajos.eliminar','Puede eliminar trabajos',true);
+insert into permisos (permiso,descripcion,sistema) values ('tareas.crear','Puede crear tareas',true);
+insert into permisos (permiso,descripcion,sistema) values ('tareas.modificar','Puede modificar tareas',true);
+insert into permisos (permiso,descripcion,sistema) values ('tareas.eliminar','Puede eliminar tareas',true);
 
--- Añadimos los permisos al rol de técnico para que pueda gestionar api, certificados y trabajos
+-- Añadimos los permisos al rol de técnico para que pueda gestionar api, certificados y tareas
 insert into roles_permisos (id_rol, id_permiso) values (2, 10);
 insert into roles_permisos (id_rol, id_permiso) values (2, 11);
 insert into roles_permisos (id_rol, id_permiso) values (2, 12);
@@ -151,6 +151,8 @@ insert into usuarios (
     true
 );
 
+
+-- Creamos Triggers para impedir que se modifiquen o eliminen filas de las tablas con la columna Sistema en True, para evitar fallos de la API
 delimiter //
 create trigger bloquear_modificar_usuarios
 before update on usuarios

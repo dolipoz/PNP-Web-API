@@ -1,5 +1,3 @@
-
-
 <?php
     include 'head.php';
 ?>
@@ -74,7 +72,7 @@
             <h2>Fecha Creación: ".$_SESSION['usuario']['f_creado']."</h2>
             <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
 
-            <form id='mod_perfil' action='Scripts/modificar-mi-usuario.php' method='POST' style='display: none;'>
+            <form id='mod_perfil' action='Scripts/Modificar/modificar-mi-usuario.php' method='POST' style='display: none;'>
                 <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
                 <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='".$_SESSION['usuario']['correo']."' size='20' minlenght='8' maxlenght='20' required><br>
                 <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='".$_SESSION['usuario']['nombre']."' size='20' minlenght='8' maxlenght='20' required><br>
@@ -86,7 +84,7 @@
         ";
         // -----------------------------------------  Consola 4 Crear usuarios  ---------------------------------------------------------
         echo "
-        <form id='consola_signup' class='consolas' action='Scripts/crear-usuario.php' method='POST' style='display: none;'>
+        <form id='consola_signup' class='consolas' action='Scripts/Crear/crear-usuario.php' method='POST' style='display: none;'>
             <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='20' maxlength='20' required><br>
             <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' placeholder='|' size='20' minlength='8' maxlength='20' required><br>
             <label class='prompt' for='correo'>PS C:\Escriba su correo electrónico></label><input type='email' id='correo' name='correo' placeholder='|' size='50' minlength='9' maxlength='50'><br>
@@ -136,7 +134,7 @@
                 if ($usuario['activo']) { $activo = 'checked'; }
                 echo "
                 <tr>
-                    <td><form action='Scripts/modificar-usuario.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este usuario?\");'>
+                    <td><form action='Scripts/Modificar/modificar-usuario.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este usuario?\");'>
                     <input type='text' name='usuario' value='".$usuario['usuario']."' size='20' maxlength='20' required $solo_lectura></td>
                     <td><input type='password' name='clave' placeholder='Nueva contraseña' size='20' minlength='8' maxlength='20'></td>
                     <td><input type='email' name='correo' value='".$usuario['correo']."' size='50' minlength='9' maxlength='50'></td>
@@ -161,7 +159,7 @@
                     <td>".$usuario['ult_sesion']."
                 ";
                 if ($puede_modificar_usuarios) { echo "   </td><td><input type='submit' value='Modificar'>"; }                
-                if ($puede_eliminar_usuarios) { echo "   </td><td><input type='submit' formaction='Scripts/eliminar-usuario.php' value='Eliminar'>"; }
+                if ($puede_eliminar_usuarios) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-usuario.php' value='Eliminar'>"; }
                 echo "
                     </form>
                     </td>
@@ -176,7 +174,7 @@
         ";
         // -----------------------------------------  Consola 6 - Crear API  -------------------------------------------------------------
         echo "
-        <form id='consola_addapi' class='consolas' action='Scripts/crear-api.php' method='POST' style='display: none;'>
+        <form id='consola_addapi' class='consolas' action='Scripts/Crear/crear-api.php' method='POST' style='display: none;'>
             <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
             <label class='prompt' for='sitio'>PS C:\Escriba la url del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
             <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
@@ -202,18 +200,20 @@
         $apis = mysqli_query($conexion, $Q_apis);
         if ($apis and mysqli_num_rows($apis) > 0) {
             while ($api = mysqli_fetch_assoc($apis)) {
+                $id = $api['id'];
                 $tenant = $api['tenant'];
                 $sitio = $api['sitio'];
                 $id_cliente = $api['id_cliente'];
                 echo "
                 <tr>
-                    <td><form action='Scripts/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
+                    <td><form action='Scripts/Modificar/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
+                    <input type='hidden' name='id_api' value='$id' required>
                     <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
                     <td><input type='text' name='sitio' value='$sitio' size='30' minlength='8' maxlength='255' required></td>
                     <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
                 ";
                 if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
-                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/eliminar-api.php' value='Eliminar'>"; }
+                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-api.php' value='Eliminar'>"; }
                 echo "
                     </td><td><select name='certificados'>
                 ";
@@ -236,10 +236,20 @@
         </div>
         ";
         // -----------------------------------------  Consola 8 - Crear Certificados  -------------------------------------------------------------
+        
         echo "
-        <form id='consola_addcert' class='consolas' action='Scripts/crear-certificado.php' method='POST' style='display: none;'>
-            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' name='expira' min='1' max='4' required><br>
+        <form id='consola_addcert' class='consolas' action='Scripts/Crear/crear-certificado.php' method='POST' style='display: none;'>
+            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' id='certificado' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='pais'>PS C:\Escoja el pais></label>
+            <select id='pais' name='pais'>
+                <option value='ES' selected>España</option>
+                <option value='US'>Estados Unidos</option>
+                <option value='DE'>Alemania</option>
+                <option value='FR'>Francia</option>
+            </select><br>
+            <label class='prompt' for='ciudad'>PS C:\Escriba el nombre de la ciudad></label><input type='text' id='ciudad' name='ciudad' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='localidad'>PS C:\Escriba el nombre de la localidad></label><input type='text' id='localidad' name='localidad' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' id='expira' name='expira' value='1' min='1' max='4' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
@@ -266,13 +276,13 @@
                 $f_expira = $cert['expira'];
                 echo "
                 <tr>
-                    <td><form action='Scripts/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
+                    <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
                     <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
                     <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
                     <td><p>$f_expira</p>
                 ";
-                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/eliminar-cert.php' value='Eliminar'>"; }
+                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-cert.php' value='Eliminar'>"; }
                 echo "
                     </form></td>
                 </tr>

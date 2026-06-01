@@ -1,14 +1,14 @@
 <?php
-	include "variables.php";
-	include "funciones.php";
-	include "conectar-db.php";
+	include "../variables.php";
+	include "../funciones.php";
+	include "../conectar-db.php";
 
     if (isset($_POST['usuario'])) {
 		$usuario = $_POST['usuario'];
 	} else {
 		$_SESSION["error"] = True;
 		$_SESSION["info"] = "El usuario está mal escrito o no se encuentra.";
-		header("Location: ../index.php");
+		header("Location: ../../index.php");
 	}
 	$correo = isset($_POST['correo']) ? $_POST['correo'] : null;
 	$nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
@@ -52,7 +52,7 @@
 		$_SESSION["info"] = "El usuario está mal escrito o no se encuentra.";
 	}
 
-	header("Location: ../index.php");
+	header("Location: ../../index.php");
 	
 ?>
 

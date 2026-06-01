@@ -4,49 +4,33 @@
     include "conectar-db.php";
 
     header('Content-Type: application/json');
-    $q_trabajos = "
-        select
-            id,
-            id_api,
-            nombre_contenedor,
-            id_trabajo,
-            trabajo,
-            estado,
-            salida,
-            error,
-            progreso,
-            f_finalizacion
-        from trabajos
-    ";
+    // Ponemos los contadores de los tareas a 0
+    $pendientes = $corriendo = $completadas = $fallidas = 0;
 
-    // Ponemos los contadores de los trabajos a 0
-    $pendientes = $corriendo = $completados = $erroneos = 0;
-
-    // Buscamos todos los trabajos en la base de datos para contarlos y almacenar en el json los que estén en ejecución o pendientes
-    $lista_trabajos = [];
-    $trabajos = mysqli_query($conexion, $q_trabajos);
-    while ($trabajo = mysqli_fetch_assoc($trabajos)) {
-        if ($trabajo['estado'] == 'pendiente') {
-            $lista_trabajos[] = $trabajo;
+    // Buscamos todos los tareas en la base de datos para contarlos y almacenar en el json los que estén en ejecución o pendientes
+    $lista_tareas = [];
+    $tareas = mysqli_query($conexion, $Q_tareas);
+    while ($tarea = mysqli_fetch_assoc($tareas)) {
+        if ($tarea['estado'] == 'pendiente') {
+            $lista_tareas[] = $tarea;
             $pendientes += 1;
-        } elseif ($trabajo['estado'] == 'corriendo') {
-            $lista_trabajos[] = $trabajo;
+        } elseif ($tarea['estado'] == 'corriendo') {
+            $lista_tareas[] = $tarea;
             $corriendo += 1;
-        } elseif ($trabajo['estado'] == 'completado') {
-            $completados += 1;
-        } elseif ($trabajo['estado'] == 'fallido') {
-            $erroneos += 1;
+        } elseif ($tarea['estado'] == 'completada') {
+            $completadas += 1;
+        } elseif ($tarea['estado'] == 'fallida') {
+            $fallidas += 1;
         }
     }
     // Creamos el json con los contadores y lo enviamos para que el script pueda sacar los datos
     $json = [
         "pendientes" => $pendientes,
         "corriendo" => $corriendo,
-        "completados" => $completados,
-        "erroneos" => $erroneos,
-        "trabajos" => $lista_trabajos
+        "completadas" => $completadas,
+        "fallidas" => $fallidas,
+        "tareas" => $lista_tareas
     ];
     echo json_encode($json);
-
 ?>
 

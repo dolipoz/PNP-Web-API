@@ -56,20 +56,20 @@
             // Lo guardamos en la variable en vez de en un fichero del servidor
             $json = json_encode($datos, JSON_UNESCAPED_UNICODE);
 
-            // Insertamos los datos necesarios para crear un trabajo que se procese por Powershell con los datos del JSON
+            // Insertamos los datos necesarios para crear un tarea que se procese por Powershell con los datos del JSON
             // Al ser una acción que cambia permisos se requiere del bloqueo para que solo se pueda ejercer uno a la vez por sitio 
             $q_cambiar_permisos = "
-                insert into trabajos ( id_api, trabajo, estado, bloqueo) values (
+                insert into tareas ( id_api, tarea, estado, bloqueo) values (
                 $id_api,
                 \"{'script':'$script','parametros':['$tenant','$sitio','$id_cliente','$certificado','$json']}\",
                 'pendiente',
                 1)";
             if ($conexion->query($q_cambiar_permisos) == True) {
                 $_SESSION['correcto'] = True;
-                $_SESSION["info"] = "Trabajo en proceso, vea los procesos para seguir el estado.";
+                $_SESSION["info"] = "Tarea en proceso, vea las tareas para seguir el estado.";
             } else {
                 $_SESSION["error"] = True;
-                $_SESSION["info"] = "No se pudo ejecutar el trabajo.";
+                $_SESSION["info"] = "No se pudo ejecutar el tarea.";
             }
         } else {
             $_SESSION["error"] = True;

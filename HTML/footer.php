@@ -37,11 +37,11 @@
             // Muestra el elemento seleccionado
             document.getElementById(idc).style.display = 'block';
 
-            // Parte añadida para el monitor a tiempo real de trabajos
+            // Parte añadida para el monitor a tiempo real de tareas
             // Detenemos el monitor si está activado
             clearInterval(monitor);
             // si se abre la pestaña de APIs
-            if (idc === 'Monitor_Trabajos') {
+            if (idc === 'monitor_tareas') {
                 actualizarMonitor();
                 monitor = setInterval( actualizarMonitor, 5000 );
             }
@@ -50,19 +50,19 @@
             fetch('Scripts/monitor.php')
                 .then(response => response.json())
                 .then(datos => {
-                    let trabajos = `
+                    let tareas = `
                         <table class='cabecera-tabla'>
                             <tr>
                                 <th>Cantidad Pendientes</th>
                                 <th>Cantidad Corriendo</th>
-                                <th>Cantidad Completados</th>
-                                <th>Cantidad Erroneos</th>
+                                <th>Cantidad Completadas</th>
+                                <th>Cantidad Fallidas</th>
                             </tr>
                             <tr>
                                 <td>${datos.pendientes}</td>
                                 <td>${datos.corriendo}</td>
-                                <td>${datos.completados}</td>
-                                <td>${datos.erroneos}</td>
+                                <td>${datos.completadas}</td>
+                                <td>${datos.fallidas}</td>
                             </tr>
                         </table>
                         <table class='cabecera-tabla'>
@@ -70,8 +70,8 @@
                                 <th>ID</th>
                                 <th>ID API</th>
                                 <th>Nombre Contenedor</th>
-                                <th>ID Trabajo</th>
-                                <th>Trabajo</th>
+                                <th>ID Tarea</th>
+                                <th>Comando</th>
                                 <th>Estado</th>
                                 <th>Salida</th>
                                 <th>Error</th>
@@ -79,14 +79,14 @@
                                 <th>Fecha de Finalización</th>
                             </tr>
                     `;
-                    datos.trabajos.forEach(function(t) {
-                        trabajos += `
+                    datos.tareas.forEach(function(t) {
+                        tareas += `
                             <tr>
                                 <td>${t.id}</td>
                                 <td>${t.id_api}</td>
                                 <td>${t.nombre_contenedor}</td>
-                                <td>${t.id_trabajo}</td>
-                                <td>${t.trabajo}</td>
+                                <td>${t.id_tarea}</td>
+                                <td>${t.comando}</td>
                                 <td>${t.estado}</td>
                                 <td>${t.salida}</td>
                                 <td>${t.error}</td>
@@ -95,11 +95,11 @@
                             </tr>
                         `;
                     });
-                    trabajos += '</table>';
-                    document.getElementById('Monitor_Trabajos').innerHTML = trabajos;
+                    tareas += '</table>';
+                    document.getElementById('monitor_tareas').innerHTML = tareas;
                 })
                 .catch(error => {
-                    document.getElementById('Monitor_Trabajos').innerHTML = 'Error al cargar datos';
+                    document.getElementById('monitor_tareas').innerHTML = 'Error al cargar datos';
                     console.error(error);
                 });
         }

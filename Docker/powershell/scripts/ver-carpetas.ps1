@@ -17,7 +17,7 @@ $RutaCert = "/certs/$cert.pfx"
 $password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
 # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
 Connect-PnPOnline -Url "$tenant.sharepoint.com/sites/$sitio" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
-ejecutarquery("update trabajos set progreso = 66 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+ejecutarquery("update tareas set progreso = 66 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 
 # Para recorrer todos los directorios dentro del Sharepoint usamos Get-PnPListItems
 # La columna FileLeafRef da el nombre del directorio, el deFSObjType da si es fichero o directorio, HasUniqueRoleAssignments dice si tiene permisos propios o heredados
@@ -53,7 +53,7 @@ ejecutarquery("update trabajos set progreso = 66 where estado = 'ejecutando' and
 # write-output "+++++++++++++++++++++++++++++++"
 
 
-#ejecutarquery("update trabajos set salida = '{".'"resultado"'.":$directorios}', progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+#ejecutarquery("update tareas set salida = '{".'"resultado"'.":$directorios}', progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 # Para cerrar la sesion de PNP
 
 $csv = Import-Csv -Path $csvTexto -Delimiter ";"
@@ -85,4 +85,4 @@ foreach ($fila in $csv) {
 }
 write-output "__________________________________________"
 Disconnect-PnPOnline
-ejecutarquery("update trabajos set estado = 'Completado', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_trabajo = $index;")
+ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")

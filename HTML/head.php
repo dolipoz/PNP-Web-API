@@ -36,10 +36,12 @@
             <h1>Sharepoint Poweshell API</h1>
             <p>Gestione sus APIs desde PHP</p>
         </div>
-        <div>
-            <ul>
-                <li><a href="index.php">Inicio</a></li>
-                <li><a href="trabajos.php">Trabajos</a></li>
-            </ul>
-        </div>
+        <ul>
+            <li><a href="index.php">Inicio</a></li>
+            <?php
+                if ($_SESSION["login"]) {
+                    echo "<li><a href='tareas.php'>Tareas</a></li>";
+                }
+            ?>
+        </ul>
     </div>

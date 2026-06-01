@@ -1,16 +1,16 @@
 <?php
-	include "variables.php";
-	include "funciones.php";
-	include "conectar-db.php";
+	include "../variables.php";
+	include "../funciones.php";
+	include "../conectar-db.php";
 
 	$tenant = $_POST['tenant'];
-	$url_sharepoint = $_POST['url_sharepoint'];
+	$sitio = $_POST['sitio'];
 	$id_cliente = $_POST['id_cliente'];
 
-	$sql_add_api="insert into api (tenant,url_sharepoint,id_cliente) values (
+	$sql_add_api="insert into api (tenant,sitio,id_cliente) values (
 		'$tenant',
-		'$url_sharepoint',
-		$id_cliente
+		'$sitio',
+		'$id_cliente'
 	)";
 
     if ($conexion->query($sql_add_api) == True) {
@@ -22,7 +22,7 @@
 		$_SESSION["info"] = "La API no se pudo añadir.";
 	}
 
-	header("Location: ../index.php");
+	header("Location: ../../index.php");
 
 
 

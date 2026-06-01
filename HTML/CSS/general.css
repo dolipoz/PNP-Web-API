@@ -15,62 +15,106 @@ footer {
     display: block;
     background-color: #1e1e1e;
     margin: 0px;
-
     height: 20vh;
 }
-
 form {
     text-align: left;
 }
 
-table {
-    border-collapse: collapse;
-}
-td {
-    border: #ffffff solid 1px;
-}
-
+/* --------- Inputs --------- */
 input[type=submit],input[type=reset] {
     cursor: pointer;
 }
 
-/* --- Parte del Banner --- */
+/* Inputs de consolas */
+.consolas input, .consolas select {
+    background-color: #012456;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    caret-color: transparent;
+}
+.consolas input:focus {
+    background-color: #9dbbe6;
+}
+.consolas input[type=submit]:hover,.consolas input[type=reset]:hover {
+    color: #00ff00;
+}
+/* ---------------------------- */
+
+
+/* --------------------- Parte del Banner ---------------------------- */
 #banner {
     display: flex;
+    flex-wrap: nowrap;
     overflow: hidden;
     height: 15vh;
     background-image: url("../Multimedia/fondo-azul-blanco.jpg");
-    background-size: cover;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     margin: 0px;
     padding: 10px;
     border: #000000 solid 1px;
 }
 #banner div {
-    flex: 0.8;
+    flex: 0.9;
+    text-align: center;
+}
+#banner div h1 {
+    margin-bottom: 0px;
+}
+#banner div p {
+    margin-top: 0px;
 }
 #banner ul {
-    flex: 0.2;
+    border: #000000 solid 1px;
+    border-radius: 5px;
+    background-color: #7ca9e4;
+    margin: 0px;
+    padding: 5px;
+    flex: 0.1;
+    justify-content: center;
+    text-align: center;
     list-style: none;
 }
 
-/* ------------ Sección para simular la consola de powershell ------------ */
-#ventana_index {
-    background-color: #012456;
-    box-shadow: 0 10px 30px #00000099;
-    border-radius: 12px;
-    margin: 20px 8% 20px 8%;
+/* ----------------- Parte de Tablas ------------------- */
+table {
+    border-collapse: collapse;
 }
-#ventana_api {
-    background-color: #7d8ea7;
-    box-shadow: 0 10px 30px #00000099;
-    border-radius: 12px;
-    margin: 20px 8% 20px 8%;
+td, th {
+    border: #000000 solid 1px;
 }
+
+.cabecera-tabla td, .cabecera-tabla th {
+    text-align: center;
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+.filas-tabla td, .filas-tabla th {
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 2vh;
+    padding-left: 2vh;
+}
+
+#ventana_tareas td, #ventana_tareas th {
+    border: #000000 solid 1px;
+}
+#ventana_index td, #ventana_index th {
+    border: #ffffff dashed 1px;
+}
+
+/* ------------ Sección para Scrollbars ------------ */
 .consolas, .monitor  {
     overflow: scroll;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.8) transparent;
+    margin: 0px;
 }
 .consolas::-webkit-scrollbar-button, .monitor::-webkit-scrollbar-button {
     display: none;
@@ -89,27 +133,30 @@ input[type=submit],input[type=reset] {
     background: #ffffff;
 }
 
-.cabecera-tabla td {
-    text-align: center;
-    margin: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 5px;
-    padding-left: 5px;
-}
 
-.filas-tabla td {
-    margin: 0px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    padding-right: 2vh;
-    padding-left: 2vh;
+/* ------------ Sección para simular la consola de powershell ------------ */
+#ventana_index .consolas {
+    background: #012456;
+    border-radius: 0px 0px 12px 12px;
+    padding: 10px;
+    font-family: Consolas, "Courier New", monospace;
+    color: #ffffff;
+    font-size: 15px;
+    min-height: 50vh;
 }
-
-/* ------------------- Parte de las pestañas para simular la consola de powershell ----------------------- */
-/* Navegador de Index */
+#ventana_index .prompt {
+    color: #00ff00;
+}
+/* ----------------- Navegador de Index -------------------- */
+#ventana_index {
+    background-color: #012456;
+    box-shadow: 0 10px 30px #00000099;
+    border-radius: 12px;
+    margin: 20px 8% 20px 8%;
+}
 #ventana_index nav {
     background-color: #1e1e1e;
+    box-shadow: 0 10px 30px #00000099;
     border-radius: 12px 12px 0px 0px;
     padding-top: 2px;
 }
@@ -142,8 +189,27 @@ input[type=submit],input[type=reset] {
 #ventana_index nav ul .pestanias a:hover {
     color: #00ff00;
 }
-/* Navegador para API */
-#ventana_api nav {
+/* ---------------- Navegador de Tareas ------------------ */
+#ventana_tareas .monitor {
+    background: linear-gradient(#e5f6f6, #d0ddef);
+    border-radius: 0px 0px 3px 3px;
+    margin: 0px;
+    padding: 10px;
+    font-family: "Segoe UI", "Inter", "Noto Sans", system-ui, sans-serif;
+    color: #000000;
+    font-size: 15px;
+    min-height: 50vh;
+}
+#ventana_tareas .prompt {
+    color: #000000;
+}
+#ventana_tareas {
+    background-color: #7d8ea7;
+    box-shadow: 0 10px 30px #00000099;
+    border-radius: 12px;
+    margin: 20px 8% 20px 8%;
+}
+#ventana_tareas nav {
     background: #f0f0f0;
     border-bottom: 1px solid #c8c8c8;
     font-family: "Segoe UI", sans-serif;
@@ -151,7 +217,7 @@ input[type=submit],input[type=reset] {
     border-radius: 1px 1px 0px 0px;
     padding-top: 2px;
 }
-#ventana_api nav ul {
+#ventana_tareas nav ul {
     display: flex;
     flex-wrap: nowrap;
     list-style: none;
@@ -161,7 +227,7 @@ input[type=submit],input[type=reset] {
     align-items: end;
 
 }
-#ventana_api nav ul .pestanias {
+#ventana_tareas nav ul .pestanias {
     flex: 0.2;
     border-radius: 3px 3px 0px 0px;
     margin: 0 1px;
@@ -171,73 +237,30 @@ input[type=submit],input[type=reset] {
     font-size: 13px;
     font-weight: 600;
     color: #000000;
-
     background: #e5e5e5;
     border: 1px solid #c8c8c8;
     border-bottom: none;
     border-radius: 3px 3px 0 0;
     cursor: pointer;
-
 }
-#ventana_api nav ul .pestanias a {
+#ventana_tareas nav ul .pestanias a {
     color: #202020;
     text-decoration: none;
 }
-#ventana_api nav ul .pestanias a:active {
+#ventana_tareas nav ul .pestanias a:active {
     background: white;
     position: relative;
     top: 1px;
 }
 /* --------------------------------------------------------- */
-/* Parte de la consola para simular la consola de powershell */
-#ventana_index .consolas {
-    background: #012456;
-    border-radius: 0px 0px 12px 12px;
-    padding: 10px;
-    font-family: Consolas, "Courier New", monospace;
-    color: #ffffff;
-    font-size: 15px;
-    min-height: 50vh;
-}
-#ventana_index .prompt {
-    color: #00ff00;
-}
 
 
-.consolas input, .consolas select {
-    background-color: #012456;
-    border: none;
-
-    outline: none;
-    color: #ffffff;
-    caret-color: transparent;
-}
-.consolas input:focus {
-    background-color: #9dbbe6;
-}
-
-.consolas input[type=submit]:hover,input[type=reset]:hover {
-    color: #00ff00;
-}
-
-/* Versión de monitor de recursos para API */
-#ventana_api .monitor {
-    background: linear-gradient(#eaf6e5, #d9efd0);
-    border-radius: 0px 0px 3px 3px;
-    padding: 10px;
-    font-family: "Segoe UI", "Inter", "Noto Sans", system-ui, sans-serif;
-    color: #000000;
-    font-size: 15px;
-    min-height: 50vh;
-}
-#ventana_api .prompt {
-    color: #000000;
-}
-/* ------------------------------------------------------------------- */
 /* ------------------- Parte para mostrar perfil --------------------- */
 
 #consola_perfil ul {
+    display: none;
     flex-direction: column;
+    list-style: none;
 }
 
 /* ------------------------------------------------------------------- */

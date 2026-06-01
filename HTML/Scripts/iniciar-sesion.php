@@ -2,6 +2,7 @@
     include "variables.php";
     include "funciones.php";
     include "conectar-db.php";
+
     $user = $_POST['usuario'];
     $pass = $_POST['clave'];
 
@@ -17,9 +18,11 @@
             if ($usuario['activo'] == true) {
                 $upd_user = "update usuarios set ult_sesion = current_timestamp where usuario = '$user'";
                 mysqli_query($conexion,$upd_user);
+                // Actualizamos la fecha y hora de la última sesión del usuario y la volvemos a buscar para añadirla a las variables
                 $q_sesion = "select ult_sesion from usuarios where usuario = '$user'";
                 $sesion = mysqli_query($conexion,$q_sesion);
                 $ult_sesion = mysqli_fetch_assoc($sesion);
+                // Rellenamos las variables de sesión para el usuario
                 $_SESSION["usuario"]['id'] = $usuario['id'];
                 $_SESSION["usuario"]['usuario'] = $usuario['usuario'];
                 $_SESSION["usuario"]['id_rol'] = $usuario['id_rol'];
@@ -30,8 +33,8 @@
                 $_SESSION["usuario"]['f_creado'] = $usuario['f_creado'];
                 $_SESSION["usuario"]['ult_sesion'] = $ult_sesion['ult_sesion'];
                 // Sacamos los permisos del usuario usando un select join con las tablas de rol y permisos
-                $perm_user="select r.rol,p.id,p.permiso from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$usuario['id_rol'];
-                $perms=mysqli_query($conexion,$perm_user);
+                $perm_user = "select r.rol,p.id,p.permiso from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$usuario['id_rol'];
+                $perms = mysqli_query($conexion,$perm_user);
                 if ($perms and mysqli_num_rows($perms) > 0) {
                     while ($p = mysqli_fetch_assoc($perms)) {
                         $_SESSION["usuario"]['rol'] = $p['rol'];
