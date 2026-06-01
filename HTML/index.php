@@ -37,8 +37,6 @@
             ?>
             </ul>
         </nav>
-
-
 <?php
     if (!$_SESSION["login"]) {
         echo "
@@ -70,7 +68,6 @@
                     echo "  <li>$id: $nombre</li>";
                 }
             }
-
         }
         echo "
             </ul>
@@ -78,10 +75,10 @@
             <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
 
             <form id='mod_perfil' action='Scripts/modificar-mi-usuario.php' method='POST' style='display: none;'>
-                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' id='clave' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar correo></label><input type='email' id='correo' name='correo' value='".$_SESSION['usuario']['correo']."' size='20' minlenght='8' maxlenght='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar nombre></label><input type='text' id='nombre' name='nombre' value='".$_SESSION['usuario']['nombre']."' size='20' minlenght='8' maxlenght='20' required><br>
-                <label class='prompt' for='clave'>PS C:\Cambiar apellidos></label><input type='text' id='apellidos' name='apellidos' value='".$_SESSION['usuario']['apellidos']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='".$_SESSION['usuario']['correo']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='".$_SESSION['usuario']['nombre']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='apellidos'>PS C:\Cambiar apellidos></label><input type='text' name='apellidos' value='".$_SESSION['usuario']['apellidos']."' size='20' minlenght='8' maxlenght='20' required><br>
                 <br>
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
             </form>
@@ -118,18 +115,18 @@
         <div id='consola_g_usuarios' class='consolas' style='display: none;'>
             <table class='cabecera-tabla'>
                 <tr>
-                    <td>Usuario</td>
-                    <td>Clave</td>
-                    <td>Correo</td>
-                    <td>Nombre</td>
-                    <td>Apellidos</td>
-                    <td>Activo</td>
-                    <td>Rol</td>
-                    <td>Creado el</td>
-                    <td>Última Sesión</td>
+                    <th>Usuario</th>
+                    <th>Clave</th>
+                    <th>Correo</th>
+                    <th>Nombre</th>
+                    <th>Apellidos</th>
+                    <th>Activo</th>
+                    <th>Rol</th>
+                    <th>Creado el</th>
+                    <th>Última Sesión</th>
         ";
-        if ($puede_modificar_usuarios) { echo "            <td>Actualizar</td>"; }
-        if ($puede_eliminar_usuarios) { echo "            <td>Eliminar</td>"; }
+        if ($puede_modificar_usuarios) { echo "            <th>Actualizar</th>"; }
+        if ($puede_eliminar_usuarios) { echo "            <th>Eliminar</th>"; }
         echo "  </tr>";
 
         $usuarios = mysqli_query($conexion, $Q_usuarios);
@@ -193,13 +190,13 @@
         <div id='consola_g_api' class='consolas' style='display: none;'>
             <table class='cabecera-tabla'>
                 <tr>
-                    <td>Tenant</td>
-                    <td>Sitio</td>
-                    <td>Cliente ID</td>
+                    <th>Tenant</th>
+                    <th>Sitio</th>
+                    <th>Cliente ID</th>
         ";
-        if ($puede_modificar_api) { echo "            <td>Actualizar</td>"; }
-        if ($puede_eliminar_api) { echo "            <td>Eliminar</td>"; }
-        echo "      <td>Certificados Asociados</td>";
+        if ($puede_modificar_api) { echo "            <th>Actualizar</th>"; }
+        if ($puede_eliminar_api) { echo "            <th>Eliminar</th>"; }
+        echo "      <th>Certificados Asociados</th>";
         echo "  </tr>";
 
         $apis = mysqli_query($conexion, $Q_apis);
@@ -253,25 +250,25 @@
         <div id='consola_g_cert' class='consolas' style='display: none;'>
             <table class='cabecera-tabla'>
                 <tr>
-                    <td>Nombre</td>
-                    <td>Descargar Certificado</td>
-                    <td>Fecha Creación</td>
-                    <td>Fecha Expiración</td>
+                    <th>Nombre</th>
+                    <th>Descargar Certificado</th>
+                    <th>Fecha Creación</th>
+                    <th>Fecha Expiración</th>
         ";
-        if ($puede_eliminar_certificados) { echo "            <td>Eliminar</td>"; }
+        if ($puede_eliminar_certificados) { echo "            <th>Eliminar</th>"; }
         echo "  </tr>";
 
         $certs = mysqli_query($conexion, $Q_certs);
         if ($certs and mysqli_num_rows($certs) > 0) {
             while ($cert = mysqli_fetch_assoc($certs)) {
-                $nombre = $cert['nombre'];
+                $nombre_certificado = $cert['nombre'];
                 $f_creado = $cert['f_creado'];
                 $f_expira = $cert['expira'];
                 echo "
                 <tr>
                     <td><form action='Scripts/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
-                    <input type='text' name='nombre' value='$nombre' size='20' maxlength='20' required></td>
-                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre)."'>Descargar</a></td>
+                    <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
+                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
                     <td><p>$f_expira</p>
                 ";
@@ -287,8 +284,7 @@
         </div>
         ";
     }
-?>
-    </div>
-<?php
+    echo "</div>";
+
     include 'footer.php';
 ?>

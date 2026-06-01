@@ -2,7 +2,7 @@
 head {
     background-color: black;
 }
-html {
+html, body {
     margin: 0px;
     padding: 0px;
 }
@@ -15,14 +15,43 @@ footer {
     display: block;
     background-color: #1e1e1e;
     margin: 0px;
-    width: 100%;
-    height: 100%;
+
+    height: 20vh;
 }
+
+form {
+    text-align: left;
+}
+
 table {
     border-collapse: collapse;
 }
 td {
     border: #ffffff solid 1px;
+}
+
+input[type=submit],input[type=reset] {
+    cursor: pointer;
+}
+
+/* --- Parte del Banner --- */
+#banner {
+    display: flex;
+    overflow: hidden;
+    height: 15vh;
+    background-image: url("../Multimedia/fondo-azul-blanco.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0px;
+    padding: 10px;
+    border: #000000 solid 1px;
+}
+#banner div {
+    flex: 0.8;
+}
+#banner ul {
+    flex: 0.2;
+    list-style: none;
 }
 
 /* ------------ Sección para simular la consola de powershell ------------ */
@@ -38,25 +67,25 @@ td {
     border-radius: 12px;
     margin: 20px 8% 20px 8%;
 }
-.consolas {
+.consolas, .monitor  {
     overflow: scroll;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.8) transparent;
 }
-.consolas::-webkit-scrollbar-button {
+.consolas::-webkit-scrollbar-button, .monitor::-webkit-scrollbar-button {
     display: none;
 }
-.consolas::-webkit-scrollbar {
+.consolas::-webkit-scrollbar, .monitor::-webkit-scrollbar {
     width: 6px;
 }
-.consolas::-webkit-scrollbar-track {
+.consolas::-webkit-scrollbar-track, .monitor::-webkit-scrollbar-track {
     background: transparent;
 }
-.consolas::-webkit-scrollbar-thumb {
+.consolas::-webkit-scrollbar-thumb, .monitor::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.8);
     border-radius: 10px;
 }
-.consolas::-webkit-scrollbar-thumb:hover {
+.consolas::-webkit-scrollbar-thumb:hover, .monitor::-webkit-scrollbar-thumb:hover {
     background: #ffffff;
 }
 
@@ -104,6 +133,7 @@ td {
     font-size: 13px;
     font-weight: 600;
     color: #ffffff;
+    cursor: pointer;
 }
 #ventana_index nav ul .pestanias a {
     text-decoration: none;
@@ -173,9 +203,7 @@ td {
     color: #00ff00;
 }
 
-form {
-    text-align: left;
-}
+
 .consolas input, .consolas select {
     background-color: #012456;
     border: none;
@@ -188,15 +216,12 @@ form {
     background-color: #9dbbe6;
 }
 
-input[type=submit],input[type=reset] {
-    cursor: pointer;
-}
-input[type=submit]:hover,input[type=reset]:hover {
+.consolas input[type=submit]:hover,input[type=reset]:hover {
     color: #00ff00;
 }
 
 /* Versión de monitor de recursos para API */
-#ventana_api .consolas {
+#ventana_api .monitor {
     background: linear-gradient(#eaf6e5, #d9efd0);
     border-radius: 0px 0px 3px 3px;
     padding: 10px;

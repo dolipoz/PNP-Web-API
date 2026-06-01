@@ -77,7 +77,7 @@ create table api_certificados (
 -- Tabla para los trabajos de powershell
 create table trabajos (
     id int auto_increment primary key,
-    id_api int deafult null,
+    id_api int default null,
     nombre_contenedor varchar(255) default null,
     id_trabajo int default null,
     trabajo json not null,
@@ -114,21 +114,27 @@ insert into permisos (permiso,descripcion,sistema) values ('roles.eliminar','Pue
 insert into permisos (permiso,descripcion,sistema) values ('permisos.crear','Puede crear roles',true);
 insert into permisos (permiso,descripcion,sistema) values ('permisos.modificar','Puede modificar roles',true);
 insert into permisos (permiso,descripcion,sistema) values ('permisos.eliminar','Puede eliminar roles',true);
--- De 10 a 15 son para api y certificados. En adelante se pueden agregar más para otras funciones.
+-- De 10 a 18 son para api, certificados y trabajos. En adelante se pueden agregar más para otras funciones.
 insert into permisos (permiso,descripcion,sistema) values ('api.crear','Puede crear una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('api.modificar','Puede modificar una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('api.eliminar','Puede eliminar una api',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.crear','Puede crear certificados',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.modificar','Puede modificar certificados',true);
 insert into permisos (permiso,descripcion,sistema) values ('certificados.eliminar','Puede eliminar certificados',true);
+insert into permisos (permiso,descripcion,sistema) values ('trabajos.crear','Puede crear trabajos',true);
+insert into permisos (permiso,descripcion,sistema) values ('trabajos.modificar','Puede modificar trabajos',true);
+insert into permisos (permiso,descripcion,sistema) values ('trabajos.eliminar','Puede eliminar trabajos',true);
 
--- Añadimos los permisos al rol de técnico para que pueda gestionar api y certificados
+-- Añadimos los permisos al rol de técnico para que pueda gestionar api, certificados y trabajos
 insert into roles_permisos (id_rol, id_permiso) values (2, 10);
 insert into roles_permisos (id_rol, id_permiso) values (2, 11);
 insert into roles_permisos (id_rol, id_permiso) values (2, 12);
 insert into roles_permisos (id_rol, id_permiso) values (2, 13);
 insert into roles_permisos (id_rol, id_permiso) values (2, 14);
 insert into roles_permisos (id_rol, id_permiso) values (2, 15);
+insert into roles_permisos (id_rol, id_permiso) values (2, 16);
+insert into roles_permisos (id_rol, id_permiso) values (2, 17);
+insert into roles_permisos (id_rol, id_permiso) values (2, 18);
 
 -- Añadimos el usuario admin con contraseña "admin" hasheada, se debe modificar la constraseña tras iniciar sesión
 insert into usuarios (
