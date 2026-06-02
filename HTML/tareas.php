@@ -91,7 +91,47 @@
     echo "
         </table>
     </div>
-</div>
     ";
+    // -----------------------------------------  Monitor 3 - Lanzar Tareas  ---------------------------------------------------------
+    echo "
+    <form id='lanzar_tareas' class='monitor' action='Scripts/Crear/lanzar-tarea.php' method='POST' style='display: none;'>
+        <label class='lanzador' for='script'>Elija que acción quiere lanzar </label>
+        <select id='script' name='script' widht='10'>
+            <option value='ver-carpetas.ps1' selected>Mostrar Carpetas y Permisos</option>
+            <option value='resetear-permisos.ps1'>Resetear Permisos de todas las carpetas</option>
+            <option value='cambiar-permisos.ps1'>Cambiar Permisos a partir de CSV</option>
+        </select><br>
+        <label class='lanzador' for='apis' required>Elija la api</label>
+        <select id='apis' name='apis'>
+    ";
+    $apis = mysqli_query($conexion, $Q_apis);
+    if ($apis and mysqli_num_rows($apis) > 0) {
+        $grupos = [];
+        while ($api = mysqli_fetch_assoc($apis)) {
+            $id_api = $api['id'];
+            $tenant = $api['tenant'];
+            $sitio = $api['sitio'];
+            if (!isset($grupos[$tenant])) {
+                $grupos[$tenant] = [];
+            }
+            $grupos[$tenant][] = [$id_api,$sitio];
+        }
+        foreach ($grupos as $grupo => $sitios) {
+            echo "      <optgroup label='$grupo'>";
+            foreach ($sitios as $sitio) {
+                echo "          <option value='".$sitio[0]."'>Sitio: ".$sitio[1]."</option>";
+            }
+            echo "      </optgroup>";
+        }
+    }
+    echo "
+        </select><br>
+        <label class='lanzador' for='certificado' required>Seleccione el certificado asociado a la API</label>
+        <select id='certificado' name='certificado'>
+        </select><br>
+        <label class='lanzador'>Pulse Aceptar para lanzar la tarea ></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
+    </form>
+    ";
+    echo "</div>";
     include 'footer.php';
 ?>

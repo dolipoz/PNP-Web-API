@@ -52,8 +52,8 @@ create table api (
     tenant varchar(50) not null,
     sitio varchar(50) not null,
     id_cliente varchar(255) not null,
-
-    unique (sitio)
+    
+    unique (tenant,sitio)
 );
 -- Tabla para los certificados de las sesiones de PNP.Powershell
 create table certificados (

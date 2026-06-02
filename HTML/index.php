@@ -13,12 +13,6 @@
                 <li id='perfil' class='pestanias' style='background-color: #012456;'><a href='#' onclick='mostrarConsola(\"perfil\",\"consola_perfil\")'>Mi Perfil</a></li>
                 <li id='logoff' class='pestanias'><a href='#' onclick='mostrarConsola(\"logoff\",\"consola_logoff\")'>Cerrar Sesión</a></li>
                 ";
-                if ($puede_crear_usuarios) {
-                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola_signup\")'>Crear Usuario</a></li>";
-                }
-                if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
-                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
-                }
                 if ($puede_crear_api) {
                     echo "<li id='addapi' class='pestanias'><a href='#' onclick='mostrarConsola(\"addapi\",\"consola_addapi\")'>Crear API</a></li>";
                 }
@@ -30,6 +24,12 @@
                 }
                 if ($puede_modificar_certificados or $puede_eliminar_certificados) {
                     echo "<li id='gestion_cert' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_cert\",\"consola_g_cert\")'>Gestionar Certificados</a></li>";
+                }
+                if ($puede_crear_usuarios) {
+                    echo "<li id='signup' class='pestanias'><a href='#' onclick='mostrarConsola(\"signup\",\"consola_signup\")'>Crear Usuario</a></li>";
+                }
+                if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
+                    echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
                 }
             }
             ?>
@@ -82,7 +82,128 @@
             </form>
         </div>
         ";
-        // -----------------------------------------  Consola 4 Crear usuarios  ---------------------------------------------------------
+        // -----------------------------------------  Consola 4 - Crear API  -------------------------------------------------------------
+        echo "
+        <form id='consola_addapi' class='consolas' action='Scripts/Crear/crear-api.php' method='POST' style='display: none;'>
+            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
+            <label class='prompt' for='sitio'>PS C:\Escriba la url del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
+            <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
+            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
+        </form>
+        ";
+        // -----------------------------------------  Consola 5 - Gestionar API  ---------------------------------------------------------
+        $solo_lectura = "";
+        if (!$puede_modificar_api) {$solo_lectura = "readonly";}
+        echo "
+        <div id='consola_g_api' class='consolas' style='display: none;'>
+            <table class='cabecera-tabla'>
+                <tr>
+                    <th>Tenant</th>
+                    <th>Sitio</th>
+                    <th>Cliente ID</th>
+        ";
+        if ($puede_modificar_api) { echo "            <th>Actualizar</th>"; }
+        if ($puede_eliminar_api) { echo "            <th>Eliminar</th>"; }
+        echo "      <th>Certificados Asociados</th>";
+        echo "  </tr>";
+
+        $apis = mysqli_query($conexion, $Q_apis);
+        if ($apis and mysqli_num_rows($apis) > 0) {
+            while ($api = mysqli_fetch_assoc($apis)) {
+                $id = $api['id'];
+                $tenant = $api['tenant'];
+                $sitio = $api['sitio'];
+                $id_cliente = $api['id_cliente'];
+                echo "
+                <tr>
+                    <td><form action='Scripts/Modificar/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
+                    <input type='hidden' name='id_api' value='$id' required>
+                    <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
+                    <td><input type='text' name='sitio' value='$sitio' size='30' minlength='2' maxlength='100' required></td>
+                    <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
+                ";
+                if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
+                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-api.php' value='Eliminar'>"; }
+                echo "
+                    </td><td><select name='certificados'>
+                ";
+                $q_cert = "select certs.* from certificados certs inner join api_certificados api_cert on api_cert.id_certificado = certs.id where api_cert.id_api = ".$api['id'];
+                $certificados = mysqli_query($conexion, $q_cert);
+                if ($certificados and mysqli_num_rows($certificados) > 0) {
+                    while ($certificado = mysqli_fetch_assoc($certificados)) {
+                        echo "      <option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
+                    }
+                }
+                echo "
+                        </select>
+                    </form></td>
+                </tr>
+                ";
+            }
+        }
+        echo "
+            </table>
+        </div>
+        ";
+        // -----------------------------------------  Consola 6 - Crear Certificados  -------------------------------------------------------------
+        
+        echo "
+        <form id='consola_addcert' class='consolas' action='Scripts/Crear/crear-certificado.php' method='POST' style='display: none;'>
+            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' id='certificado' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='pais'>PS C:\Escoja el pais></label>
+            <select id='pais' name='pais'>
+                <option value='ES' selected>España</option>
+                <option value='US'>Estados Unidos</option>
+                <option value='DE'>Alemania</option>
+                <option value='FR'>Francia</option>
+            </select><br>
+            <label class='prompt' for='ciudad'>PS C:\Escriba el nombre de la ciudad></label><input type='text' id='ciudad' name='ciudad' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='localidad'>PS C:\Escriba el nombre de la localidad></label><input type='text' id='localidad' name='localidad' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' id='expira' name='expira' value='1' min='1' max='4' required><br>
+            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
+        </form>
+        ";
+        // -----------------------------------------  Consola 7 - Gestionar Certificados  ---------------------------------------------------------
+        $solo_lectura = "";
+        if ($puede_eliminar_certificados and !$puede_modificar_certificados) {$solo_lectura = "readonly";}
+        echo "
+        <div id='consola_g_cert' class='consolas' style='display: none;'>
+            <table class='cabecera-tabla'>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descargar Certificado</th>
+                    <th>Fecha Creación</th>
+                    <th>Fecha Expiración</th>
+        ";
+        if ($puede_eliminar_certificados) { echo "            <th>Eliminar</th>"; }
+        echo "  </tr>";
+
+        $certs = mysqli_query($conexion, $Q_certs);
+        if ($certs and mysqli_num_rows($certs) > 0) {
+            while ($cert = mysqli_fetch_assoc($certs)) {
+                $nombre_certificado = $cert['nombre'];
+                $f_creado = $cert['f_creado'];
+                $f_expira = $cert['expira'];
+                echo "
+                <tr>
+                    <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
+                    <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
+                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
+                    <td><p>$f_creado</p></td>
+                    <td><p>$f_expira</p>
+                ";
+                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-cert.php' value='Eliminar'>"; }
+                echo "
+                    </form></td>
+                </tr>
+                ";
+            }
+        }
+        echo "
+            </table>
+        </div>
+        ";
+        // -----------------------------------------  Consola 8 Crear usuarios  ---------------------------------------------------------
         echo "
         <form id='consola_signup' class='consolas' action='Scripts/Crear/crear-usuario.php' method='POST' style='display: none;'>
             <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='20' maxlength='20' required><br>
@@ -106,7 +227,7 @@
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
-        // -----------------------------------------  Consola 5 Gestión de usuarios  ---------------------------------------------------------
+        // -----------------------------------------  Consola 9 Gestión de usuarios  ---------------------------------------------------------
         $solo_lectura = "";
         if (!$puede_modificar_usuarios) {$solo_lectura = "readonly";}
         echo "
@@ -163,128 +284,6 @@
                 echo "
                     </form>
                     </td>
-                </tr>
-                ";
-            }
-        }
-
-        echo "
-            </table>
-        </div>
-        ";
-        // -----------------------------------------  Consola 6 - Crear API  -------------------------------------------------------------
-        echo "
-        <form id='consola_addapi' class='consolas' action='Scripts/Crear/crear-api.php' method='POST' style='display: none;'>
-            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
-            <label class='prompt' for='sitio'>PS C:\Escriba la url del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
-            <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
-            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
-        </form>
-        ";
-        // -----------------------------------------  Consola 7 - Gestionar API  ---------------------------------------------------------
-        $solo_lectura = "";
-        if (!$puede_modificar_api) {$solo_lectura = "readonly";}
-        echo "
-        <div id='consola_g_api' class='consolas' style='display: none;'>
-            <table class='cabecera-tabla'>
-                <tr>
-                    <th>Tenant</th>
-                    <th>Sitio</th>
-                    <th>Cliente ID</th>
-        ";
-        if ($puede_modificar_api) { echo "            <th>Actualizar</th>"; }
-        if ($puede_eliminar_api) { echo "            <th>Eliminar</th>"; }
-        echo "      <th>Certificados Asociados</th>";
-        echo "  </tr>";
-
-        $apis = mysqli_query($conexion, $Q_apis);
-        if ($apis and mysqli_num_rows($apis) > 0) {
-            while ($api = mysqli_fetch_assoc($apis)) {
-                $id = $api['id'];
-                $tenant = $api['tenant'];
-                $sitio = $api['sitio'];
-                $id_cliente = $api['id_cliente'];
-                echo "
-                <tr>
-                    <td><form action='Scripts/Modificar/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
-                    <input type='hidden' name='id_api' value='$id' required>
-                    <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
-                    <td><input type='text' name='sitio' value='$sitio' size='30' minlength='8' maxlength='255' required></td>
-                    <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
-                ";
-                if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
-                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-api.php' value='Eliminar'>"; }
-                echo "
-                    </td><td><select name='certificados'>
-                ";
-                $q_cert = "select certs.* from certificados certs inner join api_certificados api_cert on api_cert.id_certificado = certs.id where api_cert.id_api = ".$api['id'];
-                $certificados = mysqli_query($conexion, $q_cert);
-                if ($certificados and mysqli_num_rows($certificados) > 0) {
-                    while ($certificado = mysqli_fetch_assoc($certificados)) {
-                        echo "      <option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
-                    }
-                }
-                echo "
-                        </select>
-                    </form></td>
-                </tr>
-                ";
-            }
-        }
-        echo "
-            </table>
-        </div>
-        ";
-        // -----------------------------------------  Consola 8 - Crear Certificados  -------------------------------------------------------------
-        
-        echo "
-        <form id='consola_addcert' class='consolas' action='Scripts/Crear/crear-certificado.php' method='POST' style='display: none;'>
-            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' id='certificado' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='pais'>PS C:\Escoja el pais></label>
-            <select id='pais' name='pais'>
-                <option value='ES' selected>España</option>
-                <option value='US'>Estados Unidos</option>
-                <option value='DE'>Alemania</option>
-                <option value='FR'>Francia</option>
-            </select><br>
-            <label class='prompt' for='ciudad'>PS C:\Escriba el nombre de la ciudad></label><input type='text' id='ciudad' name='ciudad' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='localidad'>PS C:\Escriba el nombre de la localidad></label><input type='text' id='localidad' name='localidad' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' id='expira' name='expira' value='1' min='1' max='4' required><br>
-            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
-        </form>
-        ";
-        // -----------------------------------------  Consola 9 - Gestionar Certificados  ---------------------------------------------------------
-        $solo_lectura = "";
-        if ($puede_eliminar_certificados and !$puede_modificar_certificados) {$solo_lectura = "readonly";}
-        echo "
-        <div id='consola_g_cert' class='consolas' style='display: none;'>
-            <table class='cabecera-tabla'>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descargar Certificado</th>
-                    <th>Fecha Creación</th>
-                    <th>Fecha Expiración</th>
-        ";
-        if ($puede_eliminar_certificados) { echo "            <th>Eliminar</th>"; }
-        echo "  </tr>";
-
-        $certs = mysqli_query($conexion, $Q_certs);
-        if ($certs and mysqli_num_rows($certs) > 0) {
-            while ($cert = mysqli_fetch_assoc($certs)) {
-                $nombre_certificado = $cert['nombre'];
-                $f_creado = $cert['f_creado'];
-                $f_expira = $cert['expira'];
-                echo "
-                <tr>
-                    <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
-                    <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
-                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
-                    <td><p>$f_creado</p></td>
-                    <td><p>$f_expira</p>
-                ";
-                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-cert.php' value='Eliminar'>"; }
-                echo "
-                    </form></td>
                 </tr>
                 ";
             }

@@ -103,6 +103,23 @@
                     console.error(error);
                 });
         }
+        function cargarCertificados() {
+            fetch("Scripts/certificados-de-api.php?id=" + this.value)
+                .then(response => response.json())
+                .then(datos => {
+                    const select = document.getElementById("certificado");
+                    select.innerHTML = "";
+                    datos.forEach(certificados => {
+                        const option = document.createElement("option");
+                        option.value = certificados;
+                        option.innerHTML = certificados;
+                        select.appendChild(option);
+                    });
+                });
+        }
+        document.getElementById("apis").addEventListener("change", cargarCertificados);
+        const apis = document.getElementById("apis");
+        apis.dispatchEvent(new Event("change"));
     </script>
 </body>
 </html>

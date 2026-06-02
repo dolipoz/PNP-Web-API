@@ -14,14 +14,10 @@
             a.tenant as tenant,
             a.sitio as sitio,
             a.id_cliente as id_cliente
-        from
-            api_certificados ac
-        join
-            certificados c on ac.id_certificado = c.id
-        join
-            apis a on ac.id_api = a.id
-        where
-            ac.id_certificado = $id_certificado and ac.id_api = $id_api";
+        from api_certificados ac
+        join certificados c on ac.id_certificado = c.id
+        join apis a on ac.id_api = a.id
+        where ac.id_certificado = $id_certificado and ac.id_api = $id_api";
     $apis = mysqli_query($conexion,$q_api);
     if ($apis and mysqli_num_rows($apis) > 0) {
         while ($api = mysqli_fetch_assoc($apis)) {
@@ -44,7 +40,7 @@
         $arrayCSV = pathinfo($nombreCSV);
         $extension = $arrayCSV['extension'];
         // Comprobamos que la extensión es la correcta y que el fichero no sea mayor del máximo MB
-        if (in_array($extension,$extensionesValidas and $csvsize < $MaxMB)) {
+        if (in_array($extension,$extensionesValidas) and $csvsize < $MaxMB) {
             // Leemos el contenido del CSV
             $csv = fopen($_FILES['csv']['tmp_name'], 'r');
             $cabecera = fgetcsv($csv, 0, ';');
