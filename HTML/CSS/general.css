@@ -48,20 +48,28 @@ input[type=submit],input[type=reset] {
     display: flex;
     flex-wrap: nowrap;
     overflow: hidden;
-    height: 15vh;
+    height: 10vh;
     background-image: url("../Multimedia/fondo-azul-blanco.jpg");
     background-size: 100% 100%;
     background-repeat: no-repeat;
-    margin: 0px;
-    padding: 10px;
-    border: #000000 solid 1px;
+    margin: 10px;
+    
+    border-radius: 12px;
+    padding: 25px 35px;
+
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 8px 25px #00000026;
+
 }
 #banner div {
     flex: 0.9;
     text-align: center;
 }
 #banner div h1 {
-    margin-bottom: 0px;
+    font-size:42px;
+    margin-bottom:8px;
 }
 #banner div p {
     margin-top: 0px;
@@ -190,24 +198,11 @@ td, th {
     color: #00ff00;
 }
 /* ---------------- Navegador de Tareas ------------------ */
-#ventana_tareas .monitor {
-    background: linear-gradient(#e5f6f6, #d0ddef);
-    border-radius: 0px 0px 3px 3px;
-    margin: 0px;
-    padding: 10px;
-    font-family: "Segoe UI", "Inter", "Noto Sans", system-ui, sans-serif;
-    color: #000000;
-    font-size: 15px;
-    min-height: 50vh;
-}
-#ventana_tareas .prompt {
-    color: #000000;
-}
 #ventana_tareas {
     background-color: #7d8ea7;
     box-shadow: 0 10px 30px #00000099;
-    border-radius: 12px;
     margin: 20px 8% 20px 8%;
+    border-radius:12px;
 }
 #ventana_tareas nav {
     background: #f0f0f0;
@@ -251,6 +246,24 @@ td, th {
     background: white;
     position: relative;
     top: 1px;
+}
+
+#ventana_tareas h1{
+    font-size: 16px;
+}
+
+#ventana_tareas .monitor {
+    background: linear-gradient(#e5f6f6, #d0ddef);
+    border-radius: 0px 0px 3px 3px;
+    margin: 0px;
+    padding: 10px;
+    font-family: "Segoe UI", "Inter", "Noto Sans", system-ui, sans-serif;
+    color: #000000;
+    font-size: 15px;
+    min-height: 50vh;
+}
+#ventana_tareas .prompt {
+    color: #000000;
 }
 /* --------------------------------------------------------- */
 

@@ -22,10 +22,23 @@ for ($index=1; $index -le $MaxHilos; $index++) {
                         $columnas = $fila -split "`t"
                         $tarea = $columnas[4] | ConvertFrom-Json
                         $script = $tarea.script
-                        $params = @($tarea.parametros)
+                        $params = @()
+                        $contador = 0
+                        foreach ($p in $tarea.parametros) {
+                            # Si se ejecuta el script Cambiar-Permisos habrá 5 parámetros y si el contador llega a 4 convierte ese parametro
+                            # que es el csv a formato json
+                            if ($contador -eq 4) {
+                                $params += $p | ConvertTo-Json
+                            } else {
+                                $params += $p
+                            }
+                            $contador++
+                        }
                         $params += "$nombre_contenedor"
                         $params += "$index"
-                        & pwsh \scripts\$script $params
+
+                        & pwsh \scripts\$script $params 2>&1
+                        #ejecutarquery("update tareas set salida = '$salida' where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
                     }
                     ### Tras llegar el proceso a 100% se actualizará el tarea como completado y se le pondrá fecha de finalización
                     #ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")

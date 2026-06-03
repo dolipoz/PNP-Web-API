@@ -120,6 +120,22 @@
         document.getElementById("apis").addEventListener("change", cargarCertificados);
         const apis = document.getElementById("apis");
         apis.dispatchEvent(new Event("change"));
+        // Función para cambiar el Action del formulario para Cambiar Permisos
+        function cambiarFormulario() {
+            let script = document.getElementById("script").value;
+            if (script === 'cambiar-permisos.ps1') {
+                document.getElementById("etiqueta_csv").style.display = 'inline';
+                document.getElementById("csv").style.display = 'inline';
+                document.getElementById("lanzar_tareas").action = "Scripts/cambiar-permisos.php";
+            } else {
+                document.getElementById("etiqueta_csv").style.display = 'none';
+                document.getElementById("csv").style.display = 'none';
+                document.getElementById("lanzar_tareas").action = "Scripts/lanzar-tarea.php";
+            }
+        }
+        document.getElementById("script").addEventListener("change", cambiarFormulario);
+        const script = document.getElementById("script");
+        script.dispatchEvent(new Event("change"));
     </script>
 </body>
 </html>

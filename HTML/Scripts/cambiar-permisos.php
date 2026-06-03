@@ -3,37 +3,35 @@
     include "funciones.php";
     include "conectar-db.php";
 
-    $script = "ver-carpetas.ps1"
-    $id_api = $_POST['id_api'];
-    $id_certificado = $_POST['id_certificado'];
-
-    // Con un select JOIN obtenemos los datos de la API y del Certificado si están asociados
-    $q_api = "
-        select
-            c.nombre as certificado,
-            a.tenant as tenant,
-            a.sitio as sitio,
-            a.id_cliente as id_cliente
-        from api_certificados ac
-        join certificados c on ac.id_certificado = c.id
-        join apis a on ac.id_api = a.id
-        where ac.id_certificado = $id_certificado and ac.id_api = $id_api";
-    $apis = mysqli_query($conexion,$q_api);
-    if ($apis and mysqli_num_rows($apis) > 0) {
-        while ($api = mysqli_fetch_assoc($apis)) {
-            $certificado = $api['certificado'];
-            $sitio = $api['sitio'];
-            $tenant = $api['tenant'];
-            $id_cliente = $api['id_cliente'];
-        }
-    } else {
-        $_SESSION["error"] = True;
-        $_SESSION["info"] = "El certificado no está asociado a esa API.";
-        header('Location: ../index.php');
-    }
+    $script = $_POST['script'];
+    $id_api = $_POST['apis'];
+    $certificado = $_POST['certificado'];
 
     // Si no hay fichero de entrada saldrá mostrando un error
     if (isset($_FILES['csv'])) {
+        // Con un select JOIN obtenemos los datos de la API y del Certificado si están asociados
+        $q_api = "
+            select
+                a.tenant as tenant,
+                a.sitio as sitio,
+                a.id_cliente as id_cliente
+            from api_certificados ac
+            join certificados c on ac.id_certificado = c.id
+            join api a on ac.id_api = a.id
+            where c.nombre = '$certificado' and ac.id_api = $id_api";
+        $apis = mysqli_query($conexion,$q_api);
+        if ($apis and mysqli_num_rows($apis) > 0) {
+            while ($api = mysqli_fetch_assoc($apis)) {
+                $sitio = $api['sitio'];
+                $tenant = $api['tenant'];
+                $id_cliente = $api['id_cliente'];
+            }
+        } else {
+            $_SESSION["error"] = True;
+            $_SESSION["info"] = "El certificado no está asociado a esa API.";
+            header('Location: ../tareas.php');
+        }
+
         // Sacamos la información del CSV, su nombre, tamaño y extensión
         $nombreCSV = $_FILES['csv']['name'];
         $csvsize = $_FILES['csv']['size'];
@@ -43,21 +41,24 @@
         if (in_array($extension,$extensionesValidas) and $csvsize < $MaxMB) {
             // Leemos el contenido del CSV
             $csv = fopen($_FILES['csv']['tmp_name'], 'r');
-            $cabecera = fgetcsv($csv, 0, ';');
+            $cabecera = fgetcsv($csv,0,';','"','\\');
             $datos = [];
-            while (($fila = fgetcsv($csv, 0, ';')) !== false) {
+            while (($fila = fgetcsv($csv,0,';','"','\\')) !== false) {
                 $datos[] = array_combine($cabecera, $fila);
             }
             fclose($csv);
             // Lo guardamos en la variable en vez de en un fichero del servidor
-            $json = json_encode($datos, JSON_UNESCAPED_UNICODE);
-
+            $comando = [
+                "script" => $script,
+                "parametros" => [$tenant,$sitio,$id_cliente,$certificado,$datos]
+            ];
+            $json = json_encode($comando, JSON_UNESCAPED_UNICODE);
             // Insertamos los datos necesarios para crear un tarea que se procese por Powershell con los datos del JSON
             // Al ser una acción que cambia permisos se requiere del bloqueo para que solo se pueda ejercer uno a la vez por sitio 
             $q_cambiar_permisos = "
-                insert into tareas ( id_api, tarea, estado, bloqueo) values (
-                $id_api,
-                \"{'script':'$script','parametros':['$tenant','$sitio','$id_cliente','$certificado','$json']}\",
+                insert into tareas ( id_api, comando, estado, bloqueo) values (
+                '$id_api',
+                '$json',
                 'pendiente',
                 1)";
             if ($conexion->query($q_cambiar_permisos) == True) {
@@ -65,7 +66,7 @@
                 $_SESSION["info"] = "Tarea en proceso, vea las tareas para seguir el estado.";
             } else {
                 $_SESSION["error"] = True;
-                $_SESSION["info"] = "No se pudo ejecutar el tarea.";
+                $_SESSION["info"] = "No se pudo ejecutar la tarea.";
             }
         } else {
             $_SESSION["error"] = True;
@@ -73,8 +74,8 @@
         }
     } else {
         $_SESSION["error"] = True;
-        $_SESSION["info"] = "No se recibió ningún fichero.";
+        $_SESSION["info"] = "No se recibió ningún fichero. : ".$_FILES['csv']['name'];
     }
 
-    header('Location: ../index.php');
+    header('Location: ../tareas.php');
 ?>

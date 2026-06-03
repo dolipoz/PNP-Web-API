@@ -4,7 +4,6 @@ param (
    [string]$sitio,
    [string]$id_cliente,
    [string]$cert,
-   [string]$csvTexto,
    [string]$nombre_contenedor,
    [int32]$index
 )
@@ -21,68 +20,38 @@ ejecutarquery("update tareas set progreso = 66 where estado = 'ejecutando' and n
 
 # Para recorrer todos los directorios dentro del Sharepoint usamos Get-PnPListItems
 # La columna FileLeafRef da el nombre del directorio, el deFSObjType da si es fichero o directorio, HasUniqueRoleAssignments dice si tiene permisos propios o heredados
-# $directorios = Get-PnPListItem -List $Raiz -PageSize 5000 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }
+$directorios = Get-PnPListItem -List $Raiz -PageSize 500 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }
 
-# write-output "+++++++++++++++++++++++++++++++"
-# # Recorremos los directorios buscados con Get-PnPListItems
-# foreach ($dir in $directorios) {
-#    $HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
-#    #Write-Output $dirPNP.PSObject.Properties.Name
-#    #$HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
-#    Write-Output $dir['FileLeafRef']
-#    #Write-Output $dir['FSObjType']
+$json = @{}
+
+write-output "+++++++++++++++++++++++++++++++"
+# Recorremos los directorios buscados con Get-PnPListItems
+foreach ($dir in $directorios) {
+   $HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
+   #Write-Output $dirPNP.PSObject.Properties.Name
+   #$HasUniqueRoleAssignments = Get-PnPProperty -ClientObject $dir -Property HasUniqueRoleAssignments
+   Write-Output $dir['FileLeafRef']
+   #Write-Output $dir['FSObjType']
    
-#    if ($dir['FSObjType'] -ne 1) {
-#       # Si FSObjType no es 1 significa que es un directorio, que es lo que buscamos
-#       continue
-#    }
+   if ($dir['FSObjType'] -ne 1) {
+      # Si FSObjType no es 1 significa que es un directorio, que es lo que buscamos
+      continue
+   }
    
-#    if ($HasUniqueRoleAssignments -eq $true) {
-#       #Write-Output $dir.PSObject.Properties.Name
-#       $roleAssignments = Get-PnPProperty -ClientObject $dir -Property RoleAssignments
-#       foreach ($roleAssignment in $roleAssignments) {
-#          #$grupo = $roleAssignment.Member.Title
-#          $grupo = Get-PnPProperty -ClientObject $roleAssignment -Property Member
-#          $permisos = Get-PnPProperty -ClientObject $roleAssignment -Property RoleDefinitionBindings
-#          write-output $grupo.PSObject.Properties.Name
-#          #write-output $permisos.Name
-#       }
-#    }
-#    break
-# }
-# write-output "+++++++++++++++++++++++++++++++"
-
-
-#ejecutarquery("update tareas set salida = '{".'"resultado"'.":$directorios}', progreso = 99 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
-# Para cerrar la sesion de PNP
-
-$csv = Import-Csv -Path $csvTexto -Delimiter ";"
-
-# Obtenemos las cabeceras de los niveles del CSV como ARRAY
-$cabecerasNiveles = $csv[0].psobject.properties.name | where-object { $_ -match "^Nivel" }
-# Obtenemos las cabeceras de los Grupos sin Prefijo del CSV como ARRAY
-$cabecerasPermisos = $csv[0].psobject.properties.name | where-object { $_ -notmatch "^Nivel" }
-
-# Quitamos las filas que estén vacías al final del CSV
-$csv = $csv | where-object { $_.psobject.properties.Value -ne  '' }
-# Sacamos la cantidad de filas que hay en el CSV -1 para usarlo en el FOREACH
-$csvLimite = $csv | Measure-Object
-$csvLimite = $csvLimite.Count-1
-$nivel1 = $nivel2 = $nivel3 = $nivel4 = 0
-
-$contador = 0
-write-output "__________________________________________"
-foreach ($fila in $csv) {
-    if ($contador -eq 0) {
-        write-output "$contador principio"
-    } elseif ($contador -eq $csvLimite) {
-        write-output $cabecerasNiveles | foreach-object { $fila.$_ }
-        write-output $cabecerasPermisos | foreach-object { $fila.$_ }
-    } else {
-        write-output "$contador normal"
-    }
-    $contador++
+   if ($HasUniqueRoleAssignments -eq $true) {
+      #Write-Output $dir.PSObject.Properties.Name
+      $roleAssignments = Get-PnPProperty -ClientObject $dir -Property RoleAssignments
+      foreach ($roleAssignment in $roleAssignments) {
+         #$grupo = $roleAssignment.Member.Title
+         $grupo = Get-PnPProperty -ClientObject $roleAssignment -Property Member
+         $permisos = Get-PnPProperty -ClientObject $roleAssignment -Property RoleDefinitionBindings
+         $json[$grupo.PSObject.Properties.Name] = $permisos.Name
+         #write-output $permisos.Name
+      }
+   }
 }
-write-output "__________________________________________"
+write-output "+++++++++++++++++++++++++++++++"
+
+# Para cerrar la sesion de PNP
 Disconnect-PnPOnline
 ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
