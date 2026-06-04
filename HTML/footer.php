@@ -54,13 +54,13 @@
                         <table class='cabecera-tabla'>
                             <tr>
                                 <th>Cantidad Pendientes</th>
-                                <th>Cantidad Corriendo</th>
+                                <th>Cantidad ejecutando</th>
                                 <th>Cantidad Completadas</th>
                                 <th>Cantidad Fallidas</th>
                             </tr>
                             <tr>
                                 <td>${datos.pendientes}</td>
-                                <td>${datos.corriendo}</td>
+                                <td>${datos.ejecutando}</td>
                                 <td>${datos.completadas}</td>
                                 <td>${datos.fallidas}</td>
                             </tr>
@@ -71,7 +71,6 @@
                                 <th>ID API</th>
                                 <th>Nombre Contenedor</th>
                                 <th>ID Tarea</th>
-                                <th>Comando</th>
                                 <th>Estado</th>
                                 <th>Salida</th>
                                 <th>Error</th>
@@ -86,7 +85,6 @@
                                 <td>${t.id_api}</td>
                                 <td>${t.nombre_contenedor}</td>
                                 <td>${t.id_tarea}</td>
-                                <td>${t.comando}</td>
                                 <td>${t.estado}</td>
                                 <td>${t.salida}</td>
                                 <td>${t.error}</td>

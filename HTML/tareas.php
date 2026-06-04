@@ -46,7 +46,7 @@
     if ($puede_modificar_tareas) { echo "            <th>Actualizar</th>"; }
     if ($puede_eliminar_tareas) { echo "            <th>Eliminar</th>"; }
     echo "  </tr>";
-    $q_tareas = "select * from tareas where estado = 'completada' or estado = 'fallida'";
+    $q_tareas = "select * from tareas where estado = 'completada' or estado = 'fallida' or estado = 'pendiente'";
     $tareas = mysqli_query($conexion, $q_tareas);
     if ($tareas and mysqli_num_rows($tareas) > 0) {
         while ($tarea = mysqli_fetch_assoc($tareas)) {

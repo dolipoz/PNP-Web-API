@@ -5,7 +5,7 @@
 
     header('Content-Type: application/json');
     // Ponemos los contadores de los tareas a 0
-    $pendientes = $corriendo = $completadas = $fallidas = 0;
+    $pendientes = $ejecutando = $completadas = $fallidas = 0;
 
     // Buscamos todos los tareas en la base de datos para contarlos y almacenar en el json los que estén en ejecución o pendientes
     $lista_tareas = [];
@@ -14,9 +14,9 @@
         if ($tarea['estado'] == 'pendiente') {
             $lista_tareas[] = $tarea;
             $pendientes += 1;
-        } elseif ($tarea['estado'] == 'corriendo') {
+        } elseif ($tarea['estado'] == 'ejecutando') {
             $lista_tareas[] = $tarea;
-            $corriendo += 1;
+            $ejecutando += 1;
         } elseif ($tarea['estado'] == 'completada') {
             $completadas += 1;
         } elseif ($tarea['estado'] == 'fallida') {
@@ -26,7 +26,7 @@
     // Creamos el json con los contadores y lo enviamos para que el script pueda sacar los datos
     $json = [
         "pendientes" => $pendientes,
-        "corriendo" => $corriendo,
+        "ejecutando" => $ejecutando,
         "completadas" => $completadas,
         "fallidas" => $fallidas,
         "tareas" => $lista_tareas
