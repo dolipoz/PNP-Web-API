@@ -2,6 +2,13 @@
 $MaxHilos = 4
 $nombre_contenedor = $env:HOSTNAME
 
+
+$traducirPermisos = @{
+    "" = "Vacio"
+    "RO" = "Leer"
+    "RW" = "Colaborar"
+}
+
 # Función para ejecutar querys de MySQL
 function ejecutarquery {
     param(
@@ -23,11 +30,10 @@ function ObtenerCarpetas {
     )
     $cabecerasNiveles = $csv[0].PSObject.Properties.Name | Where-Object { $_ -match '^NIVEL' }
     $cabecerasPermisos = $csv[0].PSObject.Properties.Name | Where-Object { $_ -notmatch '^NIVEL' }
-    # Diccionario para almacenar la estructura de 
+    # Diccionario para almacenar la estructura de carpetas con sus permisos
     $carpetas = @{}
-    # Nivel => código actual
+    # Variables para controlar las celdas vacías del excel
     $digitoActualPorNivel = @{}
-    # Padre => último hijo generado
     $contadorHijosPorPadre = @{}
 
     foreach ($fila in $csv) {
@@ -64,8 +70,6 @@ function ObtenerCarpetas {
         if (-not $digitoMasProfundo) { continue }
         if (-not $carpetas.ContainsKey($digitoMasProfundo)) { $carpetas[$digitoMasProfundo] = @( '', '', '', '' ) }
 
-
-        # Fusionar
         $Actual = $carpetas[$digitoMasProfundo]
         $Nuevo = $permisosFila
         for ($i = 0; $i -lt $Nuevo.Count; $i++) {
@@ -91,9 +95,16 @@ function ObtenerCarpetas {
     }
     # Ordenar las carpetas por nombre y agregar cabeceras
     $carpetas = foreach ($carpeta in ($carpetas.Keys | Sort-Object)) {
+        $contadorGrp = 0
+        [System.Collections.ArrayList]$permisos = @()
+        foreach ($p in $carpetas[$carpeta]) {
+            $permisos.Add(@($cabecerasPermisos[$contadorGrp] , $p))
+            $contadorGrp++
+        }
+        $permisos = $permisos | Sort-Object -Property @{Expression={ $_[0] }}
         [PSCustomObject]@{
             Carpeta  = $carpeta
-            Permisos = $carpetas[$carpeta]
+            Permisos = $permisos
         }
     }
     return $carpetas

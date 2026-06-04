@@ -4,7 +4,7 @@ param (
    [string]$sitio,
    [string]$id_cliente,
    [string]$cert,
-   $csvString,
+   $csvJson,
    [string]$nombre_contenedor,
    [int32]$index
 )
@@ -17,32 +17,36 @@ $RutaCert = "/certs/$cert.pfx"
 $password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
 write-output "Mostrar Carpetas"
 # Llamamos a la función de ObtenerCarpetas alojada en Importaciones
-$csv = $csvString | ConvertFrom-Json
+$csv = $csvJson | ConvertFrom-Json
 $carpetas = ObtenerCarpetas $csv
-#write-output $carpetas
-
-
-
-
-
-
-
-
-
-
 
 
 # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
 Connect-PnPOnline -Url "$tenant.sharepoint.com/sites/$sitio" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
 
-
-
-
 ejecutarquery("update tareas set progreso = 33 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 # # Obtener todas las carpetas
-$directorios = Get-PnPListItem -List $Raiz -PageSize 500 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef } | Where-Object -Property FileLeafRef -match "^01\."
+$directorios = Get-PnPListItem -List $Raiz -PageSize 500 -Fields "FileLeafRef","FSObjType","HasUniqueRoleAssignments" | Sort-Object { $_.FieldValues.FileLeafRef }
 
-Write-Output $directorios
+foreach ($c in $carpetas) {
+   $cn = $c.Carpeta
+   $carpeta = $directorios | Where-Object { $_.FieldValues.FileLeafRef -match "^$cn\s" }
+   Write-Output $directorio.FieldValues.FileLeafRef
+   foreach ($g in $c.Permisos) {
+      $grupo = $g[0]
+      $permiso = $traducirPermisos[$g[1]]
+      write-output "El grupo $grupo puede $permiso"
+   }
+}
+
+
+
+
+
+
+
+
+
 # foreach ($directorio in $directorios) {
 #     # Cargar propiedad HasUniqueRoleAssignments
 #     Get-PnPProperty -ClientObject $directorio -Property HasUniqueRoleAssignments
