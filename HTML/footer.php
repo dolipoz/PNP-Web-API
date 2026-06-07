@@ -72,8 +72,6 @@
                                 <th>Nombre Contenedor</th>
                                 <th>ID Tarea</th>
                                 <th>Estado</th>
-                                <th>Salida</th>
-                                <th>Error</th>
                                 <th>Progreso</th>
                                 <th>Fecha de Finalización</th>
                             </tr>
@@ -86,8 +84,6 @@
                                 <td>${t.nombre_contenedor}</td>
                                 <td>${t.id_tarea}</td>
                                 <td>${t.estado}</td>
-                                <td>${t.salida}</td>
-                                <td>${t.error}</td>
                                 <td>${t.progreso}</td>
                                 <td>${t.f_finalizacion}</td>
                             </tr>

@@ -36,7 +36,6 @@
                 <th>ID API</th>
                 <th>Nombre Contenedor</th>
                 <th>ID Trabajo</th>
-                <th>Comando</th>
                 <th>Estado</th>
                 <th>Salida</th>
                 <th>Error</th>
@@ -67,9 +66,9 @@
                 <td><input type='number' name='id_api' value='$id_api' readonly></td>
                 <td><input type='text' name='contenedor' value='$nombre_contenedor' size='30' readonly></td>
                 <td><input type='number' name='id_tarea' value='$id_tarea' readonly></td>
-                <td><input type='text' name='comando' value='$comando' size='30' readonly></td>
-                <td><input type='text' name='estado' value='$estado' size='30' readonly></td>
-                <td><input type='text' name='salida' value='$salida' size='30' readonly></td>
+                <td><input type='hidden' name='comando' value='$comando'>
+                <input type='text' name='estado' value='$estado' size='30' readonly></td>
+                <td><input type='hidden' name='salida' value='$salida'><input type='submit' formaction='ver-carpetas.php' value='Mostrar Carpetas'></td>
                 <td><input type='text' name='error' value='$error' size='30' readonly></td>
                 <td><input type='text' name='progreso' value='$progreso' size='30' readonly></td>
                 <td><p>$f_finalizacion</p>

@@ -83,7 +83,7 @@ create table tareas (
     comando json not null,
     estado varchar(20) not null,
     salida json default null,
-    error varchar(255) default null,
+    error text default null,
     progreso int default 0,
     f_finalizacion datetime default null,
     bloqueo tinyint default null,
