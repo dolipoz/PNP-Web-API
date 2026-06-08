@@ -33,7 +33,7 @@ jobs:
         token: ${{ secrets.TOKEN_GITHUB }}
     - name: Crear certificado autofirmado temporal para evitar fallos de pods
       run: |
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout Docker/apache/servidor.key -out Docker/apache/servidor.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
+        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./servidor.key -out ./servidor.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v6
