@@ -163,14 +163,16 @@ jobs:
         kubectl apply -f Kubernetes/servicios/apache.yml
         kubectl apply -f Kubernetes/servicios/mysql.yml
 
-        kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=60s
-        kubectl wait --for=condition=Ready pod --all --timeout=60s
     # Ejecutamos el script de mysql para crear la base de datos
     - name: Ejecutar script SQL para crear Base de Datos
       run: |
+        kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=60s
+        kubectl wait --for=condition=Ready pod -l app=pod-mysql --timeout=60s
         until kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysqladmin ping -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
           sleep 2
         done
         cat Docker/mysql/crear-database.sql | kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}"
-        
+    # Mostramos el servicio y los datos
+    - name: Mostrar datos de Salida
+      run: |
         kubectl get svc servicio-apache

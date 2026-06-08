@@ -12,6 +12,9 @@ jobs:
       run: |
         if ["${{ vars.AWS_REGION }}" == ""]; then exit 1 ; fi
         if ["${{ vars.AWS_S3 }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.TOKEN_GITHUB }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.AWS_ACCESS_KEY_ID }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.AWS_SECRET_ACCESS_KEY }}" == ""]; then exit 1 ; fi
     # Importar Checkout para cargar el repositorio en el runner
     - name: Checkout
       uses: actions/checkout@v6
@@ -54,10 +57,15 @@ jobs:
         mv eksctl /usr/local/bin
     # Conectamos kubectl con el cluster para eliminar todos los deployments
     - name: Conectar kubectl con cluster y eliminar apache y mysql del EKS
+      continue-on-error: true
       run: |
         CLUSTER_NAME=$(aws eks list-clusters --region ${{ vars.AWS_REGION }} --query "clusters[?contains(@, 'eks')] | [0]" --output text)
         aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $CLUSTER_NAME
-        kubectl delete services --all --all-namespaces=true
+        kubectl delete service --all
+        kubectl delete ingress --all
+        kubectl delete deployment --all
+        kubectl delete replicaset --all
+        kubectl delete pvc --all
     # ------------------------------- Terraform -------------------------------
     # Descargar terraform.tfstate mediante awscli
     - name: Descargar fichero de s3
