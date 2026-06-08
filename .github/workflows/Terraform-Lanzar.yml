@@ -117,7 +117,7 @@ jobs:
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/mysql.yml | tee mysql-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/despliegues/powershell.yml | tee powershell-var.yml
 
-        docker build -t $ImagenApache ./Docker/apache
+        docker build -t $ImagenApache -f Docker/apache/dockerfile .
         docker build -t $ImagenMysql ./Docker/mysql
         docker build -t $ImagenPowershell ./Docker/powershell
 
