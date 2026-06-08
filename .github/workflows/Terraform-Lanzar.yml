@@ -147,7 +147,7 @@ jobs:
         aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $nombre_cluster
 
         ### Creamos el secret de la contraseña de mysql, si no existe, en caso contrario lo modifica, para luego cargarlos en los despliegues
-        kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }} --from-literal=API_PASS=${{ secrets.API_PASS }} --from-literal=PWSH_PASS=${{ secrets.PWSH_PASS }} --dry-run=client -o yaml | kubectl apply -f -
+        kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }} --from-literal=API_USER=${{ vars.API_USER }} --from-literal=API_PASS=${{ secrets.API_PASS }} --from-literal=PWSH_USER=${{ vars.PWSH_USER }} --from-literal=PWSH_PASS=${{ secrets.PWSH_PASS }} --dry-run=client -o yaml | kubectl apply -f -
 
         ####### Añadimos los drivers de csi para volumenes en efs #######
         kubectl apply -k "github.com/kubernetes-sigs/aws-efs-csi-driver/deploy/kubernetes/overlays/stable/ecr/?ref=release-1.5"
