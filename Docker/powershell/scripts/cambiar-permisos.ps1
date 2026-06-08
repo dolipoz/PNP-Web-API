@@ -10,17 +10,19 @@ param (
 )
 # Importamos las funciones para realizar actualizaciones en la base de datos
 . \scripts\importaciones.ps1
-# Si el Sitio está configurado en otro idioma diferente al Español, cambiar según el lenguaje la raíz, por ejemplo en inglés sería "Documents"
-$raiz = "Documentos compartidos"
 
-$RutaCert = "/certs/$cert.pfx"
-$password = ConvertTo-SecureString $env:PFX_PASS -Force -AsPlainText
-write-output "Mostrar Carpetas"
-# Llamamos a la función de ObtenerCarpetas alojada en Importaciones
-$csv = $csvJson | ConvertFrom-Json
-$carpetas = ObtenerCarpetas $csv
-ejecutarquery("update tareas set progreso = 1 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 try {
+   ejecutarquery("update tareas set progreso = 1 where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+   # Si el Sitio está configurado en otro idioma diferente al Español, cambiar según el lenguaje la raíz, por ejemplo en inglés sería "Documents"
+   $raiz = "Documentos compartidos"
+
+   $RutaCert = "/certs/$cert.pfx"
+   $password = ConvertTo-SecureString $env:PWSH_PASS -Force -AsPlainText
+   write-output "Mostrar Carpetas"
+   # Llamamos a la función de ObtenerCarpetas alojada en Importaciones
+   $csv = $csvJson | ConvertFrom-Json
+   $carpetas = ObtenerCarpetas $csv
+
    # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
    Connect-PnPOnline -Url "$tenant.sharepoint.com/sites/$sitio" -ClientId $id_cliente -Tenant "$tenant.onmicrosoft.com" -CertificatePath $RutaCert -CertificatePassword $password
    # # Obtener todas las carpetas
@@ -59,6 +61,10 @@ try {
    }
    ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 } catch {
-   ejecutarquery("update tareas set estado = 'fallida', f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+   $_ | out-file -filepath "/certs/errores.log" -append
+   $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
+   $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
+   write-output $_
+   ejecutarquery("update tareas set estado = 'fallida', error = '$b64', f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 }
 Disconnect-PnPOnline

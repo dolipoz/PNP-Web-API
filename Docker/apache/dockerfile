@@ -28,6 +28,7 @@ RUN a2enmod rewrite
 # Crear directorio SSL
 RUN mkdir /etc/apache2/ssl
 
+COPY HTML /var/www/html
 # Copiar configuración SSL personalizada tras cambiar las variables por valores
 COPY https-var.conf /etc/apache2/sites-available/https.conf
 COPY servidor.key /etc/apache2/ssl/servidor.key

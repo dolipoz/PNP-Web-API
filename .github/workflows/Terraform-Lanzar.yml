@@ -10,8 +10,13 @@ jobs:
     steps:
     - name: Comprobar si las variables están creadas
       run: |
+        if ["${{ secrets.TOKEN_GITHUB }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.AWS_ACCESS_KEY_ID }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.AWS_SECRET_ACCESS_KEY }}" == ""]; then exit 1 ; fi
+        if ["${{ secrets.AWS_SESSION_TOKEN }}" == ""]; then exit 1 ; fi
         if ["${{ vars.AWS_REGION }}" == ""]; then exit 1 ; fi
         if ["${{ vars.AWS_S3 }}" == ""]; then exit 1 ; fi
+        
         if ["${{ vars.HTTP_SERVER }}" == ""]; then exit 1 ; fi
         if ["${{ vars.HTTP_ALIAS }}" == ""]; then exit 1 ; fi
         if ["${{ vars.ECR_Repo }}" == ""]; then exit 1 ; fi
@@ -95,7 +100,6 @@ jobs:
 
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/https.conf | tee Docker/apache/https-var.conf
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
-        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-HTML.yml | tee VP-HTML-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-CERTS.yml | tee VP-CERTS-var.yml
     # ------------------------------- ECR Docker -------------------------------
     # Iniciamos sesión en docker con aws ECR ya creado donde almacenaremos las imágenes creadas en AWS
@@ -142,7 +146,7 @@ jobs:
         source variables-terraform.sh
         aws eks update-kubeconfig --region ${{ vars.AWS_REGION }} --name $nombre_cluster
 
-        ### Creamos el secret de la contraseña de mysql, si no existe, en caso contrario lo modifica
+        ### Creamos el secret de la contraseña de mysql, si no existe, en caso contrario lo modifica, para luego cargarlos en los despliegues
         kubectl create secret generic mysql --from-literal=MYSQL_PASS=${{ secrets.MYSQL_ROOT_PASSWORD }} --from-literal=API_PASS=${{ secrets.API_PASS }} --from-literal=PWSH_PASS=${{ secrets.PWSH_PASS }} --dry-run=client -o yaml | kubectl apply -f -
 
         ####### Añadimos los drivers de csi para volumenes en efs #######
@@ -150,7 +154,6 @@ jobs:
 
         kubectl apply -f Kubernetes/volumenes/CSI-Ext.yml
         kubectl apply -f VP-DB-var.yml
-        kubectl apply -f VP-HTML-var.yml
         kubectl apply -f VP-CERTS-var.yml
 
         kubectl apply -f apache-var.yml
@@ -160,7 +163,7 @@ jobs:
         kubectl apply -f Kubernetes/servicios/apache.yml
         kubectl apply -f Kubernetes/servicios/mysql.yml
 
-        kubectl wait --for=condition=Available deployment/despliegue-mysql --timeout=60s
+        kubectl wait --for=condition=Ready pod -l app=pod-mysql --timeout=60s
         kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p${{ secrets.MYSQL_ROOT_PASSWORD }} < Docker/mysql/crear-database.sql
-
+        kubectl wait --for=condition=Ready pod --all --timeout=60s
         kubectl get svc servicio-apache

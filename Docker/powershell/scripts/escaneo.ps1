@@ -43,8 +43,11 @@ for ($index=1; $index -le $MaxHilos; $index++) {
                     ### Tras llegar el proceso a 100% se actualizará el tarea como completado y se le pondrá fecha de finalización
                     #ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
                 } catch {
-                    write-error $_
-                    ejecutarquery("update tareas set estado = 'fallida', error = 'error', bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+                    $_ | out-file -filepath "/certs/errores.log" -append
+                    $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
+                    $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
+                    write-output $_
+                    ejecutarquery("update tareas set estado = 'fallida', error = '$b64', f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
                 }
             }
             Start-Sleep -Seconds 2

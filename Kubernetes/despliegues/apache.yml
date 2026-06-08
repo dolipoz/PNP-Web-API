@@ -32,10 +32,3 @@ spec:
               containerPort: 80
             - name: https
               containerPort: 443
-          volumeMounts:
-            - name: volumen-html
-              mountPath: /var/www/html
-      volumes:
-        - name: volumen-html
-          persistentVolumeClaim:
-            claimName: pvc-efs-html
