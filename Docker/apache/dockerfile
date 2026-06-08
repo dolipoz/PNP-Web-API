@@ -1,8 +1,7 @@
-FROM php:8.2-apache-bookworm
+FROM php:8.4-apache
 
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    openssl
+# Instalar MySQLi para conectar con la base de datos
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Habilitar módulos apache necesarios
 RUN a2enmod ssl
@@ -11,7 +10,9 @@ RUN a2enmod rewrite
 # Crear directorio SSL
 RUN mkdir /etc/apache2/ssl
 
+# Pasar página completa
 COPY HTML /var/www/html
+RUN chown -R www-data:www-data /var/www/html && chown -R 755 /var/www/html/*
 # Copiar configuración SSL personalizada tras cambiar las variables por valores
 COPY Docker/apache/https-var.conf /etc/apache2/sites-available/https.conf
 COPY servidor.key /etc/apache2/ssl/servidor.key

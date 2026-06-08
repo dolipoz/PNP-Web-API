@@ -1,9 +1,8 @@
 <?php
+    session_start();
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
     // Variables globales para cada sesión de cliente Web
-    session_start();
-
     $MaxTamaArchivos = 10;
     $MaxMB = $MaxTamaArchivos*1024*1024;
     $extensionesValidas = array("csv","CSV");

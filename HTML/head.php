@@ -1,3 +1,7 @@
+<?php
+    // Importamos las variables e iniciamos la sesión del navegador
+    include "Scripts/variables.php";
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,8 +15,6 @@
 <body>
     <!-- Iniciamos sesión por cada usuario para usar variables globales -->
     <?php
-        // Importamos las variables e iniciamos la sesión del navegador
-        include "Scripts/variables.php";
         if ($_SESSION['alerta']) {
             // Si 'alerta' es true, se mostrará el mensaje de aviso de alerta
             echo '<script>alert("'.$_SESSION['info'].'")</script>';
