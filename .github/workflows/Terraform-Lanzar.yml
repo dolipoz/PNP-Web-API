@@ -171,7 +171,7 @@ jobs:
         until kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysqladmin ping -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
           sleep 2
         done
-        cat Docker/mysql/crear-database.sql | kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}"
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "source crear-database.sql"
     # Mostramos el servicio y los datos
     - name: Mostrar datos de Salida
       run: |
