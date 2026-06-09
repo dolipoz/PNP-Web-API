@@ -12,7 +12,6 @@
 	$comando = '{"script": "crear-cert.ps1", "parametros": ["'.$nombre.'", "'.$pais.'", "'.$ciudad.'", "'.$localidad.'", '.$expira.']}';
 	$sql_addcert = "insert into tareas (comando, estado) values ('$comando', 'pendiente')";
     if ($conexion->query($sql_addcert) == True) {
-        echo "Certificado añadido.";
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "El Certificado se añadió correctamente, descarguelo desde gestión de certificados.";
     } else {

@@ -14,16 +14,12 @@
 	)";
 
     if ($conexion->query($sql_add_api) == True) {
-        echo "API añadido.";
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "La API se añadió correctamente, inserte un certificado para utilizarlo.";
     } else {
 		$_SESSION["error"] = True;
 		$_SESSION["info"] = "La API no se pudo añadir.";
 	}
-
+	
 	header("Location: ../../index.php");
-
-
-
 ?>

@@ -40,7 +40,6 @@
     if ($conexion->query($sql_mod_user) == True) {
 		$filas = mysqli_affected_rows($conexion);
 		if ($filas > 0) {
-			echo "Usuario modificado.";
 			$_SESSION["correcto"] = True;
 			$_SESSION["info"] = "El usuario: $usuario se modificó correctamente.";
 		} else {

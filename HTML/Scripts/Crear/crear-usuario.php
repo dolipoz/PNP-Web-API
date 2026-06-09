@@ -21,14 +21,12 @@
 		$id_rol
 	)";
     if ($conexion->query($sql_signup) == True) {
-        echo "Usuario añadido.";
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "Usuario se añadió correctamente.";
     } else {
 		$_SESSION["error"] = True;
 		$_SESSION["info"] = "Usuario no se pudo añadir.";
 	}
-
 	header("Location: ../../index.php");
 
 

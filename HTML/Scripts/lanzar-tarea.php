@@ -25,7 +25,6 @@
 	}
 	
     if ($conexion->query($sql_addtarea) == True) {
-        echo "Se lanzó la tarea.";
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "Se lanzó la tarea correctamente.";
     } else {

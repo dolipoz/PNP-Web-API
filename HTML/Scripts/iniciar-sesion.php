@@ -56,5 +56,6 @@
         $_SESSION['error'] = true;
         $_SESSION['info'] = 'El usuario no existe.';
     }
+    
     header('Location: ../index.php');
 ?>

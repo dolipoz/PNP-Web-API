@@ -125,9 +125,16 @@
                 if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
                 if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-api.php' value='Eliminar'>"; }
                 echo "
-                    </td><td><select name='certificados'>
+                    </form></td>
+                    <td><form action='Scripts/Modificar/desasociar-certificado-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres desasociar el certificado?\");'>
+                    <input type='hidden' name='id_api' value='$id' required>
+                    <select name='id_cert'>
                 ";
-                $q_cert = "select certs.* from certificados certs inner join api_certificados api_cert on api_cert.id_certificado = certs.id where api_cert.id_api = ".$api['id'];
+                $q_cert = "
+                    select c.* 
+                    from certificados c 
+                    inner join api_certificados ac on ac.id_certificado = c.id
+                    where ac.id_api = ".$api['id'];
                 $certificados = mysqli_query($conexion, $q_cert);
                 if ($certificados and mysqli_num_rows($certificados) > 0) {
                     while ($certificado = mysqli_fetch_assoc($certificados)) {
@@ -135,7 +142,8 @@
                     }
                 }
                 echo "
-                        </select>
+                    </select>
+                    <input type='submit' value='Desasociar'>
                     </form></td>
                 </tr>
                 ";
@@ -176,17 +184,21 @@
                     <th>Fecha Expiración</th>
         ";
         if ($puede_eliminar_certificados) { echo "            <th>Eliminar</th>"; }
-        echo "  </tr>";
+        echo "  
+                    <td>Asociar Certificados</td>
+                </tr>
+        ";
 
         $certs = mysqli_query($conexion, $Q_certs);
         if ($certs and mysqli_num_rows($certs) > 0) {
             while ($cert = mysqli_fetch_assoc($certs)) {
+                $id_cert = $cert['id'];
                 $nombre_certificado = $cert['nombre'];
                 $f_creado = $cert['f_creado'];
                 $f_expira = $cert['expira'];
                 echo "
                 <tr>
-                    <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el certificado?\");'>
+                    <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres eliminar el certificado?\");'>
                     <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
                     <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
@@ -194,6 +206,44 @@
                 ";
                 if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-cert.php' value='Eliminar'>"; }
                 echo "
+                    </form></td>
+                    <td><form action='Scripts/Modificar/asociar-certificado-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres asociar el certificado?\");'>
+                    <input type='hidden' name='id_cert' value='$id_cert' required>
+                    <select name='id_api' required>
+                ";
+                $q_cert_apis = "
+                    select 
+                        a.*
+                    from api a
+                    where not exists (
+                        select 1 from api_certificados ac
+                        where ac.id_api = a.id and ac.id_certificado = $id_cert
+                    )
+                    order by a.tenant
+                ";
+                $cert_apis = mysqli_query($conexion, $q_cert_apis);
+                if ($cert_apis and mysqli_num_rows($cert_apis) > 0) {
+                    $grupos = [];
+                    while ($cert_api = mysqli_fetch_assoc($cert_apis)) {
+                        $c_id_api = $cert_api['id'];
+                        $c_tenant = $cert_api['tenant'];
+                        $c_sitio = $cert_api['sitio'];
+                        if (!isset($grupos[$c_tenant])) {
+                            $grupos[$c_tenant] = [];
+                        }
+                        $grupos[$c_tenant][] = [$c_id_api,$c_sitio];
+                    }
+                    foreach ($grupos as $grupo => $sitios) {
+                        echo "      <optgroup label='$grupo'>";
+                        foreach ($sitios as $sitio) {
+                            echo "          <option value='".$sitio[0]."'>Sitio: ".$sitio[1]."</option>";
+                        }
+                        echo "      </optgroup>";
+                    }
+                }
+                echo "
+                    </select>
+                    <input type='submit' value='Asociar'>
                     </form></td>
                 </tr>
                 ";
@@ -218,7 +268,7 @@
         $roles = mysqli_query($conexion,$Q_roles);
         // Recorremos los roles que existen
         if ($roles and mysqli_num_rows($roles) > 0) {
-            while ($rol=mysqli_fetch_assoc($roles)) {
+            while ($rol = mysqli_fetch_assoc($roles)) {
                 echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
             }
         }

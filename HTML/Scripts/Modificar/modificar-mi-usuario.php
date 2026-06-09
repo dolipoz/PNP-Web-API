@@ -33,7 +33,6 @@
 	";
 	
     if ($conexion->query($sql_mod_user) == True) {
-        echo "Usuario modificado.";
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "Su usuario se modificó correctamente.";
     } else {
