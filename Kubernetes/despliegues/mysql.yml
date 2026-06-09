@@ -25,7 +25,8 @@ spec:
                   name: mysql
                   key: MYSQL_PASS
           ports:
-            - containerPort: 3306
+            - name: mysql
+              containerPort: 3306
           volumeMounts:
             - name: volumen-db
               mountPath: /var/lib/mysql
