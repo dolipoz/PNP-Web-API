@@ -171,7 +171,7 @@ jobs:
         until kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysqladmin ping -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
           sleep 2
         done
-        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" \
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -h 127.0.0.1 -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" \
                 -e "source crear-database.sql;" \
                 -e "create user '${{ vars.API_USER }}'@'%' identified by '${{ secrets.API_PASS }}';" \
                 -e "grant all privileges on powershell_api.* to '${{ vars.API_USER }}'@'%';" \
