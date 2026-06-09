@@ -171,13 +171,12 @@ jobs:
         until kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysqladmin ping -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
           sleep 2
         done
-        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "
-                source crear-database.sql; &&
-                create user '${{ vars.API_USER }}'@'%' identified by '${{ secrets.API_PASS }}'; &&
-                grant all privileges on powershell_api.* to '${{ vars.API_USER }}'@'%'; &&
-                create user '${{ vars.PWSH_USER }}'@'%' identified by '${{ secrets.PWSH_PASS }}'; &&
-                grant all privileges on powershell_api.* to '${{ vars.PWSH_USER }}'@'%';
-                "
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" \
+                -e "source crear-database.sql;" \
+                -e "create user '${{ vars.API_USER }}'@'%' identified by '${{ secrets.API_PASS }}';" \
+                -e "grant all privileges on powershell_api.* to '${{ vars.API_USER }}'@'%';" \
+                -e "create user '${{ vars.PWSH_USER }}'@'%' identified by '${{ secrets.PWSH_PASS }}';" \
+                -e "grant all privileges on powershell_api.* to '${{ vars.PWSH_USER }}'@'%';"
     # Mostramos el servicio y los datos
     - name: Mostrar datos de Salida
       run: |
