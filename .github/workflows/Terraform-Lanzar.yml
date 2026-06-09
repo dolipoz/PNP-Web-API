@@ -172,6 +172,9 @@ jobs:
           sleep 2
         done
         kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "source crear-database.sql"
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "create user '${{ vars.API_USER }}'@'%' identified by '${{ secrets.API_PASS }}'"
+        kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysql -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" -e "grant all privileges on powershell_api.* to '${{ vars.API_USER }}'@'%'"
+
     # Mostramos el servicio y los datos
     - name: Mostrar datos de Salida
       run: |

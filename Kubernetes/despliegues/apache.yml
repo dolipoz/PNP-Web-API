@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: despliegue-apache
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: pod-apache
