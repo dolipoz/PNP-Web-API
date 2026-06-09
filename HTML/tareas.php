@@ -25,8 +25,6 @@
     </div>
     ";
     // -----------------------------------------  Monitor 2 - tareas  ---------------------------------------------------------
-    //$solo_lectura = "";
-    //if (!$puede_modificar_api) {$solo_lectura = "readonly";}
     echo "
     <div id='tareas_completadas' class='monitor'>
         <button onclick='location.reload()'>Recargar Tareas</button>

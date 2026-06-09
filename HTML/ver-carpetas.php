@@ -22,13 +22,9 @@
     ksort($carpetas);
 ?>
     <div id="ventana_tareas">
-        <div>
+        <div class="titulo">
             <h1>Info de Carpetas de <?php echo "$tenant/$sitio de la tarea con ID: $id"; ?></h1>
         </div>
-        <nav>
-            <ul>
-            </ul>
-        </nav>
 <?php
     // -----------------------------------------  Mostrar Carpetas  ---------------------------------------------------------
     echo "

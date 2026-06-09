@@ -16,6 +16,7 @@ jobs:
         if ["${{ secrets.AWS_SESSION_TOKEN }}" == ""]; then exit 1 ; fi
         if ["${{ vars.AWS_REGION }}" == ""]; then exit 1 ; fi
         if ["${{ vars.AWS_S3 }}" == ""]; then exit 1 ; fi
+        if ["${{ vars.AWS_CERTIFICADO }}" == ""]; then exit 1 ; fi
         
         if ["${{ vars.HTTP_SERVER }}" == ""]; then exit 1 ; fi
         if ["${{ vars.HTTP_ALIAS }}" == ""]; then exit 1 ; fi
@@ -52,6 +53,27 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
         aws-region: ${{ vars.AWS_REGION }}
+
+    # Sacamos el certificado importado previamente en AWS, al importar requiere de una etiqueta llamada Nombre y usar ese valor para seleccionarlo
+    - name: Sacar certificado de aws
+      run: |
+        ARN=$(aws resourcegroupstaggingapi get-resources \
+          --tag-filters Key="Nombre",Values="${{ vars.AWS_CERTIFICADO }}" \
+          --resource-type-filters acm:certificate \
+          --query "ResourceTagMappingList[0].ResourceARN" \
+          --output text)
+
+        # Si no encuentra el certificado da error
+        if [[ -z "$ARN" || "$ARN" == "None" ]]; then
+          echo "ERROR: Certificado Nombre=${{ vars.AWS_CERTIFICADO }}, no encontrado" >&2
+          exit 1
+        fi
+
+        yq -i '
+          .metadata.annotations = (.metadata.annotations // {}) |
+          .metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-ssl-cert"] = "'"$ARN"'" |
+          .metadata.annotations["service.beta.kubernetes.io/aws-load-balancer-ssl-ports"] = "443"
+        ' Kubernetes/servicios/apache.yml
 
     # ------------------------------- Terraform -------------------------------
     # Cargamos el .tfstate del bucket si ya existe
