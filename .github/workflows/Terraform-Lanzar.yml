@@ -188,8 +188,8 @@ jobs:
     # Ejecutamos el script de mysql para crear la base de datos
     - name: Ejecutar script SQL para crear Base de Datos
       run: |
-        kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=2m
-        kubectl wait --for=condition=Ready pod -l app=pod-mysql --timeout=2m
+        kubectl wait --for=jsonpath='{.status.phase}'=Bound pvc --all --timeout=6m
+        kubectl wait --for=condition=Ready pod -l app=pod-mysql --timeout=6m
         until kubectl exec $(kubectl get pods -l app=pod-mysql -o name) -- mysqladmin ping -u root -p"${{ secrets.MYSQL_ROOT_PASSWORD }}" --silent; do
           sleep 2
         done

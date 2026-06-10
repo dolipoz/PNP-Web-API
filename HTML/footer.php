@@ -71,45 +71,85 @@
                 .then(response => response.json())
                 .then(datos => {
                     let tareas = `
-                        <table class='cabecera-tabla'>
-                            <tr>
-                                <th>Cantidad Pendientes</th>
-                                <th>Cantidad ejecutando</th>
-                                <th>Cantidad Completadas</th>
-                                <th>Cantidad Fallidas</th>
-                            </tr>
-                            <tr>
-                                <td>${datos.pendientes}</td>
-                                <td>${datos.ejecutando}</td>
-                                <td>${datos.completadas}</td>
-                                <td>${datos.fallidas}</td>
-                            </tr>
-                        </table>
-                        <table class='cabecera-tabla'>
-                            <tr>
-                                <th>ID</th>
-                                <th>ID API</th>
-                                <th>Nombre Contenedor</th>
-                                <th>ID Tarea</th>
-                                <th>Estado</th>
-                                <th>Progreso</th>
-                                <th>Fecha de Finalización</th>
-                            </tr>
+                        <div id='tiempo_real'>
+                            <div>
+                                <div><h3>Pendientes</h3></div>
+                                <div style='height:30px;
+                                            width:${datos.pendientes*10}px;
+                                            background:#02fcef;
+                                            border-radius:0 6px 6px 0;'>
+                                    <p>${datos.pendientes}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div><h3>Ejecutando</h3></div>
+                                <div style='height:30px;
+                                            width:${datos.ejecutando*10}px;
+                                            background:#fc7202;
+                                            border-radius:0 6px 6px 0;'>
+                                    <p>${datos.ejecutando}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div><h3>Completadas</h3></div>
+                                <div style='height:30px;
+                                            width:${datos.completadas*10}px;
+                                            background:#0aa317;
+                                            border-radius:0 6px 6px 0;'>
+                                    <p>${datos.completadas}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <div><h3>Fallidas</h3></div>
+                                <div style='height:30px;
+                                            width:${datos.fallidas*10}px;
+                                            background:#8a0f0f;
+                                            border-radius:0 6px 6px 0;'>
+                                    <p>${datos.fallidas}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id='monitor_ejecucion'>
+                            <h1>Tareas en Ejecución</h1>
+                            <table class='cabecera-tabla'>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ID API</th>
+                                    <th>Nombre Contenedor</th>
+                                    <th>ID Tarea</th>
+                                    <th>Estado</th>
+                                    <th>Progreso</th>
+                                    <th>Fecha de Finalización</th>
+                                </tr>
                     `;
-                    datos.tareas.forEach(function(t) {
+                    if (datos.tareas.lenght > 0) {
+                        datos.tareas.forEach(function(t) {
+                            tareas += `
+                                    <tr>
+                                        <td>${t.id}</td>
+                                        <td>${t.id_api}</td>
+                                        <td>${t.nombre_contenedor}</td>
+                                        <td>${t.id_tarea}</td>
+                                        <td>${t.estado}</td>
+                                        <td>${t.progreso}</td>
+                                        <td>${t.f_finalizacion}</td>
+                                    </tr>
+                            `;
+                        });
+                    } else {
                         tareas += `
-                            <tr>
-                                <td>${t.id}</td>
-                                <td>${t.id_api}</td>
-                                <td>${t.nombre_contenedor}</td>
-                                <td>${t.id_tarea}</td>
-                                <td>${t.estado}</td>
-                                <td>${t.progreso}</td>
-                                <td>${t.f_finalizacion}</td>
-                            </tr>
+                                <tr>
+                                    <td>No hay tareas en ejecución</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
                         `;
-                    });
-                    tareas += '</table>';
+                    }
+                    tareas += '</table></div>';
                     document.getElementById('monitor_tareas').innerHTML = tareas;
                 })
                 .catch(error => {
