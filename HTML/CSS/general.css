@@ -7,8 +7,6 @@ html, body {
     padding: 0px;
 }
 body {
-    /*background-image: url("../Multimedia/Fondo-Login.jpg");
-    background-size: 100%;*/
     background-color: #2c5794;
 }
 footer {
@@ -20,15 +18,105 @@ footer {
 form {
     text-align: left;
 }
+/* -- Iconos -- */
 
+#i_indice {
+    background: url("../Multimedia/Indice.png");
+    background-size: cover;
+    margin-right: 5px;
+}
+#i_tareas {
+    background: url("../Multimedia/Tareas.png");
+    background-size: cover;
+    margin-right: 5px;
+}
+
+/* ---------- Listas ----------- */
+ul {
+    list-style: none;
+    padding: 0px;
+}
+#indice ul {
+    text-align: center;
+    align-items: center;
+    font-family: 'Times New Roman', serif;
+    font-size: 18px;
+}
+#ventana_index nav ul, #ventana_tareas nav ul {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: auto;
+    margin: 0px;
+}
+#ventana_index nav ul {
+    padding: 0px;
+}
+/* -- lista de permisos -- */
+#consola_perfil ul {
+    display: none;
+    flex-direction: column;
+}
+/* -- Lista en Tareas -- */
+#ventana_tareas nav ul {
+    padding: 0px 5px;
+    align-items: end;
+}
+/* ---------- Títulos H1 H2 H3 ----------- */
+#b_titulo h1 {
+    font-size:42px;
+    margin-bottom:8px;
+}
+#ventana_tareas h1 {
+    font-size: 16px;
+}
+/* ---------- Enlaces ----------- */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+#ventana_index .pestanias a:hover {
+    color: #00ff00;
+}
+#ventana_tareas nav ul .pestanias a {
+    color: #202020;
+    text-decoration: none;
+}
+#ventana_tareas nav ul .pestanias a:active {
+    background-color: #ffffff;
+    position: relative;
+    top: 1px;
+}
 /* --------- Inputs --------- */
-input[type=submit],input[type=reset] {
+input[type=submit], input[type=reset] {
     cursor: pointer;
 }
 
+.eliminar, .editar, .reiniciar, #i_indice, #i_tareas {
+    border: 0;
+    display: inline-block;
+    height: 3vh;
+    width: 3vh;
+}
+.eliminar {
+    background: url("../Multimedia/Eliminar.png");
+    background-size: cover;
+}
+.editar {
+    background: url("../Multimedia/Editar.png");
+    background-size: cover;
+}
+.reiniciar {
+    background: url("../Multimedia/Reiniciar.png");
+    background-size: cover;
+}
+
 /* Inputs de consolas */
+#consola_logoff input {
+    color: #910c0c;
+}
 .consolas input, .consolas select {
-    background-color: #012456;
+    background-color: #063a83;
+    padding: 5px;
     border: none;
     outline: none;
     color: #ffffff;
@@ -37,7 +125,10 @@ input[type=submit],input[type=reset] {
 .consolas input:focus {
     background-color: #9dbbe6;
 }
-.consolas input[type=submit]:hover,.consolas input[type=reset]:hover {
+.consolas input[type=submit], .consolas input[type=reset] {
+    background-color: transparent;
+}
+.consolas input[type=submit]:hover, .consolas input[type=reset]:hover {
     color: #00ff00;
 }
 /* ---------------------------- */
@@ -63,27 +154,22 @@ input[type=submit],input[type=reset] {
     box-shadow: 0 8px 25px #00000026;
 
 }
-#banner div {
+#b_titulo {
     flex: 0.9;
     text-align: center;
 }
-#banner div h1 {
-    font-size:42px;
-    margin-bottom:8px;
-}
-#banner div p {
+
+#b_titulo p {
     margin-top: 0px;
 }
-#banner ul {
-    border: #000000 solid 1px;
-    border-radius: 5px;
-    background-color: #7ca9e4;
+#indice {
+    border: #000000 groove 5px;
+    text-align: center;
+    box-shadow: 5px 5px 10px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(#5989e2, #1b498a);
     margin: 0px;
     padding: 5px;
     flex: 0.1;
-    justify-content: center;
-    text-align: center;
-    list-style: none;
 }
 
 /* ----------------- Parte de Tablas ------------------- */
@@ -93,7 +179,10 @@ table {
 td, th {
     border: #000000 solid 1px;
 }
-
+/* -- Para mostrar tablas en las consolas -- */
+#ventana_index td, #ventana_index th {
+    border: #ffffff dashed 1px;
+}
 .cabecera-tabla td, .cabecera-tabla th {
     text-align: center;
     margin: 0px;
@@ -110,11 +199,15 @@ td, th {
     padding-left: 2vh;
 }
 
+/* -- Para mostrar tablas en las tareas -- */
 #ventana_tareas td, #ventana_tareas th {
     border: #000000 solid 1px;
 }
-#ventana_index td, #ventana_index th {
-    border: #ffffff dashed 1px;
+
+
+/* -- Para mostrar el perfil -- */
+#consola_perfil tr, #consola_perfil td {
+    border: 0px;
 }
 
 /* ------------ Sección para Scrollbars ------------ */
@@ -143,14 +236,16 @@ td, th {
 
 
 /* ------------ Sección para simular la consola de powershell ------------ */
-#ventana_index .consolas {
-    background: #012456;
+.consolas {
+    background-color: #012456;
     border-radius: 0px 0px 12px 12px;
     padding: 10px;
+    min-height: 50vh;
+}
+.consolas * {
     font-family: Consolas, "Courier New", monospace;
     color: #ffffff;
     font-size: 15px;
-    min-height: 50vh;
 }
 #ventana_index .prompt {
     color: #00ff00;
@@ -168,14 +263,6 @@ td, th {
     border-radius: 12px 12px 0px 0px;
     padding-top: 2px;
 }
-#ventana_index nav ul {
-    display: flex;
-    flex-wrap: nowrap;
-    list-style: none;
-    overflow: auto;
-    margin: 0px;
-    padding: 0px;
-}
 #ventana_index nav ul .pestanias {
     flex: 0.2;
     background-color: #1e1e1e;
@@ -190,13 +277,7 @@ td, th {
     color: #ffffff;
     cursor: pointer;
 }
-#ventana_index nav ul .pestanias a {
-    text-decoration: none;
-    color: inherit;
-}
-#ventana_index nav ul .pestanias a:hover {
-    color: #00ff00;
-}
+
 /* ---------------- Navegador de Tareas ------------------ */
 #ventana_tareas {
     background-color: #7d8ea7;
@@ -205,22 +286,12 @@ td, th {
     border-radius:12px;
 }
 #ventana_tareas nav {
-    background: #f0f0f0;
+    background-color: #f0f0f0;
     border-bottom: 1px solid #c8c8c8;
     font-family: "Segoe UI", sans-serif;
     font-size: 12px;
     border-radius: 1px 1px 0px 0px;
     padding-top: 2px;
-}
-#ventana_tareas nav ul {
-    display: flex;
-    flex-wrap: nowrap;
-    list-style: none;
-    overflow: auto;
-    margin: 0px;
-    padding: 0px 5px;
-    align-items: end;
-
 }
 #ventana_tareas nav ul .pestanias {
     flex: 0.2;
@@ -232,26 +303,12 @@ td, th {
     font-size: 13px;
     font-weight: 600;
     color: #000000;
-    background: #e5e5e5;
+    background-color: #e5e5e5;
     border: 1px solid #c8c8c8;
     border-bottom: none;
     border-radius: 3px 3px 0 0;
     cursor: pointer;
 }
-#ventana_tareas nav ul .pestanias a {
-    color: #202020;
-    text-decoration: none;
-}
-#ventana_tareas nav ul .pestanias a:active {
-    background: white;
-    position: relative;
-    top: 1px;
-}
-
-#ventana_tareas h1{
-    font-size: 16px;
-}
-
 #ventana_tareas .monitor {
     background: linear-gradient(#e5f6f6, #d0ddef);
     border-radius: 0px 0px 3px 3px;
@@ -267,20 +324,15 @@ td, th {
 }
 /* --------------------------------------------------------- */
 
-
+#certificados {
+    width: 150px;
+}
 /* ------------------- Parte para mostrar perfil --------------------- */
 
-#consola_perfil ul {
-    display: none;
-    flex-direction: column;
-    list-style: none;
-}
+
 
 /* ------------------------------------------------------------------- */
 
 
 
 
-#certificados {
-    width: 150px;
-}

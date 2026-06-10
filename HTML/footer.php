@@ -5,6 +5,26 @@
     </footer>
     <script>
         let monitor = null;
+        let permisos = false;
+        let mod_perfil = false;
+        function mostrarPermisos() {
+            if (permisos === true) {
+                document.getElementById("p_permisos").style.display = 'none';
+                permisos = false;
+            } else {
+                document.getElementById("p_permisos").style.display = 'block';
+                permisos = true;
+            }
+        }
+        function mostrarEditarPerfil() {
+            if (mod_perfil === true) {
+                document.getElementById("mod_perfil").style.display = 'none';
+                mod_perfil = false;
+            } else {
+                document.getElementById("mod_perfil").style.display = 'block';
+                mod_perfil = true;
+            }
+        }
         function mostrarConsola(idp,idc) {
             // Cambia el background de todos los elementos con clase "pestanias"
             const pestaniasC = document.querySelectorAll('.pestanias');

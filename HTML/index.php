@@ -46,19 +46,38 @@
         </form>
         ";
     } else {
+        $activo = isset($_SESSION['usuario']['activo']) ? "Si" : "No";
         // -----------------------------------------  Consolas 2 y 3 - Cerrar Sesión y Perfil de usuario modificable  ---------------------------------------------------------
         echo "
         <form id='consola_logoff' class='consolas' action='Scripts/cerrar-sesion.php' method='POST' style='display: none;'>
             <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
         </form>
         <div id='consola_perfil' class='consolas'>
-            <h2>Usuario: ".$_SESSION['usuario']['usuario']."</h2>
-            <h2>Correo: ".$_SESSION['usuario']['correo']."</h2>
-            <h2>Nombre: ".$_SESSION['usuario']['nombre']."</h2>
-            <h2>Apellidos: ".$_SESSION['usuario']['apellidos']."</h2>
-            <h2>Activo: ".$_SESSION['usuario']['activo']."</h2>
-            <h2>Rol: ".$_SESSION['usuario']['rol']."</h2>
-            <ul>
+            <table>
+                <tr>
+                    <td><label class='prompt'>PS C:\Users\\{$_SESSION['usuario']['usuario']}></label> net user {$_SESSION['usuario']['usuario']}</td>
+                </tr>
+                <tr>
+                    <td>Nombre de usuario</td><td>{$_SESSION['usuario']['usuario']}</td>
+                </tr>
+                <tr>
+                    <td>Nombre completo</td><td>{$_SESSION['usuario']['nombre']} {$_SESSION['usuario']['apellidos']}</td>
+                </tr>
+                <tr>
+                    <td>Cuenta activa</td><td>{$activo}</td>
+                </tr>
+                <tr>
+                    <td>Correo de usuario</td><td>{$_SESSION['usuario']['correo']}</td>
+                </tr>
+                <tr>
+                    <td>Creación</td><td>{$_SESSION['usuario']['f_creado']}</td>
+                </tr>
+                <tr>
+                    <td>Ultimo sesión</td><td>{$_SESSION['usuario']['ult_sesion']}</td>
+                </tr>
+            </table>
+            <h3><a id='mostrar_permisos' onclick='mostrarPermisos()' href='#'>Mostrar Permisos v</a></h3>
+            <ul id='p_permisos' style='display: none;'>
         ";
         foreach ($_SESSION['usuario']['permisos'] as $id => $nombre_valor) {
             foreach ($nombre_valor as $nombre => $valor) {
@@ -69,14 +88,13 @@
         }
         echo "
             </ul>
-            <h2>Fecha Creación: ".$_SESSION['usuario']['f_creado']."</h2>
-            <h2>Última Sesión: ".$_SESSION['usuario']['ult_sesion']."</h2>
-
+            <h3><a id='modificar_mi_perfil' onclick='mostrarEditarPerfil()' href='#'>Modificar Perfil v</a></h3>
             <form id='mod_perfil' action='Scripts/Modificar/modificar-mi-usuario.php' method='POST' style='display: none;'>
+                <input type='hidden' name='id_usuario' value='{$_SESSION['usuario']['id']}' required>
                 <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
-                <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='".$_SESSION['usuario']['correo']."' size='20' minlenght='8' maxlenght='20' required><br>
-                <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='".$_SESSION['usuario']['nombre']."' size='20' minlenght='8' maxlenght='20' required><br>
-                <label class='prompt' for='apellidos'>PS C:\Cambiar apellidos></label><input type='text' name='apellidos' value='".$_SESSION['usuario']['apellidos']."' size='20' minlenght='8' maxlenght='20' required><br>
+                <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='{$_SESSION['usuario']['correo']}' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='{$_SESSION['usuario']['nombre']}' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='apellidos'>PS C:\Cambiar apellidos></label><input type='text' name='apellidos' value='{$_SESSION['usuario']['apellidos']}' size='20' minlenght='8' maxlenght='20'><br>
                 <br>
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
             </form>
@@ -86,8 +104,8 @@
         echo "
         <form id='consola_addapi' class='consolas' action='Scripts/Crear/crear-api.php' method='POST' style='display: none;'>
             <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
-            <label class='prompt' for='sitio'>PS C:\Escriba la url del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
-            <label class='prompt' for='id_cliente'>PS C:\Escriba el cliente id de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
+            <label class='prompt' for='sitio'>PS C:\Escriba el sitio del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
+            <label class='prompt' for='id_cliente'>PS C:\Escriba el id cliente de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
@@ -122,8 +140,8 @@
                     <td><input type='text' name='sitio' value='$sitio' size='30' minlength='2' maxlength='100' required></td>
                     <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
                 ";
-                if ($puede_modificar_api) { echo "  </td><td><input type='submit' value='Modificar'>"; }
-                if ($puede_eliminar_api) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-api.php' value='Eliminar'>"; }
+                if ($puede_modificar_api) { echo "  </td><td><input class='editar' type='submit' value=''>"; }
+                if ($puede_eliminar_api) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/Eliminar/eliminar-api.php'>"; }
                 echo "
                     </form></td>
                     <td><form action='Scripts/Modificar/desasociar-certificado-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres desasociar el certificado?\");'>
@@ -134,16 +152,17 @@
                     select c.* 
                     from certificados c 
                     inner join api_certificados ac on ac.id_certificado = c.id
-                    where ac.id_api = ".$api['id'];
+                    where ac.id_api = $id
+                ";
                 $certificados = mysqli_query($conexion, $q_cert);
                 if ($certificados and mysqli_num_rows($certificados) > 0) {
                     while ($certificado = mysqli_fetch_assoc($certificados)) {
-                        echo "      <option value='".$certificado['id']."'>".$certificado['nombre']."</option>";
+                        echo "      <option value='{$certificado['id']}'> {$certificado['nombre']} </option>";
                     }
                 }
                 echo "
                     </select>
-                    <input type='submit' value='Desasociar'>
+                    <input class='eliminar' type='submit' value=''>
                     </form></td>
                 </tr>
                 ";
@@ -200,11 +219,11 @@
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres eliminar el certificado?\");'>
                     <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
-                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
+                    <td><a href='Scripts/descargar-cert.php?nombre={htmlspecialchars($nombre_certificado)}'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
                     <td><p>$f_expira</p>
                 ";
-                if ($puede_eliminar_certificados) { echo "      </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-cert.php' value='Eliminar'>"; }
+                if ($puede_eliminar_certificados) { echo "      </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/Eliminar/eliminar-cert.php'>"; }
                 echo "
                     </form></td>
                     <td><form action='Scripts/Modificar/asociar-certificado-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres asociar el certificado?\");'>
@@ -236,7 +255,7 @@
                     foreach ($grupos as $grupo => $sitios) {
                         echo "      <optgroup label='$grupo'>";
                         foreach ($sitios as $sitio) {
-                            echo "          <option value='".$sitio[0]."'>Sitio: ".$sitio[1]."</option>";
+                            echo "          <option value='{$sitio[0]}'>Sitio: {$sitio[1]}</option>";
                         }
                         echo "      </optgroup>";
                     }
@@ -269,7 +288,7 @@
         // Recorremos los roles que existen
         if ($roles and mysqli_num_rows($roles) > 0) {
             while ($rol = mysqli_fetch_assoc($roles)) {
-                echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
+                echo "<option value='{$rol['id']}'>{$rol['rol']}</option>";
             }
         }
         echo "
@@ -306,11 +325,11 @@
                 echo "
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-usuario.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este usuario?\");'>
-                    <input type='text' name='usuario' value='".$usuario['usuario']."' size='20' maxlength='20' required $solo_lectura></td>
+                    <input type='text' name='usuario' value='{$usuario['usuario']}' size='20' maxlength='20' required $solo_lectura></td>
                     <td><input type='password' name='clave' placeholder='Nueva contraseña' size='20' minlength='8' maxlength='20'></td>
-                    <td><input type='email' name='correo' value='".$usuario['correo']."' size='50' minlength='9' maxlength='50'></td>
-                    <td><input type='text' name='nombre' value='".$usuario['nombre']."' size='20' minlength='2' maxlength='20'></td>
-                    <td><input type='text' name='apellidos' value='".$usuario['apellidos']."' size='50' minlength='2' maxlength='50'></td>
+                    <td><input type='email' name='correo' value='{$usuario['correo']}' size='50' minlength='9' maxlength='50'></td>
+                    <td><input type='text' name='nombre' value='{$usuario['nombre']}' size='20' minlength='2' maxlength='20'></td>
+                    <td><input type='text' name='apellidos' value='{$usuario['apellidos']}' size='50' minlength='2' maxlength='50'></td>
                     <td><input type='checkbox' name='activo' $activo></td>
                     <td><select name='id_rol'>
                 ";
@@ -318,19 +337,19 @@
                 if ($roles and mysqli_num_rows($roles) > 0) {
                     while ($rol = mysqli_fetch_assoc($roles)) {
                         if ($rol['id'] == $usuario['id_rol']) {
-                            echo "<option value='".$rol['id']."' selected>".$rol['rol']."</option>";
+                            echo "<option value='{$rol['id']}' selected>{$rol['rol']}</option>";
                         } else {
-                            echo "<option value='".$rol['id']."'>".$rol['rol']."</option>";
+                            echo "<option value='{$rol['id']}'>{$rol['rol']}</option>";
                         }
                     }
                 }
                 echo "
                     </select></td>
-                    <td>".$usuario['f_creado']."</td>
-                    <td>".$usuario['ult_sesion']."
+                    <td><span>{$usuario['f_creado']}</span></td>
+                    <td><span>{$usuario['ult_sesion']}</span>
                 ";
-                if ($puede_modificar_usuarios) { echo "   </td><td><input type='submit' value='Modificar'>"; }                
-                if ($puede_eliminar_usuarios) { echo "   </td><td><input type='submit' formaction='Scripts/Eliminar/eliminar-usuario.php' value='Eliminar'>"; }
+                if ($puede_modificar_usuarios) { echo "   </td><td><input class='editar' type='submit' value=''>"; }                
+                if ($puede_eliminar_usuarios) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/Eliminar/eliminar-usuario.php'>"; }
                 echo "
                     </form>
                     </td>

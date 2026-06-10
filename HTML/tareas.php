@@ -71,8 +71,8 @@
                 <td><input type='text' name='progreso' value='$progreso' size='30' readonly></td>
                 <td><p>$f_finalizacion</p>
             ";
-            if ($puede_modificar_tareas) { echo "  </td><td><input type='submit' value='Modificar'>"; }
-            if ($puede_eliminar_tareas) { echo "   </td><td><input type='submit' formaction='Scripts/eliminar-tarea.php' value='Eliminar'>"; }
+            if ($puede_modificar_tareas) { echo "  </td><td><input class='editar' type='submit'>"; }
+            if ($puede_eliminar_tareas) { echo "   </td><td><input class='eliminar' type='submit' formaction='Scripts/eliminar-tarea.php'>"; }
             echo "
                 </form></td>
             </tr>
