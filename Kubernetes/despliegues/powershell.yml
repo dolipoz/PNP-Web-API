@@ -30,6 +30,7 @@ spec:
           volumeMounts:
             - name: volumen-certs
               mountPath: /certificados
+              subPath: powershell
       volumes:
         - name: volumen-certs
           persistentVolumeClaim:

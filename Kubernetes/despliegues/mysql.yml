@@ -30,6 +30,7 @@ spec:
           volumeMounts:
             - name: volumen-db
               mountPath: /var/lib/mysql
+              subPath: mysql
       volumes:
         - name: volumen-db
           persistentVolumeClaim:
