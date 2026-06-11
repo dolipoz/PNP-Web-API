@@ -10,6 +10,3 @@ spec:
     - name: puerto-http
       port: 80
       targetPort: http
-    - name: puerto-https
-      port: 443
-      targetPort: https

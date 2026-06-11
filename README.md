@@ -2,6 +2,7 @@
 Aplicación Web con funciones PNP.Powershell dentro de estructura AWS con Kubernetes
 
 # Estructura del repositorio
+Al estar todas las tecnologías separadas se pueden utilizar en proyectos externos, como por ejemplo en máquinas virtuales
 ## GitHub Actions Workflows
 Existen varios workflows que permiten crear la infraestructura de AWS, los despliegues y lo necesario para que funcione la aplicación web menos el hosting.
 ### Los secrets de repositorio de Github actions necesarios son los siguientes:
@@ -53,7 +54,3 @@ Para la infraestructura en AWS se utiliza terraform, la estructura consta de lo 
 - Output: Permite mostrar y almacenar en variables los nombres del cluster y del EFS para el script en GitHub Actions
 ## Documentos
 En Documentos hay almacenado un fichero Excel con la plantilla de la estructura de Documentos Compartidos en el Sharepoint, además de un CSV de ejemplo exportado del mismo Excel con el separador ";"
-
-
-
-

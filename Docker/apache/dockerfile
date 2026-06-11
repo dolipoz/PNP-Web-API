@@ -26,4 +26,3 @@ RUN a2ensite https.conf
 
 # Exponer puertos
 EXPOSE 80
-EXPOSE 443
