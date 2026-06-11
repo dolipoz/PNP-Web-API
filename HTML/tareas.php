@@ -6,14 +6,14 @@
 ?>
     <div id="ventana_tareas">
         <div>
-            <h1>Gestión de Procesos</h1>
+            <h1>Gestión de Tareas</h1>
         </div>
         <nav>
             <!-- Navegador general para los enlaces -->
             <ul>
             <?php
-            echo "<li id='p_m_tareas' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_m_tareas\",\"monitor_tareas\")'>Monitor Tareas</a></li>";
-            echo "<li id='p_tareas_comp' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_comp\",\"tareas_completadas\")'>Tareas Completados</a></li>";
+            echo "<li id='p_m_tareas' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_m_tareas\",\"monitor_tareas\")'>Monitor de Tareas</a></li>";
+            echo "<li id='p_tareas_comp' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_comp\",\"tareas_completadas\")'>Tareas Completadas</a></li>";
             echo "<li id='p_tareas_lanz' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_lanz\",\"lanzar_tareas\")'>Lanzar Tareas</a></li>";
             ?>
             </ul>
@@ -27,7 +27,7 @@
     // -----------------------------------------  Monitor 2 - tareas  ---------------------------------------------------------
     echo "
     <div id='tareas_completadas' class='monitor'>
-        <button onclick='location.reload()'>Recargar Tareas</button>
+        <button class='reiniciar' onclick='location.reload()'></button>
         <table class='cabecera-tabla'>
             <tr>
                 <th>ID</th>
@@ -53,26 +53,32 @@
             $id_tarea = $tarea['id_tarea'];
             $comando = $tarea['comando'];
             $estado = $tarea['estado'];
-            $salida = $tarea['salida'];
+            $salida = isset($tarea['salida']) ? $tarea['salida'] : null;
             $error = $tarea['error'];
             $progreso = $tarea['progreso'];
             $f_finalizacion = $tarea['f_finalizacion'];
             echo "
             <tr>
-                <td><form action='Scripts/modificar-tarea.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar el tarea?\");'>
+                <td><form action='Scripts/modificar-tarea.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la tarea?\");'>
                 <input type='number' name='id' value='$id' required readonly></td>
                 <td><input type='number' name='id_api' value='$id_api' readonly></td>
                 <td><input type='text' name='contenedor' value='$nombre_contenedor' size='30' readonly></td>
                 <td><input type='number' name='id_tarea' value='$id_tarea' readonly></td>
                 <td><input type='hidden' name='comando' value='$comando'>
                 <input type='text' name='estado' value='$estado' size='30' readonly></td>
-                <td><input type='hidden' name='salida' value='$salida'><input type='submit' formaction='ver-carpetas.php' value='Mostrar Carpetas'></td>
+            ";
+            if ($salida) {
+                echo "<td><input type='hidden' name='salida' value='$salida'><input type='submit' formaction='ver-carpetas.php' value='Mostrar Carpetas'></td>";
+            } else {
+                echo "<td>Null</td>";
+            }
+            echo "
                 <td><input type='text' name='error' value='$error' size='30' readonly></td>
                 <td><input type='text' name='progreso' value='$progreso' size='30' readonly></td>
                 <td><p>$f_finalizacion</p>
             ";
-            if ($puede_modificar_tareas) { echo "  </td><td><input class='editar' type='submit'>"; }
-            if ($puede_eliminar_tareas) { echo "   </td><td><input class='eliminar' type='submit' formaction='Scripts/eliminar-tarea.php'>"; }
+            if ($puede_modificar_tareas) { echo "  </td><td><input class='editar' type='submit' value=''>"; }
+            if ($puede_eliminar_tareas) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/eliminar-tarea.php'>"; }
             echo "
                 </form></td>
             </tr>

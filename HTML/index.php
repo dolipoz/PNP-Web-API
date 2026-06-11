@@ -219,7 +219,7 @@
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres eliminar el certificado?\");'>
                     <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
-                    <td><a href='Scripts/descargar-cert.php?nombre={htmlspecialchars($nombre_certificado)}'>Descargar</a></td>
+                    <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
                     <td><p>$f_expira</p>
                 ";

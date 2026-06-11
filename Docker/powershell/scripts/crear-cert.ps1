@@ -11,9 +11,9 @@ param (
 . \scripts\importaciones.ps1
 
 try {
-    $llave = "/certs/$nombre.key"
-    $cert = "/certs/$nombre.cer"
-    $pfx = "/certs/$nombre.pfx"
+    $llave = "/certiticados/$nombre.key"
+    $cert = "/certiticados/$nombre.cer"
+    $pfx = "/certiticados/$nombre.pfx"
 
     # Generar certificado y clave privada
     $subject = "/C=$pais/ST=$ciudad/L=$localidad/CN=$nombre"
@@ -40,7 +40,7 @@ try {
     ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 
 } catch {
-    $_ | out-file -filepath "/certs/errores.log" -append
+    $_ | out-file -filepath "/certiticados/errores.log" -append
     $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
     $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
     write-output $_

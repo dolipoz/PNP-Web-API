@@ -87,7 +87,7 @@ a {
     position: relative;
     top: 1px;
 }
-/* --------- Inputs --------- */
+/* --------- Inputs y Botones --------- */
 input[type=submit], input[type=reset] {
     cursor: pointer;
 }
@@ -97,6 +97,7 @@ input[type=submit], input[type=reset] {
     display: inline-block;
     height: 3vh;
     width: 3vh;
+    cursor: pointer;
 }
 .eliminar {
     background: url("../Multimedia/Eliminar.png");
@@ -201,15 +202,14 @@ td, th {
     padding-left: 2vh;
 }
 
-/* -- Para mostrar tablas en las tareas -- */
-#ventana_tareas td, #ventana_tareas th {
-    border: #000000 solid 1px;
-}
-
-
 /* -- Para mostrar el perfil -- */
 #consola_perfil tr, #consola_perfil td {
     border: 0px;
+}
+
+/* -- Para mostrar tablas en las tareas -- */
+#ventana_tareas td, #ventana_tareas th {
+    border: #000000 solid 1px;
 }
 
 /* ------------ Sección para Scrollbars ------------ */
@@ -287,6 +287,14 @@ td, th {
     margin: 20px 8% 20px 8%;
     border-radius:12px;
 }
+
+#ventana_tareas > div > h1{
+    display: inline-block;
+    margin: 10px;
+    color: #0b4174;
+    font-size: 24px;
+}
+
 #ventana_tareas nav {
     background-color: #f0f0f0;
     border-bottom: 1px solid #c8c8c8;
