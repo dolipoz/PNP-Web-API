@@ -18,11 +18,7 @@
     }
 
 	$comando = '{"script": "'.$script.'", "parametros": ["'.$tenant.'", "'.$sitio.'", "'.$id_cliente.'", "'.$certificado.'"]}';
-	if ($script == 'resetear-permisos.ps1') {
-		$sql_addtarea = "insert into tareas (id_api, comando, estado, bloqueo) values ($id_api, '$comando', 'pendiente', 1)";
-	} else {
-		$sql_addtarea = "insert into tareas (id_api, comando, estado) values ($id_api, '$comando', 'pendiente')";
-	}
+	$sql_addtarea = "insert into tareas (id_api, comando, estado, bloqueo) values ($id_api, '$comando', 'pendiente', 1)";
 	
     if ($conexion->query($sql_addtarea) == True) {
 		$_SESSION["correcto"] = True;

@@ -162,7 +162,7 @@
                 }
                 echo "
                     </select>
-                    <input class='eliminar' type='submit' value=''>
+                    <input type='submit' value='Desasociar'>
                     </form></td>
                 </tr>
                 ";

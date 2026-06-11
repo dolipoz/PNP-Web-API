@@ -40,7 +40,7 @@
                 <th>Progreso</th>
                 <th>Fecha de Finalización</th>
     ";
-    if ($puede_modificar_tareas) { echo "            <th>Actualizar</th>"; }
+    //if ($puede_modificar_tareas) { echo "            <th>Actualizar</th>"; }
     if ($puede_eliminar_tareas) { echo "            <th>Eliminar</th>"; }
     echo "  </tr>";
     $q_tareas = "select * from tareas where estado = 'completada' or estado = 'fallida' or estado = 'pendiente'";
@@ -59,7 +59,7 @@
             $f_finalizacion = $tarea['f_finalizacion'];
             echo "
             <tr>
-                <td><form action='Scripts/modificar-tarea.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la tarea?\");'>
+                <td><form action='Scripts/Modificar/modificar-tarea.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la tarea?\");'>
                 <input type='number' name='id' value='$id' required readonly></td>
                 <td><input type='number' name='id_api' value='$id_api' readonly></td>
                 <td><input type='text' name='contenedor' value='$nombre_contenedor' size='30' readonly></td>
@@ -77,8 +77,8 @@
                 <td><input type='text' name='progreso' value='$progreso' size='30' readonly></td>
                 <td><p>$f_finalizacion</p>
             ";
-            if ($puede_modificar_tareas) { echo "  </td><td><input class='editar' type='submit' value=''>"; }
-            if ($puede_eliminar_tareas) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/eliminar-tarea.php'>"; }
+            //if ($puede_modificar_tareas) { echo "  </td><td><input class='editar' type='submit' value=''>"; }
+            if ($puede_eliminar_tareas) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/Eliminar/eliminar-tarea.php'>"; }
             echo "
                 </form></td>
             </tr>

@@ -122,33 +122,20 @@
                                     <th>Fecha de Finalización</th>
                                 </tr>
                     `;
-                    if (datos.tareas.lenght > 0) {
-                        datos.tareas.forEach(function(t) {
-                            tareas += `
-                                    <tr>
-                                        <td>${t.id}</td>
-                                        <td>${t.id_api}</td>
-                                        <td>${t.nombre_contenedor}</td>
-                                        <td>${t.id_tarea}</td>
-                                        <td>${t.estado}</td>
-                                        <td>${t.progreso}</td>
-                                        <td>${t.f_finalizacion}</td>
-                                    </tr>
-                            `;
-                        });
-                    } else {
+                    datos.tareas.forEach(function(t) {
                         tareas += `
                                 <tr>
-                                    <td>No hay tareas en ejecución</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>${t.id}</td>
+                                    <td>${t.id_api}</td>
+                                    <td>${t.nombre_contenedor}</td>
+                                    <td>${t.id_tarea}</td>
+                                    <td>${t.estado}</td>
+                                    <td>${t.progreso}</td>
+                                    <td>${t.f_finalizacion}</td>
                                 </tr>
                         `;
-                    }
+                    });
+                    
                     tareas += '</table></div>';
                     document.getElementById('monitor_tareas').innerHTML = tareas;
                 })
