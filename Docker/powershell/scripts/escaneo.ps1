@@ -43,7 +43,7 @@ for ($index=1; $index -le $MaxHilos; $index++) {
                     ### Tras llegar el proceso a 100% se actualizará el tarea como completado y se le pondrá fecha de finalización
                     #ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
                 } catch {
-                    $_ | out-file -filepath "/certs/errores.log" -append
+                    $_ | out-file -filepath "/certificados/errores.log" -append
                     $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
                     $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
                     write-output $_

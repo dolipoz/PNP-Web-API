@@ -4,7 +4,7 @@
 	include "../conectar-db.php";
 
 	$usuario = $_POST['usuario'];
-	$sql_deluser = "delete from usuarios where usuario = $usuario";
+	$sql_deluser = "delete from usuarios where usuario = '$usuario'";
     if ($conexion->query($sql_deluser) == True) {
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "Usuario se eliminó correctamente.";

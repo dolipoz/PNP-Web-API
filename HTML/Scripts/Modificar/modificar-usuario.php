@@ -32,8 +32,8 @@
 		correo = '$correo',
 		nombre = '$nombre',
 		apellidos = '$apellidos',
-		activo = '$activo',
-		id_rol = '$id_rol' 
+		activo = $activo,
+		id_rol = $id_rol
 		where usuario = '$usuario'
 	";
 	

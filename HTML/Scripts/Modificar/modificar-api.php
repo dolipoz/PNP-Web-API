@@ -12,7 +12,7 @@
 		tenant = '$tenant',
 		sitio = '$sitio',
 		id_cliente = '$id_cliente' 
-		where id = '$id'
+		where id = $id
 	";
 	
     if ($conexion->query($sql_mod_api) == True) {

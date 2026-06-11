@@ -7,6 +7,6 @@ spec:
   selector:
     app: pod-apache
   ports:
-    - name: puerto-http
+    - name: puerto-https
       port: 443
       targetPort: http

@@ -46,7 +46,7 @@
         </form>
         ";
     } else {
-        $activo = isset($_SESSION['usuario']['activo']) ? "Si" : "No";
+        $p_activo = isset($_SESSION['usuario']['activo']) ? "Si" : "No";
         // -----------------------------------------  Consolas 2 y 3 - Cerrar Sesión y Perfil de usuario modificable  ---------------------------------------------------------
         echo "
         <form id='consola_logoff' class='consolas' action='Scripts/cerrar-sesion.php' method='POST' style='display: none;'>
@@ -64,7 +64,7 @@
                     <td>Nombre completo</td><td>{$_SESSION['usuario']['nombre']} {$_SESSION['usuario']['apellidos']}</td>
                 </tr>
                 <tr>
-                    <td>Cuenta activa</td><td>{$activo}</td>
+                    <td>Cuenta activa</td><td>{$p_activo}</td>
                 </tr>
                 <tr>
                     <td>Correo de usuario</td><td>{$_SESSION['usuario']['correo']}</td>
@@ -79,10 +79,10 @@
             <h3><a id='mostrar_permisos' onclick='mostrarPermisos()' href='#'>Mostrar Permisos v</a></h3>
             <ul id='p_permisos' style='display: none;'>
         ";
-        foreach ($_SESSION['usuario']['permisos'] as $id => $nombre_valor) {
-            foreach ($nombre_valor as $nombre => $valor) {
+        foreach ($_SESSION['usuario']['permisos'] as $id_permiso => $nombre_valor) {
+            foreach ($nombre_valor as $nombre_permiso => $valor) {
                 if ($valor) {
-                    echo "  <li>$id: $nombre</li>";
+                    echo "  <li>$id_permiso: $nombre_permiso</li>";
                 }
             }
         }
@@ -128,14 +128,14 @@
         $apis = mysqli_query($conexion, $Q_apis);
         if ($apis and mysqli_num_rows($apis) > 0) {
             while ($api = mysqli_fetch_assoc($apis)) {
-                $id = $api['id'];
+                $id_api = $api['id'];
                 $tenant = $api['tenant'];
                 $sitio = $api['sitio'];
                 $id_cliente = $api['id_cliente'];
                 echo "
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
-                    <input type='hidden' name='id_api' value='$id' required>
+                    <input type='hidden' name='id_api' value='$id_api' required>
                     <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
                     <td><input type='text' name='sitio' value='$sitio' size='30' minlength='2' maxlength='100' required></td>
                     <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
@@ -145,14 +145,14 @@
                 echo "
                     </form></td>
                     <td><form action='Scripts/Modificar/desasociar-certificado-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres desasociar el certificado?\");'>
-                    <input type='hidden' name='id_api' value='$id' required>
+                    <input type='hidden' name='id_api' value='$id_api' required>
                     <select name='id_cert'>
                 ";
                 $q_cert = "
                     select c.* 
                     from certificados c 
                     inner join api_certificados ac on ac.id_certificado = c.id
-                    where ac.id_api = $id
+                    where ac.id_api = $id_api
                 ";
                 $certificados = mysqli_query($conexion, $q_cert);
                 if ($certificados and mysqli_num_rows($certificados) > 0) {
@@ -284,11 +284,11 @@
             <label class='prompt' for='id_rol'>PS C:\Seleccione el rol del usuario></label>
             <select id='id_rol' name='id_rol'>
         ";
-        $roles = mysqli_query($conexion,$Q_roles);
+        $cu_roles = mysqli_query($conexion,$Q_roles);
         // Recorremos los roles que existen
-        if ($roles and mysqli_num_rows($roles) > 0) {
-            while ($rol = mysqli_fetch_assoc($roles)) {
-                echo "<option value='{$rol['id']}'>{$rol['rol']}</option>";
+        if ($cu_roles and mysqli_num_rows($cu_roles) > 0) {
+            while ($cu_rol = mysqli_fetch_assoc($cu_roles)) {
+                echo "<option value='{$cu_rol['id']}'>{$cu_rol['rol']}</option>";
             }
         }
         echo "
@@ -333,13 +333,13 @@
                     <td><input type='checkbox' name='activo' $activo></td>
                     <td><select name='id_rol'>
                 ";
-                $roles = mysqli_query($conexion, $Q_roles);
-                if ($roles and mysqli_num_rows($roles) > 0) {
-                    while ($rol = mysqli_fetch_assoc($roles)) {
-                        if ($rol['id'] == $usuario['id_rol']) {
-                            echo "<option value='{$rol['id']}' selected>{$rol['rol']}</option>";
+                $gu_roles = mysqli_query($conexion, $Q_roles);
+                if ($gu_roles and mysqli_num_rows($gu_roles) > 0) {
+                    while ($gu_rol = mysqli_fetch_assoc($gu_roles)) {
+                        if ($gu_rol['id'] == $usuario['id_rol']) {
+                            echo "<option value='{$gu_rol['id']}' selected>{$gu_rol['rol']}</option>";
                         } else {
-                            echo "<option value='{$rol['id']}'>{$rol['rol']}</option>";
+                            echo "<option value='{$gu_rol['id']}'>{$gu_rol['rol']}</option>";
                         }
                     }
                 }

@@ -4,25 +4,17 @@ FROM php:8.4-apache
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 # Habilitar módulos apache necesarios
-RUN a2enmod ssl
 RUN a2enmod rewrite
-
-# Crear directorio SSL
-RUN mkdir /etc/apache2/ssl
 
 # Pasar página completa
 COPY HTML /var/www/html
 RUN chown -R www-data:www-data /var/www/html && chown -R 755 /var/www/html/*
-# Copiar configuración SSL personalizada tras cambiar las variables por valores
-COPY Docker/apache/https-var.conf /etc/apache2/sites-available/https.conf
-COPY servidor.key /etc/apache2/ssl/servidor.key
-COPY servidor.crt /etc/apache2/ssl/servidor.crt
 
-RUN chmod 600 /etc/apache2/ssl/servidor.key
-RUN chmod 644 /etc/apache2/ssl/servidor.crt
+# Copiar configuración personalizada tras cambiar las variables por valores
+COPY Docker/apache/http-var.conf /etc/apache2/sites-available/http.conf
 
 # Habilitar sitio SSL
-RUN a2ensite https.conf
+RUN a2ensite http.conf
 
 # Exponer puertos
 EXPOSE 80

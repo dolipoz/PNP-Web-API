@@ -32,9 +32,6 @@ jobs:
       with:
         # Para importar el repositorio se necesita generar un token en github
         token: ${{ secrets.TOKEN_GITHUB }}
-    - name: Crear certificado autofirmado temporal para evitar fallos de pods
-      run: |
-        openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./servidor.key -out ./servidor.crt -subj "/C=${{ vars.PAIS }}/CN=${{ vars.HTTP_ALIAS }}"
     # ------------------------------- Importar python para instalar awscli -------------------------------
     - name: Importar python
       uses: actions/setup-python@v6
@@ -120,7 +117,7 @@ jobs:
         export NombreServidor=${{ vars.HTTP_SERVER }}
         export AliasServidor=${{ vars.HTTP_ALIAS }}
 
-        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/https.conf | tee Docker/apache/https-var.conf
+        envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Docker/apache/http.conf | tee Docker/apache/http-var.conf
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-DB.yml | tee VP-DB-var.yml
         envsubst "$(printf '${%s} ' $(env | cut -d'=' -f1))" < Kubernetes/volumenes/VP-CERTS.yml | tee VP-CERTS-var.yml
     # ------------------------------- ECR Docker -------------------------------

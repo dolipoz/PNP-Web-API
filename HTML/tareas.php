@@ -33,7 +33,7 @@
                 <th>ID</th>
                 <th>ID API</th>
                 <th>Nombre Contenedor</th>
-                <th>ID Trabajo</th>
+                <th>ID Tarea</th>
                 <th>Estado</th>
                 <th>Salida</th>
                 <th>Error</th>

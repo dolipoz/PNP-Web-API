@@ -3,8 +3,8 @@
 	include "../funciones.php";
 	include "../conectar-db.php";
 
-	$id = $_POST['id'];
-	$sql_delrol = "delete from roles where id = $id";
+	$id_rol = $_POST['id_rol'];
+	$sql_delrol = "delete from roles where id = $id_rol";
     if ($conexion->query($sql_delrol) == True) {
 		$_SESSION["correcto"] = True;
 		$_SESSION["info"] = "El Rol se eliminó correctamente.";
