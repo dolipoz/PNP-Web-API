@@ -1,6 +1,10 @@
 <?php
     // Importamos las variables e iniciamos la sesión del navegador
     include "Scripts/variables.php";
+    
+    ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    error_reporting(E_ALL);
 ?>
 <!DOCTYPE html>
 <html lang="es">
