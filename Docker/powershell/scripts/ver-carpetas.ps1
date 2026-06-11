@@ -13,7 +13,7 @@ param (
 try {
    # Si el Sitio está configurado en otro idioma diferente al Español, cambiar según el lenguaje la raíz, por ejemplo en inglés sería "Documents"
    $raiz = "Documentos compartidos"
-   $RutaCert = "/certs/$cert.pfx"
+   $RutaCert = "/certificados/$cert.pfx"
    $password = ConvertTo-SecureString $env:PWSH_PASS -Force -AsPlainText
 
    # Creamos la conexión con la api de PNP indicando el URL de sharepoint, el id cliente de la api, el tenant, el certificado asociado a la api y la contraseña por defecto almacenada en el entorno del contenedor
@@ -56,7 +56,7 @@ try {
    $json = ConvertTo-Json $json
    ejecutarquery("update tareas set salida = '$json', estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 } catch {
-    $_ | out-file -filepath "/certs/errores.log" -append
+    $_ | out-file -filepath "/certificados/errores.log" -append
    $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
    $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
    write-output $_

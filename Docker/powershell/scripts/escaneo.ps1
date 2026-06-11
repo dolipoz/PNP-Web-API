@@ -9,8 +9,13 @@ for ($index=1; $index -le $MaxHilos; $index++) {
         # Importamos las variables y funciones dentro de cada job ya que no recoge las variables ni funciones del script base
         . \scripts\importaciones.ps1
         while ($true) {
-            # Buscamos en la base de datos el primer tarea que esté pendiente y que no haya sido asignado por otro worker
-            $buscar_tarea = ejecutarquery("select * from tareas where estado = 'pendiente' and nombre_contenedor is null;")
+            try {
+                # Buscamos en la base de datos el primer tarea que esté pendiente y que no haya sido asignado por otro worker
+                $buscar_tarea = ejecutarquery("select * from tareas where estado = 'pendiente' and nombre_contenedor is null;")
+            } catch {
+                Start-Sleep -Seconds 2
+                continue
+            }
             # Si lo encuentra le da nombre del worker que lo va a ejecutar
             if ($null -ne $buscar_tarea) {
                 ejecutarquery("update tareas set nombre_contenedor = '$nombre_contenedor', id_tarea = $index, estado = 'ejecutando' where estado = 'pendiente' and nombre_contenedor is null limit 1;")
