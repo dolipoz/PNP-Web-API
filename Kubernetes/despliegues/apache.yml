@@ -17,6 +17,8 @@ spec:
           image: $ImagenApache
           imagePullPolicy: IfNotPresent
           env:
+            - name: TZ
+              value: "Europe/Madrid"
             - name: API_USER
               valueFrom:
                 secretKeyRef:

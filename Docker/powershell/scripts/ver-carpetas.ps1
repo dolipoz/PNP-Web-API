@@ -55,8 +55,10 @@ try {
    }
    $json = ConvertTo-Json $json
    ejecutarquery("update tareas set salida = '$json', estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+   $fecha = Get-Date
+   "$fecha : Se han obtenido los datos de las carpetas en $tenant.sharepoint.com/sites/$sitio" | out-file -filepath "/certificados/vercarpetas.log" -append
 } catch {
-    $_ | out-file -filepath "/certificados/errores.log" -append
+   $_ | out-file -filepath "/certificados/errores.log" -append
    $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
    $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
    write-output $_

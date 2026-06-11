@@ -41,6 +41,8 @@ try {
         ejecutarquery("update tareas set progreso = $([math]::Round($progreso)) where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
     }
     ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+    $fecha = Get-Date
+    "$fecha : Se ha reseteado los permisos de $tenant.sharepoint.com/sites/$sitio" | out-file -filepath "/certificados/reseteos.log" -append
 } catch {
     $_ | out-file -filepath "/certificados/errores.log" -append
     $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"

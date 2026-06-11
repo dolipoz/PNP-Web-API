@@ -14,10 +14,12 @@ try {
    # Eliminamos de la base de datos el registro del certificado que hemos eliminado físicamente
    ejecutarquery("delete from certificados where nombre = '$nombre';")
    ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+   $fecha = Get-Date
+   "$fecha : Se ha eliminado el certificado $nombre" | out-file -filepath "/certificados/delcerts.log" -append
 } catch {
-    $_ | out-file -filepath "/certificados/errores.log" -append
-    $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
-    $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
-    write-output $_
-    ejecutarquery("update tareas set estado = 'fallida', error = '$b64', f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
+   $_ | out-file -filepath "/certificados/errores.log" -append
+   $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
+   $b64 = [Convert]::ToBase64String( [Text.Encoding]::UTF8.GetBytes($errorMsg) )
+   write-output $_
+   ejecutarquery("update tareas set estado = 'fallida', error = '$b64', f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
 }

@@ -17,6 +17,8 @@ spec:
           image: $ImagenPowershell
           imagePullPolicy: IfNotPresent
           env:
+            - name: TZ
+              value: "Europe/Madrid"
             - name: PWSH_USER
               valueFrom:
                 secretKeyRef:

@@ -8,7 +8,7 @@ RUN pwsh -Command "\
     Install-Module PnP.PowerShell -Scope AllUsers -Force; \
     Install-Module ThreadJob -Scope AllUsers -Force"
 
-RUN mkdir /certs/ && chmod 700 /certs
+RUN mkdir /certificados/ && chmod 744 /certificados
 COPY scripts/* /scripts/
 RUN chmod +x /scripts/*
 

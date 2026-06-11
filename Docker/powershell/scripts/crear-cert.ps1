@@ -38,7 +38,8 @@ try {
     # Creamos los certificados en la base de datos
     ejecutarquery("insert into certificados (nombre, contenido, f_creado, expira) values ('$nombre', '$cert64', current_timestamp, date_add(current_timestamp,interval $expira year));")
     ejecutarquery("update tareas set estado = 'completada', progreso = 100, f_finalizacion = current_timestamp, bloqueo = null where estado = 'ejecutando' and nombre_contenedor = '$nombre_contenedor' and id_tarea = $index;")
-
+    $fecha = Get-Date
+    "$fecha : Se ha creado el certificado $nombre correctamente" | out-file -filepath "/certificados/addcerts.log" -append
 } catch {
     $_ | out-file -filepath "/certificados/errores.log" -append
     $errorMsg = "$($_.InvocationInfo.ScriptName) -- $($_.InvocationInfo.Line) -- $($_.ErrorDetails.Message)"
