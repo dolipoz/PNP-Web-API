@@ -45,8 +45,8 @@
     if (!$_SESSION["login"]) {
         echo "
         <form id='consola_login' class='consolas' action='Scripts/iniciar-sesion.php' method='POST'>
-            <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='20' min='8' max='20' required><br>
-            <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' placeholder='|' size='20' min='8' max='20' required>
+            <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='15' min='8' max='20' required><br>
+            <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' placeholder='|' size='15' min='8' max='20' required>
             <br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
@@ -85,7 +85,7 @@
                     <td>Ultimo sesión</td><td>{$_SESSION['usuario']['ult_sesion']}</td>
                 </tr>
             </table>
-            <h3><a id='mostrar_permisos' onclick='mostrarPermisos()' href='#'>Mostrar Permisos v</a></h3>
+            <h3><a id='mostrar_permisos' onclick='mostrarPermisos()' href='#'> > Mostrar Permisos</a></h3>
             <ul id='p_permisos' style='display: none;'>
         ";
         foreach ($_SESSION['usuario']['permisos'] as $id_permiso => $nombre_valor) {
@@ -97,12 +97,12 @@
         }
         echo "
             </ul>
-            <h3><a id='modificar_mi_perfil' onclick='mostrarEditarPerfil()' href='#'>Modificar Perfil v</a></h3>
+            <h3><a id='modificar_mi_perfil' onclick='mostrarEditarPerfil()' href='#'> > Modificar Perfil</a></h3>
             <form id='mod_perfil' action='Scripts/Modificar/modificar-mi-usuario.php' method='POST' style='display: none;'>
                 <input type='hidden' name='id_usuario' value='{$_SESSION['usuario']['id']}' required>
-                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='15' minlenght='8' maxlenght='20'><br>
                 <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='{$_SESSION['usuario']['correo']}' size='20' minlenght='8' maxlenght='20'><br>
-                <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='{$_SESSION['usuario']['nombre']}' size='20' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='{$_SESSION['usuario']['nombre']}' size='15' minlenght='8' maxlenght='20'><br>
                 <label class='prompt' for='apellidos'>PS C:\Cambiar apellidos></label><input type='text' name='apellidos' value='{$_SESSION['usuario']['apellidos']}' size='20' minlenght='8' maxlenght='20'><br>
                 <br>
                 <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
@@ -112,7 +112,7 @@
         // -----------------------------------------  Consola 4 - Crear API  -------------------------------------------------------------
         echo "
         <form id='consola_addapi' class='consolas' action='Scripts/Crear/crear-api.php' method='POST' style='display: none;'>
-            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='20' maxlength='50' required><br>
+            <label class='prompt' for='tenant'>PS C:\Escriba el tenant de la api></label><input type='text' name='tenant' placeholder='|' size='15' maxlength='50' required><br>
             <label class='prompt' for='sitio'>PS C:\Escriba el sitio del sharepoint></label><input type='text' name='sitio' placeholder='|' size='30' minlength='8' maxlength='255' required><br>
             <label class='prompt' for='id_cliente'>PS C:\Escriba el id cliente de la api></label><input type='text' name='id_cliente' placeholder='|' size='30' minlength='9' maxlength='255' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
@@ -145,7 +145,7 @@
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-api.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar la api?\");'>
                     <input type='hidden' name='id_api' value='$id_api' required>
-                    <input type='text' name='tenant' value='$tenant' size='20' maxlength='50' required></td>
+                    <input type='text' name='tenant' value='$tenant' size='15' maxlength='50' required></td>
                     <td><input type='text' name='sitio' value='$sitio' size='30' minlength='2' maxlength='100' required></td>
                     <td><input type='text' name='id_cliente' value='$id_cliente' size='30' minlength='9' maxlength='255' required>
                 ";
@@ -185,7 +185,7 @@
         
         echo "
         <form id='consola_addcert' class='consolas' action='Scripts/Crear/crear-certificado.php' method='POST' style='display: none;'>
-            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' id='certificado' name='certificado' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='certificado'>PS C:\Escriba el nombre del certificado></label><input type='text' id='certificado' name='certificado' placeholder='|' size='15' maxlength='20' required><br>
             <label class='prompt' for='pais'>PS C:\Escoja el pais></label>
             <select id='pais' name='pais'>
                 <option value='ES' selected>España</option>
@@ -193,8 +193,8 @@
                 <option value='DE'>Alemania</option>
                 <option value='FR'>Francia</option>
             </select><br>
-            <label class='prompt' for='ciudad'>PS C:\Escriba el nombre de la ciudad></label><input type='text' id='ciudad' name='ciudad' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='localidad'>PS C:\Escriba el nombre de la localidad></label><input type='text' id='localidad' name='localidad' placeholder='|' size='20' maxlength='20' required><br>
+            <label class='prompt' for='ciudad'>PS C:\Escriba el nombre de la ciudad></label><input type='text' id='ciudad' name='ciudad' placeholder='|' size='15' maxlength='20' required><br>
+            <label class='prompt' for='localidad'>PS C:\Escriba el nombre de la localidad></label><input type='text' id='localidad' name='localidad' placeholder='|' size='15' maxlength='20' required><br>
             <label class='prompt' for='expira'>PS C:\Indique cuantos años debe durar el certificado></label><input type='number' id='expira' name='expira' value='1' min='1' max='4' required><br>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
@@ -227,7 +227,7 @@
                 echo "
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-certificado.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres eliminar el certificado?\");'>
-                    <input type='text' name='nombre' value='$nombre_certificado' size='20' maxlength='20' required></td>
+                    <input type='text' name='nombre' value='$nombre_certificado' size='15' maxlength='20' required></td>
                     <td><a href='Scripts/descargar-cert.php?nombre=".htmlspecialchars($nombre_certificado)."'>Descargar</a></td>
                     <td><p>$f_creado</p></td>
                     <td><p>$f_expira</p>
@@ -282,17 +282,17 @@
         </div>
         ";
         // -----------------------------------------  Consola 8 Crear usuarios  ---------------------------------------------------------
-        echo "
-        <form id='consola_signup' class='consolas' action='Scripts/Crear/crear-usuario.php' method='POST' style='display: none;'>
-            <label class='prompt' for='usuario'>PS C:\Escriba su usuario></label><input type='text' id='usuario' name='usuario' placeholder='|' size='20' maxlength='20' required><br>
-            <label class='prompt' for='clave'>PS C:\Escriba su contraseña></label><input type='password' id='clave' name='clave' placeholder='|' size='20' minlength='8' maxlength='20' required><br>
-            <label class='prompt' for='correo'>PS C:\Escriba su correo electrónico></label><input type='email' id='correo' name='correo' placeholder='|' size='50' minlength='9' maxlength='50'><br>
-            <label class='prompt' for='nombre'>PS C:\Escriba su nombre></label><input type='text' id='nombre' name='nombre' placeholder='|' size='20' minlength='2' maxlength='20'><br>
-            <label class='prompt' for='apellidos'>PS C:\Escriba su[s] apellido[s]></label><input type='text' id='apellidos' name='apellidos' placeholder='|' size='50' minlength='2' maxlength='50'><br>
-            <label class='prompt' for='activo'>PS C:\Marque si quiere activar el usuario></label><input type='checkbox' id='activo' name='activo' checked><br>
-            <label class='prompt' for='id_rol'>PS C:\Seleccione el rol del usuario></label>
-            <select id='id_rol' name='id_rol'>
-        ";
+        echo '
+        <form id="consola_signup" class="consolas" action="Scripts/Crear/crear-usuario.php" method="POST" style="display: none;">
+            <label class="prompt" for="usuario">PS C:\Escriba su usuario></label><input type="text" id="usuario" name="usuario" placeholder="|" size="15" maxlength="20" required><br>
+            <label class="prompt" for="clave">PS C:\Escriba su contraseña></label><input type="password" id="clave" name="clave" placeholder="|" size="15" minlength="8" maxlength="20" title="Debe contener al menos un símbolo, un dígito y una mayúscula" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" required><br>
+            <label class="prompt" for="correo">PS C:\Escriba su correo electrónico></label><input type="email" id="correo" name="correo" placeholder="|" size="20" minlength="9" maxlength="50"><br>
+            <label class="prompt" for="nombre">PS C:\Escriba su nombre></label><input type="text" id="nombre" name="nombre" placeholder="|" size="15" minlength="2" maxlength="20"><br>
+            <label class="prompt" for="apellidos">PS C:\Escriba su[s] apellido[s]></label><input type="text" id="apellidos" name="apellidos" placeholder="|" size="20" minlength="2" maxlength="50"><br>
+            <label class="prompt" for="activo">PS C:\Marque si quiere activar el usuario></label><input type="checkbox" id="activo" name="activo" checked><br>
+            <label class="prompt" for="id_rol">PS C:\Seleccione el rol del usuario></label>
+            <select id="id_rol" name="id_rol">
+        ';
         $cu_roles = mysqli_query($conexion,$Q_roles);
         // Recorremos los roles que existen
         if ($cu_roles and mysqli_num_rows($cu_roles) > 0) {
@@ -334,11 +334,11 @@
                 echo "
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-usuario.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este usuario?\");'>
-                    <input type='text' name='usuario' value='{$usuario['usuario']}' size='20' maxlength='20' required $solo_lectura></td>
-                    <td><input type='password' name='clave' placeholder='Nueva contraseña' size='20' minlength='8' maxlength='20'></td>
-                    <td><input type='email' name='correo' value='{$usuario['correo']}' size='50' minlength='9' maxlength='50'></td>
-                    <td><input type='text' name='nombre' value='{$usuario['nombre']}' size='20' minlength='2' maxlength='20'></td>
-                    <td><input type='text' name='apellidos' value='{$usuario['apellidos']}' size='50' minlength='2' maxlength='50'></td>
+                    <input type='text' name='usuario' value='{$usuario['usuario']}' size='15' maxlength='20' required $solo_lectura></td>
+                    <td><input type='password' name='clave' placeholder='Nueva contraseña' size='15' minlength='8' maxlength='20'></td>
+                    <td><input type='email' name='correo' value='{$usuario['correo']}' size='20' minlength='9' maxlength='50'></td>
+                    <td><input type='text' name='nombre' value='{$usuario['nombre']}' size='15' minlength='2' maxlength='20'></td>
+                    <td><input type='text' name='apellidos' value='{$usuario['apellidos']}' size='20' minlength='2' maxlength='50'></td>
                     <td><input type='checkbox' name='activo' $activo></td>
                     <td><select name='id_rol'>
                 ";
@@ -373,18 +373,29 @@
         // -----------------------------------------  Consola 10 - Crear Rol  ---------------------------------------------------------
         echo "
         <form id='consola_c_rol' class='consolas' action='Scripts/Crear/crear-rol.php' method='POST' style='display: none;'>
-            <label class='prompt' for='rol'>PS C:\Escriba el nombre del rol></label><input type='text' id='rol' name='rol' placeholder='|' size='20' minlength='3' maxlength='20' required><br>
-            <label class='prompt' for='descripcion'>PS C:\Escriba la descripción del rol></label><input type='text' id='descripcion' name='descripcion' placeholder='|' size='50' maxlength='100'><br>
+            <label class='prompt' for='rol'>PS C:\Escriba el nombre del rol></label><input type='text' id='rol' name='rol' placeholder='|' size='15' minlength='3' maxlength='20' required><br>
+            <label class='prompt' for='descripcion'>PS C:\Escriba la descripción del rol></label><input type='text' id='descripcion' name='descripcion' placeholder='|' size='20' maxlength='100'><br>
+            <label class='prompt' for='lista_permisos'>PS C:\Marque los permisos para el rol></label>
+            <table id='tabla_permisos'>
+                <tr>
         ";
         $c_permisos = mysqli_query($conexion,$Q_permisos);
         // Recorremos los permisos que existen
         if ($c_permisos and mysqli_num_rows($c_permisos) > 0) {
+            $contador_permisos = 0;
             while ($c_permiso = mysqli_fetch_assoc($c_permisos)) {
-                echo "<label class='prompt'>{$c_permiso['permiso']}</label><input type='checkbox' name='p_{$c_permiso['id']}' value='{$c_permiso['id']}'><br>";
+                $contador_permisos++;
+                echo "<td><label class='prompt'>{$c_permiso['permiso']}</label><input type='checkbox' name='p_{$c_permiso['id']}' value='{$c_permiso['id']}'></td>";
+                if ($contador_permisos == 3) {
+                    echo "</tr><tr>";
+                    $contador_permisos = 0;
+                }
+                
             }
         }
         echo "
-
+                </tr>
+            </table>
             <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
         </form>
         ";
@@ -420,10 +431,10 @@
                 <tr>
                     <td><form action='Scripts/Modificar/modificar-rol.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este rol?\");'>
                     <input type='hidden' name='id_rol' value='{$rol['id']}' required>
-                    <input type='text' name='rol' value='{$rol['rol']}' size='20' required $solo_lectura></td>
+                    <input type='text' name='rol' value='{$rol['rol']}' size='15' required $solo_lectura></td>
                     <td><input type='text' name='descripcion' value='{$rol['descripcion']}' size='30' maxlength='100' $solo_lectura>
                 ";
-                $q_rol_permisos = "select p.id as id from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$rol['id'];
+                $q_rol_permisos = "select p.id from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$rol['id'];
                 $rol_permisos = mysqli_query($conexion, $q_rol_permisos);
                 if ($rol_permisos and $gr_permisos and mysqli_num_rows($gr_permisos) > 0) {
                     $perm_check = "";

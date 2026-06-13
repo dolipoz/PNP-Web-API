@@ -15,8 +15,10 @@
         where ac.id_api = $id
     ";
     $api_certs = mysqli_query($conexion, $q_api_cert);
-    while ($api_cert = mysqli_fetch_assoc($api_certs)) {
-        $certificados[] = $api_cert['nombre'];
+    if ($api_certs and mysqli_num_rows($api_certs) > 0) {
+        while ($api_cert = mysqli_fetch_assoc($api_certs)) {
+            $certificados[] = $api_cert['nombre'];
+        }
     }
     echo json_encode($certificados);
 ?>

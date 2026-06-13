@@ -7,24 +7,31 @@
         let monitor = null;
         let permisos = false;
         let mod_perfil = false;
+        // Función para mostrar u ocultar en el perfil de usuario los permisos
         function mostrarPermisos() {
             if (permisos === true) {
+                document.getElementById('mostrar_permisos').innerHTML = " > Mostrar Permisos";
                 document.getElementById("p_permisos").style.display = 'none';
                 permisos = false;
             } else {
+                document.getElementById('mostrar_permisos').innerHTML = " V Mostrar Permisos";
                 document.getElementById("p_permisos").style.display = 'block';
                 permisos = true;
             }
         }
+        // Función para mostrar u ocultar en el perfil de usuario la edición de perfil
         function mostrarEditarPerfil() {
             if (mod_perfil === true) {
+                document.getElementById('modificar_mi_perfil').innerHTML = " > Modificar Perfil";
                 document.getElementById("mod_perfil").style.display = 'none';
                 mod_perfil = false;
             } else {
+                document.getElementById('modificar_mi_perfil').innerHTML = " V Modificar Perfil";
                 document.getElementById("mod_perfil").style.display = 'block';
                 mod_perfil = true;
             }
         }
+        // Función en Index para mostrar las consolas con los formularios
         function mostrarConsola(idp,idc) {
             // Cambia el background de todos los elementos con clase "pestanias"
             const pestaniasC = document.querySelectorAll('.pestanias');
@@ -41,6 +48,7 @@
             // Muestra el elemento seleccionado
             document.getElementById(idc).style.display = 'block';
         }
+        // Función en Tareas para mostrar los monitores con los formularios
         function mostrarMonitor(idp,idc) {
             // Cambia el background de todos los elementos con clase "pestanias"
             const pestaniasM = document.querySelectorAll('.pestanias');
@@ -66,6 +74,7 @@
                 monitor = setInterval( actualizarMonitor, 5000 );
             }
         }
+        // Función para mostrar en tiempo real los cambios en la tabla tareas de la base de datos
         function actualizarMonitor() {
             fetch('Scripts/monitor.php')
                 .then(response => response.json())
@@ -144,6 +153,7 @@
                     console.error(error);
                 });
         }
+        // Función que usa el php de certificados-de-api para mostrar los certificados de cada api
         function cargarCertificados() {
             fetch("Scripts/certificados-de-api.php?id=" + this.value)
                 .then(response => response.json())
@@ -158,10 +168,7 @@
                     });
                 });
         }
-        document.getElementById("apis").addEventListener("change", cargarCertificados);
-        const apis = document.getElementById("apis");
-        apis.dispatchEvent(new Event("change"));
-        // Función para cambiar el Action del formulario para Cambiar Permisos
+        // Función para que oculte o muestre el input file del CSV en el Select script
         function cambiarFormulario() {
             let script = document.getElementById("script").value;
             if (script === 'cambiar-permisos.ps1') {
@@ -174,9 +181,19 @@
                 document.getElementById("lanzar_tareas").action = "Scripts/lanzar-tarea.php";
             }
         }
-        document.getElementById("script").addEventListener("change", cambiarFormulario);
+
+        // Añadimos el evento change con la función cargarCertificados para que cuando cambie el valor del SELECT apis los valores de los certificados se rellenen
+        const apis = document.getElementById("apis");
+        if (apis) {
+            apis.addEventListener("change", cargarCertificados);
+            apis.dispatchEvent(new Event("change"));
+        }
+        // Añadimos el evento change con la función cambiarFormulario para que cuando cambie el valor del SELECT script oculte o muestre el input file del CSV
         const script = document.getElementById("script");
-        script.dispatchEvent(new Event("change"));
+        if (script) {
+            script.addEventListener("change", cambiarFormulario);
+            script.dispatchEvent(new Event("change"));
+        }
     </script>
 </body>
 </html>

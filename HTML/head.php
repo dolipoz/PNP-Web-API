@@ -37,7 +37,6 @@
             <p>Gestione sus APIs desde PHP</p>
         </div>
         <div id='indice'>
-            <ins>Índice</ins>
             <ul>
                 <li><i id='i_indice'></i><a href="index.php">Inicio</a></li>
                 <?php

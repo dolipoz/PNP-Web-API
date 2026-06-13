@@ -1,15 +1,14 @@
 <?php
     include "variables.php";
 
-    $user = $_POST['usuario'];
-    $pass = $_POST['clave'];
+    $user = isset($_POST['usuario']) ? $_POST['usuario'] : null;
+    $pass = isset($_POST['clave']) ? $_POST['clave'] : null;
 
     $q_user = "select * from usuarios where usuario = '$user'";
-
     $usuarios = mysqli_query($conexion,$q_user);
-    $usuario = mysqli_fetch_assoc($usuarios);
     // Buscamos al usuario dentro de la base de datos
-    if ($usuario) {
+    if ($usuarios and mysqli_num_rows($usuarios) == 1) {
+        $usuario = mysqli_fetch_assoc($usuarios);
         // Comprueba que la contraseña hasheada sea la misma que la introducida por el usuario, si no saldrá sin iniciar sesión
         if (password_verify($pass, $usuario['clave'])) {
             // Si usuario y contraseña son correctos y además está activo, modificará las variables de sesión para usuario

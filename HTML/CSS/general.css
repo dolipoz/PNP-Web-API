@@ -43,6 +43,13 @@ ul {
     font-family: 'Times New Roman', serif;
     font-size: 18px;
 }
+#indice ul li {
+    margin-top: 5px;
+    border: #000000 groove 5px;
+    background-color: #636363;
+    color: #ffffff;
+}
+
 #ventana_index nav ul, #ventana_tareas nav ul {
     display: flex;
     flex-wrap: nowrap;
@@ -130,7 +137,7 @@ input[type=submit], input[type=reset] {
 .consolas input[type=submit], .consolas input[type=reset] {
     background-color: transparent;
 }
-.consolas input[type=submit]:hover, .consolas input[type=reset]:hover {
+.consolas input[type=submit]:hover, .consolas input[type=reset]:hover, #mostrar_permisos:hover, #modificar_mi_perfil:hover {
     color: #00ff00;
 }
 /* ---------------------------- */
@@ -166,10 +173,7 @@ input[type=submit], input[type=reset] {
 }
 #indice {
     height: 100%;
-    border: #000000 groove 15px;
     text-align: center;
-    box-shadow: 5px 5px 10px 10px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(#5989e2, #1b498a);
     margin: 5px 0px 5px 0px;
     padding: 5px;
     flex: 0.1;
@@ -200,6 +204,15 @@ td, th {
     padding-bottom: 10px;
     padding-right: 2vh;
     padding-left: 2vh;
+}
+
+/* -- Para permisos al crear roles -- */
+#tabla_permisos {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+#tabla_permisos td {
+    padding: 5px;
 }
 
 /* -- Para mostrar el perfil -- */

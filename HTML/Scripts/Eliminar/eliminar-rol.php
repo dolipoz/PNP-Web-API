@@ -8,7 +8,7 @@
 		$_SESSION["info"] = "El Rol se eliminó correctamente.";
     } else {
 		$_SESSION["error"] = True;
-		$_SESSION["info"] = "El Rol no se pudo eliminar.";
+		$_SESSION["info"] = "El Rol no se pudo eliminar, quizás tenga un usuario asociado.";
 	}
 	
 	header("Location: ../../index.php");
