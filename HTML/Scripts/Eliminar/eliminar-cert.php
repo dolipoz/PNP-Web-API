@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$nombre = $_POST['nombre'];
 

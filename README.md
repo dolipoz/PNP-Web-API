@@ -31,13 +31,13 @@ Existen varios workflows que permiten crear la infraestructura de AWS, los despl
 ## Docker
 Directorio con scripts en lenguaje BASH utilizados dentro del proyecto tales como instalar docker y minikube
 ### Apache
-Directorio de la imagen para PHP con el archivo https.conf de apache y dockerfile
+Directorio de la imagen para PHP con el archivo http.conf de apache y dockerfile
 ### MySQL
 Directorio de la imagen MySQL con dockerfile y el script de la creación de la base de datos, tablas y triggers
 ### Poweshell
 Directorio de la imagen Powershell con dockerfile y la carpeta de scripts en lenguaje Powershell utilizados dentro del proyecto
 ## HTML
-Directorio con la estructura de la página web con PHP y CSS
+Directorio con la estructura de la página web con scripts PHP y estilos CSS
 ## Kubernetes
 Directorio con ficheros para el despliegue de Apache, Powershell y MySQL con sus respectivos servicios de MySQL como ClusterIP y Apache en LoadBalancer.
 ### Se divide en:

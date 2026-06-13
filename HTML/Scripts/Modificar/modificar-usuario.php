@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
     if (isset($_POST['usuario'])) {
 		$usuario = $_POST['usuario'];

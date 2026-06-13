@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$id = $_POST['id_usuario'];
 	$clave = isset($_POST['clave']) ? $_POST['clave'] : null;

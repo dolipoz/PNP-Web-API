@@ -1,7 +1,5 @@
 <?php
     include "variables.php";
-    include "funciones.php";
-    include "conectar-db.php";
 
     $user = $_POST['usuario'];
     $pass = $_POST['clave'];

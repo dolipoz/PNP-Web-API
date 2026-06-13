@@ -1,11 +1,21 @@
 <?php
     session_start();
+
+    //ini_set('display_errors', 0);
+    ini_set('display_startup_errors', 0);
+    //error_reporting(E_ALL);
+    mysqli_report(MYSQLI_REPORT_OFF);
+
+    include __DIR__."/funciones.php";
+    include __DIR__."/conectar-db.php";
+
     // Variables globales para cada sesión de cliente Web
     $MaxTamaArchivos = 10;
     $MaxMB = $MaxTamaArchivos*1024*1024;
     $extensionesValidas = array("csv","CSV");
 
-    $Q_roles = "select id,rol from roles";
+    $Q_roles = "select * from roles";
+    $Q_permisos = "select * from permisos";
     $Q_usuarios = "select * from usuarios";
     $Q_apis = "select * from api";
     $Q_certs = "select * from certificados";
@@ -15,21 +25,16 @@
         $_SESSION["usuario"] = [
             'id' => 0, 'usuario' => '', 'id_rol' => 0, 'rol' => '',
             'nombre' => '', 'apellidos' => '', 'correo' => '', 'activo' => false,
-            'f_creado' => null, 'ult_sesion' => null, 'permisos' => [
-                // Permisos de ver, modificar o eliminar usuarios
-                1 => ['1' => false], 2 => ['2' => false], 3 => ['3' => false],
-                // Permisos de ver, modificar o eliminar roles
-                4 => ['4' => false], 5 => ['5' => false], 6 => ['6' => false],
-                // Permisos de ver, modificar o eliminar permisos
-                7 => ['7' => false], 8 => ['8' => false], 9 => ['9' => false],
-                // Permisos de ver, modificar o eliminar api
-                10 => ['10' => false], 11 => ['11' => false], 12 => ['12' => false],
-                // Permisos de ver, modificar o eliminar certificados
-                13 => ['13' => false], 14 => ['14' => false], 15 => ['15' => false],
-                // Permisos de ver, modificar o eliminar tareas
-                16 => ['16' => false], 17 => ['17' => false], 18 => ['18' => false]
-            ]
+            'f_creado' => null, 'ult_sesion' => null, 'permisos' => []
         ];
+    }
+    if (count($_SESSION["usuario"]["permisos"]) == 0) {
+        $v_permisos = mysqli_query($conexion, $Q_permisos);
+        if ($v_permisos and mysqli_num_rows($v_permisos) > 0) {
+            while ($v_permiso = mysqli_fetch_assoc($v_permisos)) {
+                $_SESSION["usuario"]['permisos'][$v_permiso['id']] = [$v_permiso['permiso'] => false];
+            }
+        }
     }
     if (!isset($_SESSION["login"])) {
         // Variable que determina si se ha iniciado sesión

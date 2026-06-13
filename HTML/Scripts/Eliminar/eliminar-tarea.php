@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$id_tarea = $_POST['id'];
 	$sql_delta = "delete from tareas where id = $id_tarea";
@@ -13,5 +11,5 @@
 		$_SESSION["info"] = "La Tarea no se pudo eliminar.";
 	}
 	
-	header("Location: ../../index.php");
+	header("Location: ../../tareas.php");
 ?>

@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$id_api = $_POST['id_api'];
 	$id_cert = $_POST['id_cert'];

@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$id = isset($_POST['id_api']) ? $_POST['id_api'] : null;
 	$tenant = isset($_POST['tenant']) ? $_POST['tenant'] : null;

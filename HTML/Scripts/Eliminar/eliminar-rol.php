@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$id_rol = $_POST['id_rol'];
 	$sql_delrol = "delete from roles where id = $id_rol";

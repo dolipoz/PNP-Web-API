@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$usuario = $_POST['usuario'];
 	$clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);

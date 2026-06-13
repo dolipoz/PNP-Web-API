@@ -1,10 +1,10 @@
 <?php
     // Creamos las variables de la base de datos, el host es el nombre del servicio desplegado con Kubectl
-    $host="servicio-mysql";
-    $db_user=getenv("API_USER");
+    $host = "servicio-mysql";
+    $db_user = getenv("API_USER");
     // Usamos el Secret creado con eksctl de la contraseña de MYSQL
-    $db_pass=getenv("API_PASS");
-    $basedatos="powershell_api";
+    $db_pass = getenv("API_PASS");
+    $basedatos = "powershell_api";
     // Creamos la conexión con la base de datos
     $conexion = conectarDB($host,$db_user,$db_pass);
     if ($conexion === null) {

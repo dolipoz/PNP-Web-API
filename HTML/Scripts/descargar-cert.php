@@ -1,7 +1,5 @@
 <?php
 	include "variables.php";
-	include "funciones.php";
-	include "conectar-db.php";
 
     // Comprobamos que la variable certificado no está vacía y la buscamos en la base de datos para descargar el contenido
     if (isset($_GET['nombre'])) {

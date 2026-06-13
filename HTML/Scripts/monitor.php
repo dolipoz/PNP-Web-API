@@ -1,7 +1,5 @@
 <?php
     include "variables.php";
-    include "funciones.php";
-    include "conectar-db.php";
 
     header('Content-Type: application/json');
     // Ponemos los contadores de los tareas a 0

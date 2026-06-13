@@ -1,7 +1,5 @@
 <?php
     include "variables.php";
-    include "funciones.php";
-    include "conectar-db.php";
 
     $script = $_POST['script'];
     $id_api = $_POST['apis'];

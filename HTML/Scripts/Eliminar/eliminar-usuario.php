@@ -1,7 +1,5 @@
 <?php
 	include "../variables.php";
-	include "../funciones.php";
-	include "../conectar-db.php";
 
 	$usuario = $_POST['usuario'];
 	$sql_deluser = "delete from usuarios where usuario = '$usuario'";

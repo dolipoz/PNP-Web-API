@@ -31,6 +31,12 @@
                 if ($puede_modificar_usuarios or $puede_eliminar_usuarios) {
                     echo "<li id='gestion_usuarios' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_usuarios\",\"consola_g_usuarios\")'>Gestionar Usuarios</a></li>";
                 }
+                if ($puede_crear_roles) {
+                    echo "<li id='agregar_rol' class='pestanias'><a href='#' onclick='mostrarConsola(\"agregar_rol\",\"consola_c_rol\")'>Crear Rol</a></li>";
+                }
+                if ($puede_modificar_roles or $puede_eliminar_roles) {
+                    echo "<li id='gestion_roles' class='pestanias'><a href='#' onclick='mostrarConsola(\"gestion_roles\",\"consola_g_roles\")'>Gestionar Roles</a></li>";
+                }
             }
             ?>
             </ul>
@@ -47,11 +53,14 @@
         ";
     } else {
         $p_activo = isset($_SESSION['usuario']['activo']) ? "Si" : "No";
-        // -----------------------------------------  Consolas 2 y 3 - Cerrar Sesión y Perfil de usuario modificable  ---------------------------------------------------------
+        // ----------------------------------------- Consola 2 - Cerrar Sesión --------------------------------------------------------------------------
         echo "
         <form id='consola_logoff' class='consolas' action='Scripts/cerrar-sesion.php' method='POST' style='display: none;'>
             <label class='prompt'>PS C:\Haga click en Cerrar Sesión para salir></label><input type='submit' value='Cerrar Sesión'>
         </form>
+        ";
+        // ----------------------------------------- Consola 3 - Perfil de usuario modificable ---------------------------------------------------------
+        echo "
         <div id='consola_perfil' class='consolas'>
             <table>
                 <tr>
@@ -361,6 +370,89 @@
             </table>
         </div>
         ";
+        // -----------------------------------------  Consola 10 - Crear Rol  ---------------------------------------------------------
+        echo "
+        <form id='consola_c_rol' class='consolas' action='Scripts/Crear/crear-rol.php' method='POST' style='display: none;'>
+            <label class='prompt' for='rol'>PS C:\Escriba el nombre del rol></label><input type='text' id='rol' name='rol' placeholder='|' size='20' minlength='3' maxlength='20' required><br>
+            <label class='prompt' for='descripcion'>PS C:\Escriba la descripción del rol></label><input type='text' id='descripcion' name='descripcion' placeholder='|' size='50' maxlength='100'><br>
+        ";
+        $c_permisos = mysqli_query($conexion,$Q_permisos);
+        // Recorremos los permisos que existen
+        if ($c_permisos and mysqli_num_rows($c_permisos) > 0) {
+            while ($c_permiso = mysqli_fetch_assoc($c_permisos)) {
+                echo "<label class='prompt'>{$c_permiso['permiso']}</label><input type='checkbox' name='p_{$c_permiso['id']}' value='{$c_permiso['id']}'><br>";
+            }
+        }
+        echo "
+
+            <label class='prompt'>PS C:\Haga click en Aceptar para continuar></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
+        </form>
+        ";
+        // -----------------------------------------  Consola 11 - Gestionar Roles  ---------------------------------------------------------        
+        $solo_lectura = "";
+        $ids_rol_permisos = [];
+        $lista_permisos = [];
+
+        if (!$puede_modificar_roles) {$solo_lectura = "readonly";}
+        echo "
+        <div id='consola_g_roles' class='consolas' style='display: none;'>
+            <table class='cabecera-tabla'>
+                <tr>
+                    <th>Rol</th>
+                    <th>Descripción</th>
+        ";
+        $gr_permisos = mysqli_query($conexion, $Q_permisos);
+        if ($gr_permisos and mysqli_num_rows($gr_permisos) > 0) {
+            while ($gr_permiso = mysqli_fetch_assoc($gr_permisos)) {
+                echo "            <th>{$gr_permiso['permiso']}</th>";
+                $ids_rol_permisos[] = $gr_permiso['id'];
+            }
+        }
+        if ($puede_modificar_roles) { echo "            <th>Actualizar</th>"; }
+        if ($puede_eliminar_roles) { echo "            <th>Eliminar</th>"; }
+        echo "  </tr>";
+
+        $roles = mysqli_query($conexion, $Q_roles);
+        if ($roles and mysqli_num_rows($roles) > 0) {
+            while ($rol = mysqli_fetch_assoc($roles)) {
+                $lista_permisos = [];
+                echo "
+                <tr>
+                    <td><form action='Scripts/Modificar/modificar-rol.php' method='POST' class='filas-tabla' onsubmit='return confirm(\"¿Seguro que quieres modificar/eliminar este rol?\");'>
+                    <input type='hidden' name='id_rol' value='{$rol['id']}' required>
+                    <input type='text' name='rol' value='{$rol['rol']}' size='20' required $solo_lectura></td>
+                    <td><input type='text' name='descripcion' value='{$rol['descripcion']}' size='30' maxlength='100' $solo_lectura>
+                ";
+                $q_rol_permisos = "select p.id as id from permisos p join roles_permisos rp on p.id = rp.id_permiso join roles r on r.id = rp.id_rol where rp.id_rol = ".$rol['id'];
+                $rol_permisos = mysqli_query($conexion, $q_rol_permisos);
+                if ($rol_permisos and $gr_permisos and mysqli_num_rows($gr_permisos) > 0) {
+                    $perm_check = "";
+                    while ($rol_permiso = mysqli_fetch_assoc($rol_permisos)) {
+                        $lista_permisos[] = $rol_permiso['id'];
+                    }
+                    foreach ($ids_rol_permisos as $id_rol_permisos) {
+                        if (in_array($id_rol_permisos, $lista_permisos)) {
+                            $perm_check = "checked";
+                        } else {
+                            $perm_check = "";
+                        }
+                        echo "  </td><td><input type='checkbox' name='p_$id_rol_permisos' $perm_check $solo_lectura>";
+                    }
+                }
+                if ($puede_modificar_roles) { echo "   </td><td><input class='editar' type='submit' value=''>"; }                
+                if ($puede_eliminar_roles) { echo "   </td><td><input class='eliminar' type='submit' value='' formaction='Scripts/Eliminar/eliminar-rol.php'>"; }
+                echo "
+                    </form>
+                    </td>
+                </tr>
+                ";
+            }
+        }
+        echo "
+            </table>
+        </div>
+        ";
+
     }
     echo "</div>";
 
