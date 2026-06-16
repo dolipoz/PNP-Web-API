@@ -1,6 +1,9 @@
 <?php
 	include "variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../index.php');
+		exit;
+    }
 	$script = $_POST['script'];
 	$id_api = $_POST['apis'];
 	$certificado = $_POST['certificado'];
@@ -27,4 +30,5 @@
 	}
 	
 	header("Location: ../tareas.php");
+	exit;
 ?>

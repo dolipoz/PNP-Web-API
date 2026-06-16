@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$usuario = $_POST['usuario'];
 	$sql_deluser = "delete from usuarios where usuario = '$usuario'";
     if ($conexion->query($sql_deluser) == True) {
@@ -12,4 +15,5 @@
 	}
 	
 	header("Location: ../../index.php");
+	exit;
 ?>

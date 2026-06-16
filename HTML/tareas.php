@@ -5,7 +5,7 @@
     }
 ?>
     <div id="ventana_tareas">
-        <div>
+        <div id='cabecera_tareas'>
             <h1>Gestión de Tareas</h1>
         </div>
         <nav>
@@ -13,8 +13,10 @@
             <ul>
             <?php
             echo "<li id='p_m_tareas' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_m_tareas\",\"monitor_tareas\")'>Monitor de Tareas</a></li>";
-            echo "<li id='p_tareas_comp' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_comp\",\"tareas_completadas\")'>Tareas Completadas</a></li>";
-            echo "<li id='p_tareas_lanz' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_lanz\",\"lanzar_tareas\")'>Lanzar Tareas</a></li>";
+            echo "<li id='p_tareas_comp' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_comp\",\"tareas_completadas\")'>Tareas</a></li>";
+            if ($puede_crear_tareas) {
+                echo "<li id='p_tareas_lanz' class='pestanias'><a href='#' onclick='mostrarMonitor(\"p_tareas_lanz\",\"lanzar_tareas\")'>Lanzar Tareas</a></li>";
+            }
             ?>
             </ul>
         </nav>
@@ -97,15 +99,22 @@
     ";
     // -----------------------------------------  Monitor 3 - Lanzar Tareas  ---------------------------------------------------------
     echo "
-    <form id='lanzar_tareas' class='monitor' enctype='multipart/form-data' action='Scripts/Crear/lanzar-tarea.php' method='POST' style='display: none;'>
-        <label class='lanzador' for='script'>Elija que acción quiere lanzar </label>
-        <select id='script' name='script'>
-            <option value='ver-carpetas.ps1' selected>Mostrar Carpetas y Permisos</option>
-            <option value='resetear-permisos.ps1'>Resetear Permisos de todas las carpetas</option>
-            <option value='cambiar-permisos.ps1'>Cambiar Permisos a partir de CSV</option>
-        </select><br>
-        <label class='lanzador' for='apis'>Elija la api</label>
-        <select id='apis' name='apis' required>
+    <div id='lanzar_tareas' class='monitor' style='display: none;'>
+        <h1>Lanzar Tareas a Powershell</h1>
+        <form enctype='multipart/form-data' action='Scripts/Crear/lanzar-tarea.php' method='POST'>
+            <div>
+                <i class='i_iconos i_pwsh'></i>
+                <label class='lanzador' for='script'>Elegir Tarea: </label>
+                <select id='script' name='script'>
+                    <option value='ver-carpetas.ps1' selected>Mostrar Carpetas y Permisos</option>
+                    <option value='resetear-permisos.ps1'>Resetear Permisos de todas las carpetas</option>
+                    <option value='cambiar-permisos.ps1'>Cambiar Permisos a partir de CSV</option>
+                </select>
+            </div>
+            <div>
+                <i class='i_iconos i_api'></i>
+                <label class='lanzador' for='apis'>Elija la api</label>
+                <select id='apis' name='apis' style='display:none;' required>
     ";
     $apis = mysqli_query($conexion, $Q_apis);
     if ($apis and mysqli_num_rows($apis) > 0) {
@@ -128,14 +137,23 @@
         }
     }
     echo "
-        </select><br>
-        <label class='lanzador' for='certificado'>Seleccione el certificado asociado a la API</label>
-        <select id='certificado' name='certificado' required>
-        </select><br>
-        <label id='etiqueta_csv' class='lanzador' for='csv'>Suba el csv con los permisos asociados </label>
-        <input type='file' id='csv' name='csv'><br>
-        <label class='lanzador'>Pulse Aceptar para lanzar la tarea ></label><input type='submit' value='Aceptar'> / <input type='reset' value='Reiniciar'>
-    </form>
+                    </select>
+                </div>
+                <div>
+                    <i class='i_iconos i_certificado'></i>
+                    <label class='lanzador' for='certificado'>Seleccione el certificado asociado a la API</label>
+                    <select id='certificado' name='certificado' required>
+                    </select>
+                </div>
+                <div>
+                    <i class='i_iconos i_csv'></i>
+                    <label id='etiqueta_csv' class='lanzador' for='csv'>Suba el csv con los permisos asociados </label>
+                    <input type='file' id='csv' name='csv'>
+                </div>
+                <button><i class='i_iconos i_ejecucion'></i><input type='submit' value='Aceptar'></button>
+                <button><i class='i_iconos i_reiniciar'></i><input type='reset' value='Reiniciar'></button>
+        </form>
+    </div>
     ";
     echo "</div>";
     include 'footer.php';

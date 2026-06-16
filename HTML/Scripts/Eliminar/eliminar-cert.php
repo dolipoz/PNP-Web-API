@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$nombre = $_POST['nombre'];
 
 	$comando = '{"script": "eliminar-cert.ps1", "parametros": ["'.$nombre.'"]}';
@@ -14,4 +17,5 @@
 	}
 	
 	header("Location: ../../index.php");
+	exit;
 ?>

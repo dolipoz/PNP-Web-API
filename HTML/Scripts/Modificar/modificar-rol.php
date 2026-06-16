@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$id_rol = isset($_POST['id_rol']) ? $_POST['id_rol'] : null;
 	$rol = isset($_POST['rol']) ? $_POST['rol'] : null;
 	$descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : null;
@@ -59,5 +62,6 @@
 		$_SESSION["info"] = "El rol no se encuentra.";
 	}
 
-	header("Location: ../../index.php");	
+	header("Location: ../../index.php");
+	exit;
 ?>

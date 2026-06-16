@@ -1,12 +1,16 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
     if (isset($_POST['usuario'])) {
 		$usuario = $_POST['usuario'];
 	} else {
 		$_SESSION["error"] = True;
 		$_SESSION["info"] = "El usuario está mal escrito o no se encuentra.";
 		header("Location: ../../index.php");
+		exit;
 	}
 	$correo = isset($_POST['correo']) ? $_POST['correo'] : null;
 	$nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
@@ -50,6 +54,6 @@
 	}
 
 	header("Location: ../../index.php");
-	
+	exit;	
 ?>
 

@@ -1,6 +1,9 @@
 <?php
 	include "variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../index.php');
+        exit;
+    }
     // Comprobamos que la variable certificado no está vacía y la buscamos en la base de datos para descargar el contenido
     if (isset($_GET['nombre'])) {
         $nombre = $_GET['nombre'];
@@ -18,10 +21,12 @@
             $_SESSION['error'] = true;
             $_SESSION['info'] = 'No se encontró el certificado en la base de datos.';
             header("Location: ../index.php");
+            exit;
         }
     } else {
         $_SESSION['error'] = true;
         $_SESSION['info'] = 'El campo de nombre de certificado está vacío.';
         header("Location: ../index.php");
+        exit;
     }
 ?>

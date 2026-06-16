@@ -1,6 +1,9 @@
 <?php
     include "variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../index.php');
+        exit;
+    }
     $script = $_POST['script'];
     $id_api = $_POST['apis'];
     $certificado = $_POST['certificado'];
@@ -28,6 +31,7 @@
             $_SESSION["error"] = True;
             $_SESSION["info"] = "El certificado no está asociado a esa API.";
             header('Location: ../tareas.php');
+            exit;
         }
 
         // Sacamos la información del CSV, su nombre, tamaño y extensión
@@ -76,4 +80,5 @@
     }
 
     header('Location: ../tareas.php');
+    exit;
 ?>

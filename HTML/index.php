@@ -100,7 +100,7 @@
             <h3><a id='modificar_mi_perfil' onclick='mostrarEditarPerfil()' href='#'> > Modificar Perfil</a></h3>
             <form id='mod_perfil' action='Scripts/Modificar/modificar-mi-usuario.php' method='POST' style='display: none;'>
                 <input type='hidden' name='id_usuario' value='{$_SESSION['usuario']['id']}' required>
-                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='15' minlenght='8' maxlenght='20'><br>
+                <label class='prompt' for='clave'>PS C:\Cambiar contraseña></label><input type='password' name='clave' placeholder='Nueva Contraseña' size='15' minlenght='8' maxlenght='20' title='Debe contener al menos un símbolo, un dígito y una mayúscula' pattern='(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}'><br>
                 <label class='prompt' for='correo'>PS C:\Cambiar correo></label><input type='email' name='correo' value='{$_SESSION['usuario']['correo']}' size='20' minlenght='8' maxlenght='20'><br>
                 <label class='prompt' for='nombre'>PS C:\Cambiar nombre></label><input type='text' name='nombre' value='{$_SESSION['usuario']['nombre']}' size='15' minlenght='8' maxlenght='20'><br>
                 <label class='prompt' for='apellidos'>PS C:\Cambiar apellidos></label><input type='text' name='apellidos' value='{$_SESSION['usuario']['apellidos']}' size='20' minlenght='8' maxlenght='20'><br>

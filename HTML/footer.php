@@ -53,9 +53,9 @@
             // Cambia el background de todos los elementos con clase "pestanias"
             const pestaniasM = document.querySelectorAll('.pestanias');
             pestaniasM.forEach(function (pm) {
-                pm.style.backgroundColor = '#e5e5e5';
+                pm.style.backgroundColor = '#d8d8d8';
             });
-            document.getElementById(idp).style.backgroundColor = '#d9efd0';
+            document.getElementById(idp).style.backgroundColor = '#fefefe';
 
             // Oculta todos los elementos con clase "monitor"
             const monitores = document.querySelectorAll('.monitor');
@@ -71,7 +71,7 @@
             // si se abre la pestaña de APIs
             if (idc === 'monitor_tareas') {
                 actualizarMonitor();
-                monitor = setInterval( actualizarMonitor, 5000 );
+                monitor = setInterval( actualizarMonitor, 1115000 );
             }
         }
         // Función para mostrar en tiempo real los cambios en la tabla tareas de la base de datos
@@ -82,39 +82,51 @@
                     let tareas = `
                         <div id='tiempo_real'>
                             <div>
-                                <div><h3>Pendientes</h3></div>
-                                <div style='height:30px;
-                                            width:${datos.pendientes*10}px;
-                                            background:#02fcef;
-                                            border-radius:0 6px 6px 0;'>
-                                    <p>${datos.pendientes}</p>
+                                <i class='i_iconos i_pendiente'></i>
+                                <div>
+                                    <h3>Pendientes</h3>
+                                    <div style='height:30px;
+                                                width:${datos.pendientes*2}px;
+                                                background:#02fcef;
+                                                border-radius:0 6px 6px 0;'>
+                                        <p><b>${datos.pendientes}</b></p>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <div><h3>Ejecutando</h3></div>
-                                <div style='height:30px;
-                                            width:${datos.ejecutando*10}px;
-                                            background:#fc7202;
-                                            border-radius:0 6px 6px 0;'>
-                                    <p>${datos.ejecutando}</p>
+                                <i class='i_iconos i_ejecutando'></i>
+                                <div>
+                                    <h3>Ejecutando</h3>
+                                    <div style='height:30px;
+                                                width:${datos.ejecutando*2}px;
+                                                background:#fc7202;
+                                                border-radius:0 6px 6px 0;'>
+                                        <p><b>${datos.ejecutando}</b></p>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <div><h3>Completadas</h3></div>
-                                <div style='height:30px;
-                                            width:${datos.completadas*10}px;
-                                            background:#0aa317;
-                                            border-radius:0 6px 6px 0;'>
-                                    <p>${datos.completadas}</p>
+                                <i class='i_iconos i_completada'></i>
+                                <div>
+                                    <h3>Completadas</h3>
+                                    <div style='height:30px;
+                                                width:${datos.completadas*2}px;
+                                                background:#0aa317;
+                                                border-radius:0 6px 6px 0;'>
+                                        <p><b>${datos.completadas}</b></p>
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <div><h3>Fallidas</h3></div>
-                                <div style='height:30px;
-                                            width:${datos.fallidas*10}px;
-                                            background:#8a0f0f;
-                                            border-radius:0 6px 6px 0;'>
-                                    <p>${datos.fallidas}</p>
+                                <i class='i_iconos i_fallida'></i>
+                                <div>
+                                    <h3>Fallidas</h3>
+                                    <div style='height:30px;
+                                                width:${datos.fallidas*2}px;
+                                                background:#8a0f0f;
+                                                border-radius:0 6px 6px 0;'>
+                                        <p><b>${datos.fallidas}</b></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>

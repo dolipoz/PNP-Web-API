@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$id_tarea = $_POST['id'];
 	$sql_delta = "delete from tareas where id = $id_tarea";
     if ($conexion->query($sql_delta) == True) {
@@ -12,4 +15,5 @@
 	}
 	
 	header("Location: ../../tareas.php");
+	exit;
 ?>

@@ -34,14 +34,14 @@
     <div id='banner'>
         <div id='b_titulo'>
             <h1>Sharepoint Poweshell API</h1>
-            <p>Gestione sus APIs desde PHP</p>
+            <h3>Gestione sus APIs desde PHP</h3>
         </div>
         <div id='indice'>
             <ul>
-                <li><i id='i_indice'></i><a href="index.php">Inicio</a></li>
+                <li><i class='i_iconos i_indice'></i><a href="index.php">Inicio</a></li>
                 <?php
                     if ($_SESSION["login"]) {
-                        echo "<li><i id='i_tareas'></i><a href='tareas.php'>Tareas</a></li>";
+                        echo "<li><i class='i_iconos i_tareas'></i><a href='tareas.php'>Tareas</a></li>";
                     }
                 ?>
             </ul>

@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$nombre = $_POST['certificado'];
 	$pais = $_POST['pais'];
 	$ciudad = $_POST['ciudad'];
@@ -18,4 +21,5 @@
 	}
 	
 	header("Location: ../../index.php");
+	exit;
 ?>

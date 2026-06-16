@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$id = isset($_POST['id_api']) ? $_POST['id_api'] : null;
 	$tenant = isset($_POST['tenant']) ? $_POST['tenant'] : null;
 	$sitio = isset($_POST['sitio']) ? $_POST['sitio'] : null;
@@ -27,6 +30,7 @@
 		$_SESSION["info"] = "La API no se encuentra.";
 	}
 
-	header("Location: ../../index.php");	
+	header("Location: ../../index.php");
+	exit;
 ?>
 

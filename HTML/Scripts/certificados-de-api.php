@@ -1,6 +1,9 @@
 <?php
     include "variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../index.php');
+        exit;
+    }
     $id = $_GET['id'];
 
     header('Content-Type: application/json');

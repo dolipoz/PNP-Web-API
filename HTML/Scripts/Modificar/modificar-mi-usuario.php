@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$id = $_POST['id_usuario'];
 	$clave = isset($_POST['clave']) ? $_POST['clave'] : null;
 	$correo = isset($_POST['correo']) ? $_POST['correo'] : null;
@@ -38,4 +41,5 @@
 	}
 
 	header("Location: ../../index.php");
+	exit;
 ?>

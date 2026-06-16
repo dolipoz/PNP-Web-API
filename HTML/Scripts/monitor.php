@@ -1,6 +1,9 @@
 <?php
     include "variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../index.php');
+        exit;
+    }
     header('Content-Type: application/json');
     // Ponemos los contadores de los tareas a 0
     $pendientes = $ejecutando = $completadas = $fallidas = 0;

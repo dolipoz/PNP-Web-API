@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$usuario = $_POST['usuario'];
 	$clave = password_hash($_POST['clave'], PASSWORD_DEFAULT);
 	$correo = $_POST['correo'];
@@ -25,8 +28,7 @@
 		$_SESSION["error"] = True;
 		$_SESSION["info"] = "Usuario no se pudo añadir.";
 	}
+
 	header("Location: ../../index.php");
-
-
-
+	exit;
 ?>

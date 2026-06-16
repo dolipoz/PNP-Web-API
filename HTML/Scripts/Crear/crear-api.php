@@ -1,6 +1,9 @@
 <?php
 	include "../variables.php";
-
+    if (!$_SESSION["login"]) {
+        header('Location: ../../index.php');
+		exit;
+    }
 	$tenant = $_POST['tenant'];
 	$sitio = $_POST['sitio'];
 	$id_cliente = $_POST['id_cliente'];
@@ -20,4 +23,5 @@
 	}
 	
 	header("Location: ../../index.php");
+	exit;
 ?>
