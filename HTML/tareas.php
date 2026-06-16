@@ -101,7 +101,7 @@
     echo "
     <div id='lanzar_tareas' class='monitor' style='display: none;'>
         <h1>Lanzar Tareas a Powershell</h1>
-        <form enctype='multipart/form-data' action='Scripts/Crear/lanzar-tarea.php' method='POST'>
+        <form enctype='multipart/form-data' action='Scripts/lanzar-tarea.php' method='POST'>
             <div>
                 <i class='i_iconos i_pwsh'></i>
                 <label class='lanzador' for='script'>Elegir Tarea: </label>
