@@ -221,6 +221,7 @@ input[type=submit], input[type=reset] {
     padding: 5px;
     width: 20%;
     color: #ffffff;
+    cursor: pointer;
 }
 #lanzar_tareas button > i {
     filter: grayscale(100%);

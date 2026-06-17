@@ -71,7 +71,7 @@
             // si se abre la pestaña de APIs
             if (idc === 'monitor_tareas') {
                 actualizarMonitor();
-                monitor = setInterval( actualizarMonitor, 1115000 );
+                monitor = setInterval( actualizarMonitor, 5000 );
             }
         }
         // Función para mostrar en tiempo real los cambios en la tabla tareas de la base de datos
@@ -86,7 +86,7 @@
                                 <div>
                                     <h3>Pendientes</h3>
                                     <div style='height:30px;
-                                                width:${datos.pendientes*2}px;
+                                                width:${datos.pendientes*5}px;
                                                 background:#02fcef;
                                                 border-radius:0 6px 6px 0;'>
                                         <p><b>${datos.pendientes}</b></p>
@@ -98,7 +98,7 @@
                                 <div>
                                     <h3>Ejecutando</h3>
                                     <div style='height:30px;
-                                                width:${datos.ejecutando*2}px;
+                                                width:${datos.ejecutando*5}px;
                                                 background:#fc7202;
                                                 border-radius:0 6px 6px 0;'>
                                         <p><b>${datos.ejecutando}</b></p>
@@ -110,7 +110,7 @@
                                 <div>
                                     <h3>Completadas</h3>
                                     <div style='height:30px;
-                                                width:${datos.completadas*2}px;
+                                                width:${datos.completadas*5}px;
                                                 background:#0aa317;
                                                 border-radius:0 6px 6px 0;'>
                                         <p><b>${datos.completadas}</b></p>
@@ -122,7 +122,7 @@
                                 <div>
                                     <h3>Fallidas</h3>
                                     <div style='height:30px;
-                                                width:${datos.fallidas*2}px;
+                                                width:${datos.fallidas*5}px;
                                                 background:#8a0f0f;
                                                 border-radius:0 6px 6px 0;'>
                                         <p><b>${datos.fallidas}</b></p>
@@ -186,11 +186,11 @@
             if (script === 'cambiar-permisos.ps1') {
                 document.getElementById("etiqueta_csv").style.display = 'inline';
                 document.getElementById("csv").style.display = 'inline';
-                document.getElementById("lanzar_tareas").action = "Scripts/cambiar-permisos.php";
+                document.getElementById("lanzar_tareas_form").action = "Scripts/cambiar-permisos.php";
             } else {
                 document.getElementById("etiqueta_csv").style.display = 'none';
                 document.getElementById("csv").style.display = 'none';
-                document.getElementById("lanzar_tareas").action = "Scripts/lanzar-tarea.php";
+                document.getElementById("lanzar_tareas_form").action = "Scripts/lanzar-tarea.php";
             }
         }
 

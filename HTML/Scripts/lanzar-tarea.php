@@ -4,6 +4,7 @@
         header('Location: ../index.php');
 		exit;
     }
+
 	$script = $_POST['script'];
 	$id_api = $_POST['apis'];
 	$certificado = $_POST['certificado'];

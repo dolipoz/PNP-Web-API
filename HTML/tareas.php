@@ -45,8 +45,7 @@
     //if ($puede_modificar_tareas) { echo "            <th>Actualizar</th>"; }
     if ($puede_eliminar_tareas) { echo "            <th>Eliminar</th>"; }
     echo "  </tr>";
-    $q_tareas = "select * from tareas where estado = 'completada' or estado = 'fallida' or estado = 'pendiente'";
-    $tareas = mysqli_query($conexion, $q_tareas);
+    $tareas = mysqli_query($conexion, $Q_tareas);
     if ($tareas and mysqli_num_rows($tareas) > 0) {
         while ($tarea = mysqli_fetch_assoc($tareas)) {
             $id = $tarea['id'];
@@ -101,7 +100,7 @@
     echo "
     <div id='lanzar_tareas' class='monitor' style='display: none;'>
         <h1>Lanzar Tareas a Powershell</h1>
-        <form enctype='multipart/form-data' action='Scripts/lanzar-tarea.php' method='POST'>
+        <form id='lanzar_tareas_form' enctype='multipart/form-data' action='Scripts/lanzar-tarea.php' method='POST'>
             <div>
                 <i class='i_iconos i_pwsh'></i>
                 <label class='lanzador' for='script'>Elegir Tarea: </label>
@@ -114,7 +113,7 @@
             <div>
                 <i class='i_iconos i_api'></i>
                 <label class='lanzador' for='apis'>Elija la api</label>
-                <select id='apis' name='apis' style='display:none;' required>
+                <select id='apis' name='apis' required>
     ";
     $apis = mysqli_query($conexion, $Q_apis);
     if ($apis and mysqli_num_rows($apis) > 0) {
@@ -150,8 +149,7 @@
                     <label id='etiqueta_csv' class='lanzador' for='csv'>Suba el csv con los permisos asociados </label>
                     <input type='file' id='csv' name='csv'>
                 </div>
-                <button><i class='i_iconos i_ejecucion'></i><input type='submit' value='Aceptar'></button>
-                <button><i class='i_iconos i_reiniciar'></i><input type='reset' value='Reiniciar'></button>
+                <button type='submit'><i class='i_iconos i_ejecucion'></i>Aceptar</button>
         </form>
     </div>
     ";
